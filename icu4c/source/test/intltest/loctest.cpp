@@ -4935,6 +4935,36 @@ void LocaleTest::TestCanonicalize(void)
         // ICU-21401
         { "cel-gaulish", "xtg"},
 
+        // ICU-21406
+        // Inside T extension
+        //  Case of Script and Region
+        { "ja-kana-jp-t-it-latn-it", "ja-Kana-JP-t-it-latn-it"},
+        { "und-t-zh-hani-tw", "und-t-zh-hani-tw"},
+        { "und-cyrl-t-und-Latn", "und-Cyrl-t-und-latn"},
+        //  Order of singleton
+        { "und-u-ca-roc-t-zh", "und-t-zh-u-ca-roc"},
+        //  Variant subtags are alphabetically ordered.
+        { "sl-t-sl-rozaj-biske-1994", "sl-t-sl-1994-biske-rozaj"},
+        // tfield subtags are alphabetically ordered.
+        // (Also tests subtag case normalisation.)
+        { "DE-T-lv-M0-DIN", "de-t-lv-m0-din"},
+        { "DE-T-M0-DIN-K0-QWERTZ", "de-t-k0-qwertz-m0-din"},
+        { "DE-T-lv-M0-DIN-K0-QWERTZ", "de-t-lv-k0-qwertz-m0-din"},
+        // "true" tvalue subtags aren't removed.
+        // (UTS 35 version 36, §3.2.1 claims otherwise, but tkey must be followed by
+        // tvalue, so that's likely a spec bug in UTS 35.)
+        { "en-t-m0-true", "en-t-m0-true"},
+        // tlang subtags are canonicalised.
+        { "en-t-iw", "en-t-he"},
+        { "en-t-hy-latn-SU", "en-t-hy-latn-am"},
+        { "ru-t-ru-cyrl-SU", "ru-t-ru-cyrl-ru"},
+        { "fr-t-fr-172", "fr-t-fr-ru"},
+        { "und-t-no-latn-BOKMAL", "und-t-nb-latn" },
+        { "und-t-sgn-qAAi-NL", "und-t-dse-zinh" },
+        // alias of tvalue should be replaced
+        { "en-t-m0-NaMeS", "en-t-m0-prprname" },
+        { "en-t-s0-ascii-d0-NaMe", "en-t-d0-charname-s0-ascii" },
+
     };
     int32_t i;
     for (i=0; i < UPRV_LENGTHOF(testCases); i++) {
@@ -5554,6 +5584,31 @@ void LocaleTest::TestForLanguageTag() {
     Locale result_ext = Locale::forLanguageTag(tag_ext, status);
     status.errIfFailureAndReset("\"%s\"", tag_ext);
     assertEquals(tag_ext, loc_ext.getName(), result_ext.getName());
+
+    static const struct {
+        const char *inputTag;    /* input */
+        const char *expectedID; /* expected forLanguageTag().getName() result */
+    } testCases[] = {
+      // ICU-21433
+      {"und-1994-biske-rozaj", "__1994_BISKE_ROZAJ"},
+      {"de-1994-biske-rozaj", "de__1994_BISKE_ROZAJ"},
+      {"und-x-private", "@x=private"},
+      {"de-1994-biske-rozaj-x-private", "de__1994_BISKE_ROZAJ@x=private"},
+      {"und-1994-biske-rozaj-x-private", "__1994_BISKE_ROZAJ@x=private"},
+    };
+    int32_t i;
+    for (i=0; i < UPRV_LENGTHOF(testCases); i++) {
+        UErrorCode status = U_ZERO_ERROR;
+        std::string otag = testCases[i].inputTag;
+        std::string tag = Locale::forLanguageTag(otag.c_str(), status).getName();
+        if (tag != testCases[i].expectedID) {
+            errcheckln(status, "FAIL: %s should be toLanguageTag to %s but got %s - %s",
+                       otag.c_str(),
+                       testCases[i].expectedID,
+                       tag.c_str(),
+                       u_errorName(status));
+        }
+    }
 }
 
 void LocaleTest::TestToLanguageTag() {
@@ -5613,6 +5668,33 @@ void LocaleTest::TestToLanguageTag() {
     std::string result_bogus = loc_bogus.toLanguageTag<std::string>(status);
     assertEquals("bogus", U_ILLEGAL_ARGUMENT_ERROR, status.reset());
     assertTrue(result_bogus.c_str(), result_bogus.empty());
+
+    static const struct {
+        const char *localeID;    /* input */
+        const char *expectedID; /* expected toLanguageTag() result */
+    } testCases[] = {
+      /* ICU-21414 */
+      {"und-x-abc-private", "und-x-abc-private"},
+      {"und-x-private", "und-x-private"},
+      {"und-u-ca-roc-x-private", "und-u-ca-roc-x-private"},
+      {"und-US-x-private", "und-US-x-private"},
+      {"und-Latn-x-private", "und-Latn-x-private"},
+      {"und-1994-biske-rozaj", "und-1994-biske-rozaj"},
+      {"und-1994-biske-rozaj-x-private", "und-1994-biske-rozaj-x-private"},
+    };
+    int32_t i;
+    for (i=0; i < UPRV_LENGTHOF(testCases); i++) {
+        UErrorCode status = U_ZERO_ERROR;
+        std::string otag = testCases[i].localeID;
+        std::string tag = Locale::forLanguageTag(otag.c_str(), status).toLanguageTag<std::string>(status);
+        if (tag != testCases[i].expectedID) {
+            errcheckln(status, "FAIL: %s should be toLanguageTag to %s but got %s - %s",
+                       otag.c_str(),
+                       testCases[i].expectedID,
+                       tag.c_str(),
+                       u_errorName(status));
+        }
+    }
 }
 
 /* ICU-20310 */
@@ -6412,4 +6494,5 @@ void LocaleTest::TestLeak21419() {
     IcuTestErrorCode status(*this, "TestLeak21419");
     Locale l = Locale("s-yU");
     l.canonicalize(status);
+    status.expectErrorAndReset(U_ILLEGAL_ARGUMENT_ERROR);
 }
