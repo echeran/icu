@@ -1,4 +1,12 @@
+<!--
+© 2021 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # Unicode Update
+
+*[This page's last thorough update was on [5 August
+2010](https://sites.google.com/site/icusite/system/app/pages/admin/revisions?wuid=wuid:gx:6c0edddbaea77d12).]*
 
 The International Components for Unicode (ICU) implement the Unicode Standard
 and many of its Standard Annexes faithfully and are updated to a new Unicode
@@ -14,7 +22,7 @@ size of the Unihan data).
 ## Update process
 
 For the last several updates, there is a [change log
-here](http://source.icu-project.org/repos/icu/icu/trunk/source/data/unidata/changes.txt).
+here (BROKEN LINK)](http://source.icu-project.org/repos/icu/icu/trunk/source/data/unidata/changes.txt).
 In short, most of the ucd .txt files are copied into the ICU repository, either
 without modification or, for some files, with comments removed and lines merged
 to reduce their size.
@@ -26,13 +34,13 @@ Note: We have looked at using the [UCD
 XML](http://www.unicode.org/ucd/#UCDinXML) files, but did not want to rely on
 them alone until there was a way to verify that they contain precisely the same
 data as the .txt files. Also, using the XML files would require a partial
-rewrite of the existing tools. (There is an outdated, experimental, partial UCD
-XML parser here:
+rewrite of the existing tools. (There was an outdated, experimental, partial UCD
+XML parser at this now-broken (as of 2021) link:
 <http://bugs.icu-project.org/trac/browser/icuhtml/trunk/design/properties/genudata>)
 
 The ICU Unicode tools parse the text files, process the data somewhat, and write
 binary data for runtime use. Most of these tools live in a [source
-tree](http://bugs.icu-project.org/trac/browser/tools/trunk/unicode) separate
+tree (BROKEN LINK)](http://bugs.icu-project.org/trac/browser/tools/trunk/unicode) separate
 from the ICU4C/ICU4J sources, and link with ICU4C.
 
 The following steps are necessarily manual:
