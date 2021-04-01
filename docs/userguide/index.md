@@ -17,6 +17,6 @@ License & terms of use: http://www.unicode.org/copyright.html
 This User Guide provides information on i18n topics for which ICU has services, and
 includes details that go beyond the C, C++, and Java API docs (and avoids some duplication between them).
 
-You may want to start with the [Introduction to ICU](.icu/) or browse the navigation bar for a specific topic.
+You may want to start with the [Introduction to ICU](./icu) or browse the navigation bar for a specific topic.
 
 This is the new home of the User Guide (since 2020 August).
