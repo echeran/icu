@@ -1,7 +1,7 @@
 ---
 layout: default
 title: ICU4J
-nav_order: 4
+nav_order: 500
 has_children: true
 ---
 <!--
