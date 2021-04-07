@@ -24,7 +24,7 @@ in the trunk.
 ### Update Unicode Data
 
 See the [Unicode Update page](../../uni-up.md) and the instructions in
-[icu/trunk/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt)
+[icu4c/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt)
 and nearby files, also check the change log for this and related files such as
 UnicodeData.txt.
 
@@ -44,7 +44,7 @@ Constants for script codes like Latf and Aran that are not subject to separate
 encoding may be added at any time.
 
 See details in
-[icu/trunk/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt)
+[icu4c/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt)
 and keep the list of script codes not yet in ICU up to date there.
 
 For new codes see <http://www.unicode.org/iso15924/codechanges.html> (check for
