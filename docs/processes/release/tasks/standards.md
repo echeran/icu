@@ -23,7 +23,7 @@ in the trunk.
 
 ### Update Unicode Data
 
-See the [Unicode Update page](../../uni-up.md) and the instructions in
+See the [Unicode Update page](../../unicode-update.md) and the instructions in
 [icu4c/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt)
 and nearby files, also check the change log for this and related files such as
 UnicodeData.txt.
@@ -31,7 +31,7 @@ UnicodeData.txt.
 ### Update script code enums
 
 Update script code enums with new codes from ISO 15924, send a notice for them
-as public API (born @stable) to the icu-design list.
+as public API (born `@stable`) to the icu-design list.
 
 Starting with ICU 55, add script code enum constants only after assignment of
 Unicode script property value aliases; otherwise the names of the constants may
