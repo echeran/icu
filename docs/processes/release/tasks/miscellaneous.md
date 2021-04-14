@@ -1,13 +1,15 @@
 # Miscellaneous
 
-### Complete code reviews
+## Complete code reviews
 
 Nag all the reviewers to finish reviewing the code and change the status of
 bugs.
 
 [TOC]
 
-### Check in serialization compatibility test data
+---
+
+## Check in serialization compatibility test data
 
 ICU4J unit test contains serialization compatibility test cases. When a new
 reference version is released, we build serialized object data with the version
@@ -18,7 +20,9 @@ and use it for future testing.
 3.  Once you confirm the test runs clean, copy out/serialTestData/ICU_<version>
     to main/tests/core/src/com/ibm/icu/dev/test/serializable/data/ICU_<version>.
 
-### Release ticket
+---
+
+## Release ticket
 
 After every milestone (GA / RC / Milestone-N) is completed, create a new release
 ticket in ICU Jira, then add the ticket link to the next
@@ -26,7 +30,9 @@ ticket in ICU Jira, then add the ticket link to the next
 used for BRS tasks, such as version update, tagging new version, merging post RC
 fixes from trunk and others.
 
-### Check integrity of Jira issues in commit messages
+---
+
+## Check integrity of Jira issues in commit messages
 
 Every commit being shipped in the next ICU release should be labeled with a Jira
 ticket that is marked as fixed with the correct fix version. Further, there
@@ -38,7 +44,9 @@ not have commits. To check this, run the following tool:
 Follow the instructions in the README file to generate the report and send it
 for review.
 
-### Fix MisTicketted
+---
+
+## Fix Mis-ticketted commits
 
 If the commit checker tool above reports any malformed commit messages, it might
 mean that a bad commit made its way onto ICU master. To fix this, a rebase is
@@ -67,7 +75,9 @@ Send an email to icu-support explaining the change and how to deal with it. You
 can use [this email](https://sourceforge.net/p/icu/mailman/message/36426642/) as
 a model.
 
-### Scrub closed issues in code
+---
+
+## Scrub closed issues in code
 
 (1) Search for "TODO(12345)" to detect TODO items for closed issues.
 

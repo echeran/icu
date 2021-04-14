@@ -69,6 +69,8 @@ _runLocalespiCheck:
 BUILD SUCCESSFUL
 Total time: 1 minute 46 seconds
 
+---
+
 ## Run ICU4J Test cases with JDK TimeZone
 
 ICU4J provides an option to alter TimeZone implementation to use the JRE's own
@@ -92,11 +94,15 @@ version used by ICU. In this case, some test cases may reports failures.
 Unfortunately, you have to walk though the failures to see if they are expected
 or not manually in this case.
 
+---
+
 ## Verify the Eclipse ICU4J plug-in
 
 1.  Make sure the Eclipse ICU4J plug-in binaries are successfully produced.
 2.  Run the ICU4J plug-in test cases.
 3.  Update license files, build version strings for the new release.
+
+---
 
 ## Run Tests Without ICU Data
 
@@ -124,6 +130,8 @@ CINTLTST_OPTS=-w make check
 
 ICU4J has the test target for this, but does not work as designed for now. For
 now, this task is not required for ICU4J.
+
+---
 
 ## Verify that ICU4C tests pass without collation rule strings
 
@@ -194,6 +202,8 @@ see ticket [#10636](https://unicode-org.atlassian.net/browse/ICU-10636).
 See that they pass, or fix them to pass. See ticket #10636 test code changes for
 examples.
 
+---
+
 ## Test ICU4J with only little-endian ICU4C data
 
 *Only available since ICU 54.*
@@ -259,6 +269,8 @@ $ cd test/testmap
 $ make check
 ```
 
+---
+
 ## Verify XLIFF conversion
 
 **Note:** The following instruction does not work. Please read the comments with
@@ -294,6 +306,8 @@ We should use "-l ra" here.
 *   Go through the steps given in
     <http://icu.sourceforge.net/docs/papers/localize_with_XLIFF_and_ICU.pdf>
 
+---
+
 ## Test sample and demo programs
 
 Build and run all of the sample and demo apps that are included with ICU, on
@@ -305,6 +319,8 @@ Another worthy test: Test suites and demos *from the previous release* should
 also compile and run with the libraries of the current release, at least when
 certain #defines are set (unless they test APIs that are deprecated and have
 been removed since)!
+
+---
 
 ## Test data portability
 
@@ -319,6 +335,8 @@ option. When it's not available, you would do the following:
 4.  Package up a clean copy of ICU for a non-Windows machine, like Linux on x86.
 5.  Build ICU on the non-Windows machine from the newly created package.
 6.  Run all tests on that non-Windows machine.
+
+---
 
 ## Run the environment tests
 
@@ -339,6 +357,8 @@ cores. This will take a long time to run. Here are the steps to run the test.
     be printed from each spawned test script when it finishes.
 7.  grep the logs for any test failures when the tests are done.
 
+---
+
 ## Run Thread Sanitizer tests
 
 Thread sanitizer testing is one of the standard Travis builds. If it is passing
@@ -351,6 +371,8 @@ To run manually, on a Linux system with clang,
 > make -j6 check`
 
 Errors are displayed at the point they occur, and stop further testing.
+
+---
 
 ## Run Address Sanitizer tests
 
@@ -365,6 +387,8 @@ To run manually, on a Linux system with clang,
 
 Memory leaks are summarized at the end. Other errors are displayed at the point
 they occur, and stop further testing.
+
+---
 
 ## ICU4J Serialization Compatibility Test Data
 

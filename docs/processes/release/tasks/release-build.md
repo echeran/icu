@@ -4,16 +4,16 @@
 
 ## Building ICU4J Release Files
 
-*Note: This instruction is revised for ICU4J 61.1. Some description may not
-apply to previous ICU releases. ICU4J library (as of ICU 61) supports JRE 6 or
+*Note: This instruction is reviewed for ICU4J 69.1. Some description may not
+apply to previous ICU releases. ICU4J library (as of ICU 69) supports JRE 7 or
 later Java runtime environment. To avoid the Java's system library class's
 backward compatibility problem, ICU4J binary files must be compiled with Java
-system libraries from JRE 6.*
+system libraries from JRE 7.*
 
 #### Prerequisites
 
 *   Java SE Development Kit 8 (to run ant, javac, javadoc..)
-*   Java Runtime Environment 6 (used as bootclasspath for cross-compilation)
+*   Java Runtime Environment 7 (used as bootclasspath for cross-compilation)
 *   Apache Ant 1.10.x (the latest available version)
     \[<http://ant.apache.org/>\]
 *   JCite 1.13.0 \[<https://arrenbrecht.ch/jcite/>\]
@@ -21,6 +21,8 @@ system libraries from JRE 6.*
 #### Other Prerequisites only for GA
 
 *   Maven Ant Tasks 2.1.3 (GA only) \[<http://maven.apache.org/ant-tasks>\]
+    (Note: This is component is no longer maintained, and ICU project should
+    update the process in near future)
 *   gpg (GNU Privacy Guard)
     *   ICU Project PGP key (icuintl@us.ibm.com - [published to MIT key
         server](https://pgp.mit.edu/pks/lookup?op=vindex&search=0x44CE7BF2825EA2CD))
@@ -44,39 +46,20 @@ system libraries from JRE 6.*
     *   `mavne.pom.ver` is used in pom.xml when release files are uploaded to
         OSSRH
 
-> > For ICU 61.1 GA, the contents of the properties file should be:
+> > For ICU 69.1 GA, the contents of the properties file should be:
 
-> > `api.report.version` `= 61`
+> > `api.report.version` `= 69`
 
-> > `api.report.prev.version` `= 60`
+> > `api.report.prev.version` `= 68`
 
-> > `release.file.ver` `= 61_1`
+> > `release.file.ver` `= 69_1`
 
-> > `api.doc.version` `= 61.1`
+> > `api.doc.version` `= 69.1`
 
-> > `maven.pom.ver` `= 61.1`
-
-> > For ICU 61 RC, the contents should be:
-
-> > `api.report.version` `= 61`
-
-> > `api.report.prev.version` `= 60`
-
-> > `release.file.ver` `= 61rc`
-
-> > `api.doc.version` `= 61 Release Candidate`
-
-> > `maven.pom.ver` `= 61.1-SNAPSHOT`
-
-> > For ICU 61 Milestone 1, the contents should be
-
-> > `api.report.version` `= 61`
-> > `api.report.prev.version` `= 60`
-> > `release.file.ver` `= 61m1`
-> > `api.doc.version` `= 61 Milestone 1`
-> > `maven.pom.ver` `= 61.1-SNAPSHOT`
+> > `maven.pom.ver` `= 69.1`
 
 *   Create `build-local.properties` in the ICU4J root directory
+
 *   Edit `build-local.properties` to add a property - `java7.bootclasspath
     (java6.bootclasspath for ICU57 to ICU62)`
 
@@ -92,8 +75,6 @@ For example, the values on my Linux system (Ubuntu) look like below:
 
 `java7.bootclasspath=/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/lib/resources.jar:/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/lib/rt.jar:/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/lib/sunrsasign.jar:/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/lib/jsse.jar:/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/lib/jce.jar:/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/lib/charsets.jar:/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/lib/jfr.jar:/home/yoshito/jdk/oracle/jdk1.7.0_80/jre/classes`
 
-Note: On my system, Oracle JDK 6 is installed at
-/home/yoshito/java/Oracle/jdk1.6.0_45.
 One Windows system, path separator back slash '\\' should be replaced with
 forward slash '/'. For example:
 

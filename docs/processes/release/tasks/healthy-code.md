@@ -30,6 +30,8 @@ look for "UClassID" or similar.
     *   Download the style sheet next to it:
         https://github.com/unicode-org/icu/blob/master/icu4c/icu4c.css
 
+---
+
 ## Check for non-ascii characters in ICU4C source files \[obsolete\]
 
 Note: ICU4C and ICU4J source files are UTF-8. The ASCII check is no longer
@@ -39,6 +41,8 @@ appropriate for them.
 cd icu4c/source
 find . \( -name "*.[ch]" -or -name "*.cpp" \) -exec grep -PHn [^[:ascii:]] {} \;
 ```
+
+---
 
 ## Check source files for valid UTF-8 and correct text file line endings
 
@@ -99,6 +103,8 @@ the UTF-8 signature byte sequence ("BOM").~~
 <pre><code><s>python ../tools/release/c/bomfix.py</s>
 </code></pre>
 
+---
+
 ## Clean up import statements
 
 The Eclipse IDE provides a feature which allow you to organize import statements
@@ -107,6 +113,8 @@ for multiple files. Right click on projects/source folders/files, you can select
 the import statements in a consistent order. (Note: You may experience OOM
 problem when your run this for projects/folders which contain many files. In
 this case, you may need to narrow a selection per iteration.)
+
+---
 
 ## Check library dependencies
 
@@ -168,6 +176,8 @@ of API that require conversion should depend on it; for example, group
 formattable_cnv depends on group unistr_cnv, but then nothing inside ICU depends
 on that.
 
+---
+
 ## Verify proper memory allocation functions
 
 Verify the following for library code (common, i18n, layout, ustdio). The
@@ -219,6 +229,8 @@ cmemory.h and the common base class.
             are used in the libraries (and the tests still pass...). See the
             User Guide Coding Guidelines for details.
 
+---
+
 ## Run static code analysis tools
 
 (Purify, Boundary Checker, valgrind...)
@@ -242,10 +254,14 @@ LD_LIBRARY_PATH=../../lib:../../stubdata:../../tools/ctestfw:$LD_LIBRARY_PATH  
 You can grab the command line for running the tests from the output from "make
 check", and then just insert "valgrind" before the executable.
 
+---
+
 ## Check the code coverage numbers
 
 Our goal is that all releases go out to the public with 100% API test and at
 least 85% code coverage.
+
+---
 
 ## Test ICU4C headers
 
@@ -305,6 +321,8 @@ include all other headers if it depends on definitions from them"
 **As of ICU 68, the internal header test is now automated as part of Travis
 CI.**
 
+---
+
 ## Test uconfig.h variations
 
 Test ICU completely, and run the header test (above) with:
@@ -328,6 +346,8 @@ they cause header test failures, please note in the header file the reason that
 guard conditionals cannot be used in that location, or they will lkeiely be
 re-added in the future.
 
+---
+
 ## Test C++ Namespace Use
 
 Verify that ICU builds without enabling the default use of the ICU namespace. To
@@ -349,6 +369,8 @@ defined to be empty when compiling for C.
 The automated build system should have a machine that sets both
 `-DU_USING_ICU_NAMESPACE=0` and `-DU_CHARSET_IS_UTF8=1`.
 
+---
+
 ## Test UCONFIG_NO_CONVERSION
 
 Make sure that the ICU4C common and i18n libraries build with
@@ -367,6 +389,8 @@ verify that it still works with the normal setting.
 If this breaks, someone probably inadvertently uses the UnicodeString(const char
 \*) constructor. See the "Check library dependencies" section and example fixes
 in [changeset 30186](http://bugs.icu-project.org/trac/changeset/30186).
+
+---
 
 ## Test U_CHARSET_IS_UTF8
 
@@ -391,6 +415,8 @@ which is not possible on Windows.
 The automated build system should have a machine that sets both
 `-DU_USING_ICU_NAMESPACE=0` and `-DU_CHARSET_IS_UTF8=1`.
 
+---
+
 ## Test U_OVERRIDE_CXX_ALLOCATION=0
 
 Verify that ICU builds with U_OVERRIDE_CXX_ALLOCATION=0 on Linux. Problems will
@@ -404,7 +430,7 @@ make -j12 check
 
 ## Test ICU_USE_THREADS=0 \[Obsolete\]
 
-***Only necessary up to ICU4C 49.***
+### ***Only necessary up to ICU4C 49.***
 
 *   ICU 50m1 removes ICU_USE_THREADS from the runtime code (ticket
     [#9010](http://bugs.icu-project.org/trac/ticket/9010)).
@@ -420,6 +446,8 @@ Verify that ICU builds and tests with threading disabled. To test on Linux,
 ./runConfigureICU Linux --disable-threads
 make check
 ```
+
+---
 
 ## Test ICU4C Samples and Demos
 
@@ -443,13 +471,17 @@ steps:
 To test the sample programs, run the "source\\samples\\all\\samplecheck.bat"
 script for each configuration, and ensure that they are successful.
 
-**Test ICU4C Demos via Docker**
+### **Test ICU4C Demos via Docker**
 
 See <https://github.com/unicode-org/icu-demos/blob/master/icu-kube/README.md>
 
-**Test ICU4J Web Demos via Docker**
+---
+
+## **Test ICU4J Web Demos via Docker**
 
 See: <https://github.com/unicode-org/icu-demos/blob/master/icu4jweb/README.md>
+
+---
 
 ## Test ICU4J Demos
 
@@ -459,17 +491,23 @@ To test ICU4J demo applications, cd to ICU4J directory and build and run the
 demo.
 
 ```none
-$ ant jarDemos
-$ java -jar icu4jdemos.jar
+$ cd icu4j
+$ ant jarDemos
+$  java -jar icu4jdemos.jar
 ```
 
-Above command invokes GUI demo applications including calendar, charset
-detection, holidays, RBNF and transliterator. Check if each application is
-working OK.
+Above command invokes GUI demo applications. As such it has to connect to a
+X-Server. The easiest way is to run via e.g. remote desktop on the machine on
+which it is executed instead of in a ssh shell.
+
+The demos include calendar, charset detection, holidays, RBNF and
+transliterator. Check if each application is working OK.
 
 To check ICU4J samples, open Eclipse workspace and import icu4j-samples project
 from directory <icu4j_root>/samples. Make sure these sample code has no build
 issues. Also run sample code with main and see if each sample code runs.
+
+---
 
 ## Test, exhaustive mode, C & J
 
@@ -485,6 +523,8 @@ required for the tests to complete.
 ```none
 $ make -j6 check-exhaustive
 ```
+
+---
 
 ## Test ICU4C with the Thread Sanitizer
 
