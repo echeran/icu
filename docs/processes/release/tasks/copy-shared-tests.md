@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Release & Milestone Tasks
+nav_order: 4
+---
+
 # Copy Shared Tests
 
 Certain tests are structured so that they can be shared between CLDR and ICU.

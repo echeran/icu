@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Release & Milestone Tasks
+nav_order: 8
+---
+
 # Miscellaneous
 
 ## Complete code reviews

@@ -1,3 +1,10 @@
+---
+layout: default
+title: Release & Milestone Tasks
+nav_order: 7
+has_children: true
+---
+
 # Release & Milestone Tasks
 
 * [Announcements](announce.md)

@@ -1,3 +1,9 @@
+---
+layout: default
+parent: Release & Milestone Tasks
+nav_order: 11
+---
+
 <!--
 © 2021 and later: Unicode, Inc. and others.
 License & terms of use: http://www.unicode.org/copyright.html
