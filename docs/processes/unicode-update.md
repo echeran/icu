@@ -35,7 +35,7 @@ XML](http://www.unicode.org/ucd/#UCDinXML) files, but did not want to rely on
 them alone until there was a way to verify that they contain precisely the same
 data as the .txt files. Also, using the XML files would require a partial
 rewrite of the existing tools. (There was an outdated, experimental, partial UCD
-XML parser at this link:
+XML parser here:
 <https://github.com/unicode-org/icu-docs/tree/master/design/properties/genudata>)
 
 The ICU Unicode tools parse the text files, process the data somewhat, and write
