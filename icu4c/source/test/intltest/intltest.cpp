@@ -1647,7 +1647,10 @@ const char* IntlTest::getTestDataPath(UErrorCode& err) {
     return loadTestData(err);
 }
 
-/* Returns the path to icu/source/test/testdata/ */
+/**
+ * Returns the path to icu/source/test/testdata/
+ * Note: this function is parallel with C loadSourceTestData in cintltst.c
+ */
 const char *IntlTest::getSourceTestData(UErrorCode& /*err*/) {
     const char *srcDataDir = NULL;
 #ifdef U_TOPSRCDIR
@@ -1974,6 +1977,8 @@ UBool IntlTest::assertEquals(const char* message,
 UBool IntlTest::assertEquals(const char* message,
                              const char* expected,
                              const char* actual) {
+    U_ASSERT(expected != nullptr);
+    U_ASSERT(actual != nullptr);
     if (uprv_strcmp(expected, actual) != 0) {
         errln((UnicodeString)"FAIL: " + message + "; got \"" +
               actual +

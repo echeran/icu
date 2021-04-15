@@ -20,7 +20,7 @@ import com.ibm.icu.impl.Pair;
 import com.ibm.icu.impl.units.ComplexUnitsConverter;
 import com.ibm.icu.impl.units.ConversionRates;
 import com.ibm.icu.impl.units.MeasureUnitImpl;
-import com.ibm.icu.impl.units.UnitConverter;
+import com.ibm.icu.impl.units.UnitsConverter;
 import com.ibm.icu.impl.units.UnitsRouter;
 import com.ibm.icu.util.Measure;
 import com.ibm.icu.util.MeasureUnit;
@@ -55,7 +55,31 @@ public class UnitsTest {
                 this.expected = expected;
                 this.accuracy = accuracy;
             }
+
+            void testATestCase(ComplexUnitsConverter converter) {
+                List<Measure> measures = converter.convert(value, null).measures;
+
+                assertEquals("measures length", expected.length, measures.size());
+                int i = 0;
+                for (Measure measure : measures) {
+                    double accuracy = 0.0;
+                    if (i == expected.length - 1) {
+                        accuracy = this.accuracy;
+                    }
+                    assertTrue("input " + value + ", output measure " + i + ": expected " +
+                                    expected[i] + ", expected unit " +
+                                    expected[i].getUnit() + " got unit " + measure.getUnit(),
+                            expected[i].getUnit().equals(measure.getUnit()));
+                    assertEquals("input " + value + ", output measure " + i + ": expected " +
+                                    expected[i] + ", expected number " +
+                                    expected[i].getNumber() + " got number " + measure.getNumber(),
+                            expected[i].getNumber().doubleValue(),
+                            measure.getNumber().doubleValue(), accuracy);
+                    i++;
+                }
+            }
         }
+
         TestCase[] testCases = new TestCase[] {
             // Significantly less than 2.0.
             new TestCase(
@@ -129,35 +153,21 @@ public class UnitsTest {
                          0),
         };
 
+
         ConversionRates rates = new ConversionRates();
         MeasureUnit input, output;
-        List<Measure> measures;
         for (TestCase testCase : testCases) {
             input = MeasureUnit.forIdentifier(testCase.input);
             output = MeasureUnit.forIdentifier(testCase.output);
             final MeasureUnitImpl inputImpl = MeasureUnitImpl.forIdentifier(input.getIdentifier());
             final MeasureUnitImpl outputImpl = MeasureUnitImpl.forIdentifier(output.getIdentifier());
-            ComplexUnitsConverter converter = new ComplexUnitsConverter(inputImpl, outputImpl, rates);
-            measures = converter.convert(testCase.value, null).measures;
+            ComplexUnitsConverter converter1 = new ComplexUnitsConverter(inputImpl, outputImpl, rates);
 
-            assertEquals("measures length", testCase.expected.length, measures.size());
-            int i = 0;
-            for (Measure measure : measures) {
-                double accuracy = 0.0;
-                if (i == testCase.expected.length - 1) {
-                    accuracy = testCase.accuracy;
-                }
-                assertTrue("input " + testCase.value + ", output measure " + i + ": expected " +
-                               testCase.expected[i] + ", expected unit " +
-                               testCase.expected[i].getUnit() + " got unit " + measure.getUnit(),
-                           testCase.expected[i].getUnit().equals(measure.getUnit()));
-                assertEquals("input " + testCase.value + ", output measure " + i + ": expected " +
-                                 testCase.expected[i] + ", expected number " +
-                                 testCase.expected[i].getNumber() + " got number " + measure.getNumber(),
-                             testCase.expected[i].getNumber().doubleValue(),
-                             measure.getNumber().doubleValue(), accuracy);
-                i++;
-            }
+            testCase.testATestCase(converter1);
+
+            // Test ComplexUnitsConverter created with CLDR units identifiers.
+            ComplexUnitsConverter converter2 = new ComplexUnitsConverter(testCase.input, testCase.output);
+            testCase.testATestCase(converter2);
         }
 
         // TODO(icu-units#63): test negative numbers!
@@ -165,7 +175,7 @@ public class UnitsTest {
 
 
     @Test
-    public void testComplexUnitConverterSorting() {
+    public void testComplexUnitsConverterSorting() {
         class TestCase {
             String message;
             String inputUnit;
@@ -235,9 +245,9 @@ public class UnitsTest {
         class TestData {
             MeasureUnitImpl source;
             MeasureUnitImpl target;
-            UnitConverter.Convertibility expected;
+            UnitsConverter.Convertibility expected;
 
-            TestData(String source, String target, UnitConverter.Convertibility convertibility) {
+            TestData(String source, String target, UnitsConverter.Convertibility convertibility) {
                 this.source = MeasureUnitImpl.UnitsParser.parseForIdentifier(source);
                 this.target = MeasureUnitImpl.UnitsParser.parseForIdentifier(target);
                 this.expected = convertibility;
@@ -245,43 +255,130 @@ public class UnitsTest {
         }
 
         TestData[] tests = {
-                new TestData("meter", "foot", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("kilometer", "foot", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("hectare", "square-foot", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("kilometer-per-second", "second-per-meter", UnitConverter.Convertibility.RECIPROCAL),
-                new TestData("square-meter", "square-foot", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("kilometer-per-second", "foot-per-second", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("square-hectare", "pow4-foot", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("square-kilometer-per-second", "second-per-square-meter", UnitConverter.Convertibility.RECIPROCAL),
-                new TestData("cubic-kilometer-per-second-meter", "second-per-square-meter", UnitConverter.Convertibility.RECIPROCAL),
-                new TestData("square-meter-per-square-hour", "hectare-per-square-second", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("hertz", "revolution-per-second", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("millimeter", "meter", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("yard", "meter", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("ounce-troy", "kilogram", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("percent", "portion", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("ofhg", "kilogram-per-square-meter-square-second", UnitConverter.Convertibility.CONVERTIBLE),
-                new TestData("second-per-meter", "meter-per-second", UnitConverter.Convertibility.RECIPROCAL),
+                new TestData("meter", "foot", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("kilometer", "foot", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("hectare", "square-foot", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("kilometer-per-second", "second-per-meter", UnitsConverter.Convertibility.RECIPROCAL),
+                new TestData("square-meter", "square-foot", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("kilometer-per-second", "foot-per-second", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("square-hectare", "pow4-foot", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("square-kilometer-per-second", "second-per-square-meter", UnitsConverter.Convertibility.RECIPROCAL),
+                new TestData("cubic-kilometer-per-second-meter", "second-per-square-meter", UnitsConverter.Convertibility.RECIPROCAL),
+                new TestData("square-meter-per-square-hour", "hectare-per-square-second", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("hertz", "revolution-per-second", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("millimeter", "meter", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("yard", "meter", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("ounce-troy", "kilogram", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("percent", "portion", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("ofhg", "kilogram-per-square-meter-square-second", UnitsConverter.Convertibility.CONVERTIBLE),
+                new TestData("second-per-meter", "meter-per-second", UnitsConverter.Convertibility.RECIPROCAL),
         };
         ConversionRates conversionRates = new ConversionRates();
 
         for (TestData test :
                 tests) {
-            assertEquals(test.expected, UnitConverter.extractConvertibility(test.source, test.target, conversionRates));
+            assertEquals(test.expected, UnitsConverter.extractConvertibility(test.source, test.target, conversionRates));
+        }
+    }
+
+    @Test
+    public void testConversionInfo() {
+        class TestData {
+            String source;
+            String target;
+            UnitsConverter.ConversionInfo expected = new UnitsConverter.ConversionInfo();
+
+            public TestData(String source, String target, double conversionRate, double offset, Boolean reciprocal) {
+                this.source = source;
+                this.target = target;
+                this.expected.conversionRate = BigDecimal.valueOf(conversionRate);
+                this.expected.offset = BigDecimal.valueOf(offset);
+                this.expected.reciprocal = reciprocal;
+            }
+        }
+
+        TestData[] tests = {
+                new TestData(
+                        "meter",
+                        "meter",
+                        1.0, 0, false),
+                new TestData(
+                        "meter",
+                        "foot",
+                        3.28084, 0, false),
+                new TestData(
+                        "foot",
+                        "meter",
+                        0.3048, 0, false),
+                new TestData(
+                        "celsius",
+                        "kelvin",
+                        1, 273.15, false),
+                new TestData(
+                        "fahrenheit",
+                        "kelvin",
+                        5.0 / 9.0, 255.372, false),
+                new TestData(
+                        "fahrenheit",
+                        "celsius",
+                        5.0 / 9.0, -17.7777777778, false),
+                new TestData(
+                        "celsius",
+                        "fahrenheit",
+                        9.0 / 5.0, 32, false),
+                new TestData(
+                        "fahrenheit",
+                        "fahrenheit",
+                        1.0, 0, false),
+                new TestData(
+                        "mile-per-gallon",
+                        "liter-per-100-kilometer",
+                        0.00425143707, 0, true),
+        };
+
+        ConversionRates conversionRates = new ConversionRates();
+        for (TestData test : tests) {
+            MeasureUnitImpl sourceImpl = MeasureUnitImpl.forIdentifier(test.source);
+            MeasureUnitImpl targetImpl = MeasureUnitImpl.forIdentifier(test.target);
+            UnitsConverter unitsConverter = new UnitsConverter(sourceImpl, targetImpl, conversionRates);
+
+            UnitsConverter.ConversionInfo actual = unitsConverter.getConversionInfo();
+
+            // Test conversion Rate
+            double maxDelta = 1e-6 * Math.abs(test.expected.conversionRate.doubleValue());
+            if (test.expected.conversionRate.doubleValue() == 0) {
+                maxDelta = 1e-12;
+            }
+            assertEquals("testConversionInfo for conversion rate: " + test.source + " to " + test.target,
+                    test.expected.conversionRate.doubleValue(), actual.conversionRate.doubleValue(),
+                    maxDelta);
+
+            // Test offset
+            maxDelta = 1e-6 * Math.abs(test.expected.offset.doubleValue());
+            if (test.expected.offset.doubleValue() == 0) {
+                maxDelta = 1e-12;
+            }
+            assertEquals("testConversionInfo for offset: " + test.source + " to " + test.target,
+                    test.expected.offset.doubleValue(), actual.offset.doubleValue(),
+                    maxDelta);
+
+            // Test Reciprocal
+            assertEquals("testConversionInfo for reciprocal: " + test.source + " to " + test.target,
+                    test.expected.reciprocal, actual.reciprocal);
         }
     }
 
     @Test
     public void testConverter() {
         class TestData {
-            MeasureUnitImpl source;
-            MeasureUnitImpl target;
-            BigDecimal input;
-            BigDecimal expected;
+            final String sourceIdentifier;
+            final String targetIdentifier;
+            final BigDecimal input;
+            final BigDecimal expected;
 
-            TestData(String source, String target, double input, double expected) {
-                this.source = MeasureUnitImpl.UnitsParser.parseForIdentifier(source);
-                this.target = MeasureUnitImpl.UnitsParser.parseForIdentifier(target);
+            TestData(String sourceIdentifier, String targetIdentifier, double input, double expected) {
+                this.sourceIdentifier = sourceIdentifier;
+                this.targetIdentifier = targetIdentifier;
                 this.input = BigDecimal.valueOf(input);
                 this.expected = BigDecimal.valueOf(expected);
             }
@@ -336,18 +433,55 @@ public class UnitsTest {
                 new TestData("square-yard", "square-foot", 0, 0),
                 new TestData("square-yard", "square-foot", 0.000001, 0.000009),
                 new TestData("square-mile", "square-foot", 0.0, 0.0),
+                // Fuel Consumption
+                new TestData("cubic-meter-per-meter", "mile-per-gallon", 2.1383143939394E-6, 1.1),
+                new TestData("cubic-meter-per-meter", "mile-per-gallon", 2.6134953703704E-6, 0.9),
         };
 
         ConversionRates conversionRates = new ConversionRates();
         for (TestData test : tests) {
-            UnitConverter converter = new UnitConverter(test.source, test.target, conversionRates);
+            MeasureUnitImpl source = MeasureUnitImpl.forIdentifier(test.sourceIdentifier);
+            MeasureUnitImpl target = MeasureUnitImpl.forIdentifier(test.targetIdentifier);
+
+            UnitsConverter converter = new UnitsConverter(source, target, conversionRates);
+
             double maxDelta = 1e-6 * Math.abs(test.expected.doubleValue());
             if (test.expected.doubleValue() == 0) {
                 maxDelta = 1e-12;
             }
-            assertEquals("testConverter: " + test.source + " to " + test.target,
-                         test.expected.doubleValue(), converter.convert(test.input).doubleValue(),
-                         maxDelta);
+            assertEquals("testConverter: " + test.sourceIdentifier + " to " + test.targetIdentifier,
+                    test.expected.doubleValue(), converter.convert(test.input).doubleValue(),
+                    maxDelta);
+
+            maxDelta = 1e-6 * Math.abs(test.input.doubleValue());
+            if (test.input.doubleValue() == 0) {
+                maxDelta = 1e-12;
+            }
+            assertEquals(
+                    "testConverter inverse: " + test.targetIdentifier + " back to " + test.sourceIdentifier,
+                    test.input.doubleValue(), converter.convertInverse(test.expected).doubleValue(),
+                    maxDelta);
+
+
+            // TODO: Test UnitsConverter created using CLDR separately.
+            // Test UnitsConverter created by CLDR unit identifiers
+            UnitsConverter converter2 = new UnitsConverter(test.sourceIdentifier, test.targetIdentifier);
+
+            maxDelta = 1e-6 * Math.abs(test.expected.doubleValue());
+            if (test.expected.doubleValue() == 0) {
+                maxDelta = 1e-12;
+            }
+            assertEquals("testConverter2: " + test.sourceIdentifier + " to " + test.targetIdentifier,
+                    test.expected.doubleValue(), converter2.convert(test.input).doubleValue(),
+                    maxDelta);
+
+            maxDelta = 1e-6 * Math.abs(test.input.doubleValue());
+            if (test.input.doubleValue() == 0) {
+                maxDelta = 1e-12;
+            }
+            assertEquals("testConverter2 inverse: " + test.targetIdentifier + " back to " + test.sourceIdentifier,
+                    test.input.doubleValue(), converter2.convertInverse(test.expected).doubleValue(),
+                    maxDelta);
         }
     }
 
@@ -394,7 +528,7 @@ public class UnitsTest {
 
         for (TestCase testCase :
                 tests) {
-            UnitConverter converter = new UnitConverter(testCase.source, testCase.target, conversionRates);
+            UnitsConverter converter = new UnitsConverter(testCase.source, testCase.target, conversionRates);
             BigDecimal got = converter.convert(testCase.input);
             if (compareTwoBigDecimal(testCase.expected, got, BigDecimal.valueOf(0.000001))) {
                 continue;
@@ -432,12 +566,12 @@ public class UnitsTest {
     public void testUnitPreferencesWithCLDRTests() throws IOException {
         class TestCase {
 
+            // TODO: content of outputUnitInOrder isn't checked? Only size?
             final ArrayList<Pair<String, MeasureUnitImpl>> outputUnitInOrder = new ArrayList<>();
             final ArrayList<BigDecimal> expectedInOrder = new ArrayList<>();
             /**
              * Test Case Data
              */
-            @SuppressWarnings("unused")
             String category;
             String usage;
             String region;
@@ -486,6 +620,17 @@ public class UnitsTest {
                     expectedInOrder.add(new BigDecimal(output.second));
                 }
             }
+
+            @Override
+            public String toString() {
+                ArrayList<MeasureUnitImpl> outputUnits = new ArrayList<>();
+                for (Pair<String, MeasureUnitImpl> unit : outputUnitInOrder) {
+                    outputUnits.add(unit.second);
+                }
+                return "TestCase: " + category + ", " + usage + ", " + region + "; Input: " + input +
+                    " " + inputUnit.first + "; Expected Values: " + expectedInOrder +
+                    ", Expected Units: " + outputUnits;
+            }
         }
 
         // Read Test data from the unitPreferencesTest
@@ -501,9 +646,29 @@ public class UnitsTest {
             }
         }
 
-        for (TestCase testCase :
-                tests) {
+        for (TestCase testCase : tests) {
             UnitsRouter router = new UnitsRouter(testCase.inputUnit.second, testCase.region, testCase.usage);
+            List<Measure> measures = router.route(testCase.input, null).complexConverterResult.measures;
+
+            assertEquals("For " + testCase.toString() + ", Measures size must be the same as expected units",
+                    measures.size(), testCase.expectedInOrder.size());
+            assertEquals("For " + testCase.toString() + ", Measures size must be the same as output units",
+                    measures.size(), testCase.outputUnitInOrder.size());
+
+
+            for (int i = 0; i < measures.size(); i++) {
+                if (!UnitsTest
+                        .compareTwoBigDecimal(testCase.expectedInOrder.get(i),
+                                BigDecimal.valueOf(measures.get(i).getNumber().doubleValue()),
+                                BigDecimal.valueOf(0.0000000001))) {
+                    fail("Test failed: " + testCase + "; Got unexpected result: " + measures);
+                }
+            }
+        }
+
+        // Test UnitsRouter created with CLDR units identifiers.
+        for (TestCase testCase : tests) {
+            UnitsRouter router = new UnitsRouter(testCase.inputUnit.first, testCase.region, testCase.usage);
             List<Measure> measures = router.route(testCase.input, null).complexConverterResult.measures;
 
             assertEquals("Measures size must be the same as expected units",
@@ -516,10 +681,11 @@ public class UnitsTest {
                 if (!UnitsTest
                         .compareTwoBigDecimal(testCase.expectedInOrder.get(i),
                                 BigDecimal.valueOf(measures.get(i).getNumber().doubleValue()),
-                                BigDecimal.valueOf(0.00001))) {
-                    fail(testCase.toString() + measures.toString());
+                                BigDecimal.valueOf(0.0000000001))) {
+                    fail("Test failed: " + testCase + "; Got unexpected result: " + measures);
                 }
             }
         }
+
     }
 }

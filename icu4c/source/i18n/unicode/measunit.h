@@ -32,7 +32,12 @@ U_NAMESPACE_BEGIN
 class StringEnumeration;
 class MeasureUnitImpl;
 
-#ifndef U_HIDE_DRAFT_API
+namespace number {
+namespace impl {
+class LongNameHandler;
+}
+} // namespace number
+
 /**
  * Enumeration for unit complexity. There are three levels:
  *
@@ -46,31 +51,33 @@ class MeasureUnitImpl;
  * The complexity determines which operations are available. For example, you cannot set the power
  * or prefix of a compound unit.
  *
- * @draft ICU 67
+ * @stable ICU 67
  */
 enum UMeasureUnitComplexity {
     /**
      * A single unit, like kilojoule.
      *
-     * @draft ICU 67
+     * @stable ICU 67
      */
     UMEASURE_UNIT_SINGLE,
 
     /**
      * A compound unit, like meter-per-second.
      *
-     * @draft ICU 67
+     * @stable ICU 67
      */
     UMEASURE_UNIT_COMPOUND,
 
     /**
      * A mixed unit, like hour+minute.
      *
-     * @draft ICU 67
+     * @stable ICU 67
      */
     UMEASURE_UNIT_MIXED
 };
 
+
+#ifndef U_HIDE_DRAFT_API
 /**
  * Enumeration for SI and binary prefixes, e.g. "kilo-", "nano-", "mebi-".
  *
@@ -240,13 +247,17 @@ typedef enum UMeasurePrefix {
      */
     UMEASURE_PREFIX_YOCTO = UMEASURE_PREFIX_ONE + -24,
 
+#ifndef U_HIDE_INTERNAL_API
     /**
      * ICU use only.
      * Used to determine the set of base-10 SI prefixes.
      * @internal
      */
     UMEASURE_PREFIX_INTERNAL_MIN_SI = UMEASURE_PREFIX_YOCTO,
+#endif  // U_HIDE_INTERNAL_API
 
+    // Cannot conditionalize the following with #ifndef U_HIDE_INTERNAL_API,
+    // used in definitions of non-internal enum values
     /**
      * ICU use only.
      * Sets the arbitrary offset of the base-1024 binary prefixes' enum values.
@@ -261,12 +272,14 @@ typedef enum UMeasurePrefix {
      */
     UMEASURE_PREFIX_KIBI = UMEASURE_PREFIX_INTERNAL_ONE_BIN + 1,
 
+#ifndef U_HIDE_INTERNAL_API
     /**
      * ICU use only.
      * Used to determine the set of base-1024 binary prefixes.
      * @internal
      */
     UMEASURE_PREFIX_INTERNAL_MIN_BIN = UMEASURE_PREFIX_KIBI,
+#endif  // U_HIDE_INTERNAL_API
 
     /**
      * Binary prefix: mebi, 1024^2.
@@ -317,12 +330,14 @@ typedef enum UMeasurePrefix {
      */
     UMEASURE_PREFIX_YOBI = UMEASURE_PREFIX_INTERNAL_ONE_BIN + 8,
 
+#ifndef U_HIDE_INTERNAL_API
     /**
      * ICU use only.
      * Used to determine the set of base-1024 binary prefixes.
      * @internal
      */
     UMEASURE_PREFIX_INTERNAL_MAX_BIN = UMEASURE_PREFIX_YOBI,
+#endif  // U_HIDE_INTERNAL_API
 } UMeasurePrefix;
 
 /**
@@ -367,27 +382,26 @@ class U_I18N_API MeasureUnit: public UObject {
      */
     MeasureUnit(const MeasureUnit &other);
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Move constructor.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     MeasureUnit(MeasureUnit &&other) noexcept;
 
     /**
-     * Construct a MeasureUnit from a CLDR Unit Identifier, defined in UTS 35.
-     * Validates and canonicalizes the identifier.
+     * Construct a MeasureUnit from a CLDR Core Unit Identifier, defined in UTS
+     * 35. (Core unit identifiers and mixed unit identifiers are supported, long
+     * unit identifiers are not.) Validates and canonicalizes the identifier.
      *
      * <pre>
      * MeasureUnit example = MeasureUnit::forIdentifier("furlong-per-nanosecond")
      * </pre>
      *
-     * @param identifier The CLDR Unit Identifier
+     * @param identifier The CLDR Unit Identifier.
      * @param status Set if the identifier is invalid.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     static MeasureUnit forIdentifier(StringPiece identifier, UErrorCode& status);
-#endif // U_HIDE_DRAFT_API
 
     /**
      * Copy assignment operator.
@@ -395,13 +409,11 @@ class U_I18N_API MeasureUnit: public UObject {
      */
     MeasureUnit &operator=(const MeasureUnit &other);
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Move assignment operator.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     MeasureUnit &operator=(MeasureUnit &&other) noexcept;
-#endif // U_HIDE_DRAFT_API
 
     /**
      * Returns a polymorphic clone of this object.  The result will
@@ -450,12 +462,11 @@ class U_I18N_API MeasureUnit: public UObject {
      */
     const char *getSubtype() const;
 
-#ifndef U_HIDE_DRAFT_API
     /**
      * Get CLDR Unit Identifier for this MeasureUnit, as defined in UTS 35.
      *
      * @return The string form of this unit, owned by this MeasureUnit.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     const char* getIdentifier() const;
 
@@ -464,10 +475,11 @@ class U_I18N_API MeasureUnit: public UObject {
      *
      * @param status Set if an error occurs.
      * @return The unit complexity.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     UMeasureUnitComplexity getComplexity(UErrorCode& status) const;
 
+#ifndef U_HIDE_DRAFT_API
     /**
      * Creates a MeasureUnit which is this SINGLE unit augmented with the specified prefix.
      * For example, UMEASURE_PREFIX_KILO for "kilo", or UMEASURE_PREFIX_KIBI for "kibi".
@@ -499,6 +511,7 @@ class U_I18N_API MeasureUnit: public UObject {
      * @draft ICU 69
      */
     UMeasurePrefix getPrefix(UErrorCode& status) const;
+#endif // U_HIDE_DRAFT_API
 
     /**
      * Creates a MeasureUnit which is this SINGLE unit augmented with the specified dimensionality
@@ -512,7 +525,7 @@ class U_I18N_API MeasureUnit: public UObject {
      * @param dimensionality The dimensionality (power).
      * @param status Set if this is not a SINGLE unit or if another error occurs.
      * @return A new SINGLE unit.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     MeasureUnit withDimensionality(int32_t dimensionality, UErrorCode& status) const;
 
@@ -527,7 +540,7 @@ class U_I18N_API MeasureUnit: public UObject {
      *
      * @param status Set if this is not a SINGLE unit or if another error occurs.
      * @return The dimensionality (power) of this simple unit.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     int32_t getDimensionality(UErrorCode& status) const;
 
@@ -541,7 +554,7 @@ class U_I18N_API MeasureUnit: public UObject {
      *
      * @param status Set if this is a MIXED unit or if another error occurs.
      * @return The reciprocal of the target unit.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     MeasureUnit reciprocal(UErrorCode& status) const;
 
@@ -560,10 +573,9 @@ class U_I18N_API MeasureUnit: public UObject {
      * @param other The MeasureUnit to multiply with the target.
      * @param status Set if this or other is a MIXED unit or if another error occurs.
      * @return The product of the target unit with the provided unit.
-     * @draft ICU 67
+     * @stable ICU 67
      */
     MeasureUnit product(const MeasureUnit& other, UErrorCode& status) const;
-#endif // U_HIDE_DRAFT_API
 
 #ifndef U_HIDE_DRAFT_API
     /**
@@ -667,7 +679,7 @@ class U_I18N_API MeasureUnit: public UObject {
 // the "End generated createXXX methods" comment is auto generated code
 // and must not be edited manually. For instructions on how to correctly
 // update this code, refer to:
-// http://site.icu-project.org/design/formatting/measureformat/updating-measure-unit
+// docs/processes/release/tasks/updating-measure-unit.md
 //
 // Start generated createXXX methods
 
@@ -958,6 +970,24 @@ class U_I18N_API MeasureUnit: public UObject {
      * @stable ICU 64
      */
     static MeasureUnit getKarat();
+
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Returns by pointer, unit of concentr: milligram-ofglucose-per-deciliter.
+     * Caller owns returned value and must free it.
+     * Also see {@link #getMilligramOfglucosePerDeciliter()}.
+     * @param status ICU error code.
+     * @draft ICU 69
+     */
+    static MeasureUnit *createMilligramOfglucosePerDeciliter(UErrorCode &status);
+
+    /**
+     * Returns by value, unit of concentr: milligram-ofglucose-per-deciliter.
+     * Also see {@link #createMilligramOfglucosePerDeciliter()}.
+     * @draft ICU 69
+     */
+    static MeasureUnit getMilligramOfglucosePerDeciliter();
+#endif /* U_HIDE_DRAFT_API */
 
     /**
      * Returns by pointer, unit of concentr: milligram-per-deciliter.
@@ -3689,9 +3719,13 @@ private:
     LocalArray<MeasureUnit> splitToSingleUnitsImpl(int32_t& outCount, UErrorCode& status) const;
 
     friend class MeasureUnitImpl;
+
+    // For access to findBySubType
+    friend class number::impl::LongNameHandler;
 };
 
-#ifndef U_HIDE_DRAFT_API  // @draft ICU 68
+#ifndef U_HIDE_DRAFT_API
+// inline impl of @draft ICU 68 method
 inline std::pair<LocalArray<MeasureUnit>, int32_t>
 MeasureUnit::splitToSingleUnits(UErrorCode& status) const {
     int32_t length;

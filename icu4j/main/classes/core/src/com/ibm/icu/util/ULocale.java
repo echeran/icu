@@ -501,8 +501,7 @@ public final class ULocale implements Serializable, Comparable<ULocale> {
      * Creates a ULocale from the locale by first canonicalizing the locale according to CLDR.
      * @param locale the ULocale to canonicalize
      * @return the ULocale created from the canonical version of the ULocale.
-     * @draft ICU 67
-     * @provisional This API might change or be removed in a future release.
+     * @stable ICU 67
      */
     public static ULocale createCanonical(ULocale locale) {
         return createCanonical(locale.getName());
@@ -1403,11 +1402,12 @@ public final class ULocale implements Serializable, Comparable<ULocale> {
                     throw new IllegalArgumentException(
                         "Incorrect key [" + aliasFrom + "] in alias:territory.");
                 }
-                if (aliasTo.length() < 3 || aliasTo.length() > 8) {
-                    // Ignore replacement < 3 for now. see CLDR-14312
-                    // throw new IllegalArgumentException(
-                    //    "Incorrect value [" + aliasTo + "] in alias:subdivision.");
-                    continue;
+                if (aliasTo.length() == 2) {
+                    // Add 'zzzz' based on changes to UTS #35 for CLDR-14312.
+                    aliasTo += "zzzz";
+                } else if (aliasTo.length() < 2 || aliasTo.length() > 8) {
+                    throw new IllegalArgumentException(
+                        "Incorrect value [" + aliasTo + "] in alias:territory.");
                 }
                 subdivisionAliasMap.put(aliasFrom, aliasTo);
             }
@@ -1550,7 +1550,6 @@ public final class ULocale implements Serializable, Comparable<ULocale> {
                     }
                 }
                 if (replacedExtensions != null && !replacedExtensions.isEmpty()) {
-                    // TODO(ICU-21292)
                     // DO NOTHING
                     // UTS35 does not specifiy what should we do if we have extensions in the
                     // replacement. Currently we know only the following 4 "BCP47 LegacyRules" have
@@ -1760,7 +1759,7 @@ public final class ULocale implements Serializable, Comparable<ULocale> {
                 "km", "km_KH", "kn", "kn_IN", "ko", "ko_KR", "ky", "ky_KG", "lo", "lo_LA",
                 "lt", "lt_LT", "lv", "lv_LV", "mk", "mk_MK", "ml", "ml_IN", "mn", "mn_MN",
                 "mr", "mr_IN", "ms", "ms_MY", "my", "my_MM", "nb", "nb_NO", "ne", "ne_NP",
-                "nl", "nl_NL", "or", "or_IN", "pa", "pa_IN", "pl", "pl_PL", "ps", "ps_AF",
+                "nl", "nl_NL", "no", "or", "or_IN", "pa", "pa_IN", "pl", "pl_PL", "ps", "ps_AF",
                 "pt", "pt_BR", "pt_PT", "ro", "ro_RO", "ru", "ru_RU", "sd", "sd_IN", "si",
                 "si_LK", "sk", "sk_SK", "sl", "sl_SI", "so", "so_SO", "sq", "sq_AL", "sr",
                 "sr_Cyrl_RS", "sr_Latn", "sr_RS", "sv", "sv_SE", "sw", "sw_TZ", "ta",
@@ -2475,7 +2474,6 @@ public final class ULocale implements Serializable, Comparable<ULocale> {
      * locale data, then the valid locale is <i>null</i>.
      *
      * @draft ICU 2.8 (retain)
-     * @provisional This API might change or be removed in a future release.
      */
     public static Type ACTUAL_LOCALE = new Type();
 
@@ -2491,7 +2489,6 @@ public final class ULocale implements Serializable, Comparable<ULocale> {
      * <p>Note: The valid locale will be returned correctly in ICU
      * 3.0 or later.  In ICU 2.8, it is not returned correctly.
      * @draft ICU 2.8 (retain)
-     * @provisional This API might change or be removed in a future release.
      */
     public static Type VALID_LOCALE = new Type();
 
@@ -2501,7 +2498,6 @@ public final class ULocale implements Serializable, Comparable<ULocale> {
      * @see com.ibm.icu.util.ULocale#ACTUAL_LOCALE
      * @see com.ibm.icu.util.ULocale#VALID_LOCALE
      * @draft ICU 2.8 (retainAll)
-     * @provisional This API might change or be removed in a future release.
      */
     public static final class Type {
         private Type() {}

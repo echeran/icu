@@ -9,7 +9,6 @@ import java.util.List;
 import com.ibm.icu.impl.IllegalIcuArgumentException;
 import com.ibm.icu.impl.number.MicroProps;
 import com.ibm.icu.number.Precision;
-import com.ibm.icu.util.Measure;
 import com.ibm.icu.util.MeasureUnit;
 
 /**
@@ -47,13 +46,16 @@ public class UnitsRouter {
     private ArrayList<MeasureUnit> outputUnits_ = new ArrayList<>();
     private ArrayList<ConverterPreference> converterPreferences_ = new ArrayList<>();
 
-    public UnitsRouter(MeasureUnitImpl inputUnitImpl, String region, String usage) {
+    public UnitsRouter(String inputUnitIdentifier, String region, String usage) {
+        this(MeasureUnitImpl.forIdentifier(inputUnitIdentifier), region, usage);
+    }
+
+    public UnitsRouter(MeasureUnitImpl inputUnit, String region, String usage) {
         // TODO: do we want to pass in ConversionRates and UnitPreferences instead?
         // of loading in each UnitsRouter instance? (Or make global?)
         UnitsData data = new UnitsData();
 
-        //MeasureUnitImpl inputUnitImpl = MeasureUnitImpl.forMeasureUnitMaybeCopy(inputUnit);
-        String category = data.getCategory(inputUnitImpl);
+        String category = data.getCategory(inputUnit);
         UnitPreferences.UnitPreference[] unitPreferences = data.getPreferencesFor(category, usage, region);
 
         for (int i = 0; i < unitPreferences.length; ++i) {
@@ -74,7 +76,7 @@ public class UnitsRouter {
             }
 
             outputUnits_.add(complexTargetUnitImpl.build());
-            converterPreferences_.add(new ConverterPreference(inputUnitImpl, complexTargetUnitImpl,
+            converterPreferences_.add(new ConverterPreference(inputUnit, complexTargetUnitImpl,
                     preference.getGeq(), precision,
                     data.getConversionRates()));
         }

@@ -272,7 +272,7 @@ UBool checkSimpleUnit(const MeasureUnitImpl &unit, UErrorCode &status) {
 /**
  *  Extract conversion rate from `source` to `target`
  */
-// In ICU4J, this function is partially inlined in the UnitConverter constructor.
+// In ICU4J, this function is partially inlined in the UnitsConverter constructor.
 void loadConversionRate(ConversionRate &conversionRate, const MeasureUnitImpl &source,
                         const MeasureUnitImpl &target, Convertibility unitsState,
                         const ConversionRates &ratesInfo, UErrorCode &status) {
@@ -384,6 +384,10 @@ void U_I18N_API addSingleFactorConstant(StringPiece baseStr, int32_t power, Sign
         factor.constantExponents[CONSTANT_GRAVITY] += power * signum;
     } else if (baseStr == "lb_to_kg") {
         factor.constantExponents[CONSTANT_LB2KG] += power * signum;
+    } else if (baseStr == "glucose_molar_mass") {
+        factor.constantExponents[CONSTANT_GLUCOSE_MOLAR_MASS] += power * signum;
+    } else if (baseStr == "item_per_mole") {
+        factor.constantExponents[CONSTANT_ITEM_PER_MOLE] += power * signum;
     } else if (baseStr == "PI") {
         factor.constantExponents[CONSTANT_PI] += power * signum;
     } else {
@@ -485,16 +489,37 @@ Convertibility U_I18N_API extractConvertibility(const MeasureUnitImpl &source,
     return UNCONVERTIBLE;
 }
 
-UnitConverter::UnitConverter(const MeasureUnitImpl &source, const MeasureUnitImpl &target,
-                             const ConversionRates &ratesInfo, UErrorCode &status)
+UnitsConverter::UnitsConverter(const MeasureUnitImpl &source, const MeasureUnitImpl &target,
+                               const ConversionRates &ratesInfo, UErrorCode &status)
     : conversionRate_(source.copy(status), target.copy(status)) {
-    if (source.complexity == UMeasureUnitComplexity::UMEASURE_UNIT_MIXED ||
-        target.complexity == UMeasureUnitComplexity::UMEASURE_UNIT_MIXED) {
+    this->init(ratesInfo, status);
+}
+
+UnitsConverter::UnitsConverter(StringPiece sourceIdentifier, StringPiece targetIdentifier,
+                               UErrorCode &status)
+    : conversionRate_(MeasureUnitImpl::forIdentifier(sourceIdentifier, status),
+                      MeasureUnitImpl::forIdentifier(targetIdentifier, status)) {
+    if (U_FAILURE(status)) {
+        return;
+    }
+
+    ConversionRates ratesInfo(status);
+    this->init(ratesInfo, status);
+}
+
+void UnitsConverter::init(const ConversionRates &ratesInfo, UErrorCode &status) {
+    if (U_FAILURE(status)) {
+        return;
+    }
+
+    if (this->conversionRate_.source.complexity == UMeasureUnitComplexity::UMEASURE_UNIT_MIXED ||
+        this->conversionRate_.target.complexity == UMeasureUnitComplexity::UMEASURE_UNIT_MIXED) {
         status = U_INTERNAL_PROGRAM_ERROR;
         return;
     }
 
-    Convertibility unitsState = extractConvertibility(source, target, ratesInfo, status);
+    Convertibility unitsState = extractConvertibility(this->conversionRate_.source,
+                                                      this->conversionRate_.target, ratesInfo, status);
     if (U_FAILURE(status)) return;
     if (unitsState == Convertibility::UNCONVERTIBLE) {
         status = U_INTERNAL_PROGRAM_ERROR;
@@ -503,11 +528,12 @@ UnitConverter::UnitConverter(const MeasureUnitImpl &source, const MeasureUnitImp
 
     loadConversionRate(conversionRate_, conversionRate_.source, conversionRate_.target, unitsState,
                        ratesInfo, status);
+                          
 }
 
-int32_t UnitConverter::compareTwoUnits(const MeasureUnitImpl &firstUnit,
-                                       const MeasureUnitImpl &secondUnit,
-                                       const ConversionRates &ratesInfo, UErrorCode &status) {
+int32_t UnitsConverter::compareTwoUnits(const MeasureUnitImpl &firstUnit,
+                                        const MeasureUnitImpl &secondUnit,
+                                        const ConversionRates &ratesInfo, UErrorCode &status) {
     if (U_FAILURE(status)) {
         return 0;
     }
@@ -528,8 +554,9 @@ int32_t UnitConverter::compareTwoUnits(const MeasureUnitImpl &firstUnit,
         return 0;
     }
 
-    // Represents the conversion factor from the firstUnit to the base unit that specified in the
-    // conversion data which is considered as the root of the firstUnit and the secondUnit.
+    // Represents the conversion factor from the firstUnit to the base
+    // unit that specified in the conversion data which is considered as
+    // the root of the firstUnit and the secondUnit.
     Factor firstUnitToBase = loadCompoundFactor(firstUnit, ratesInfo, status);
     Factor secondUnitToBase = loadCompoundFactor(secondUnit, ratesInfo, status);
 
@@ -551,7 +578,7 @@ int32_t UnitConverter::compareTwoUnits(const MeasureUnitImpl &firstUnit,
     return 0;
 }
 
-double UnitConverter::convert(double inputValue) const {
+double UnitsConverter::convert(double inputValue) const {
     double result =
         inputValue + conversionRate_.sourceOffset; // Reset the input to the target zero index.
     // Convert the quantity to from the source scale to the target scale.
@@ -572,7 +599,7 @@ double UnitConverter::convert(double inputValue) const {
     return result;
 }
 
-double UnitConverter::convertInverse(double inputValue) const {
+double UnitsConverter::convertInverse(double inputValue) const {
     double result = inputValue;
     if (conversionRate_.reciprocal) {
         if (result == 0) {
@@ -586,6 +613,17 @@ double UnitConverter::convertInverse(double inputValue) const {
     result += conversionRate_.targetOffset;
     result *= conversionRate_.factorDen / conversionRate_.factorNum;
     result -= conversionRate_.sourceOffset;
+    return result;
+}
+
+ConversionInfo UnitsConverter::getConversionInfo() const {
+    ConversionInfo result;
+    result.conversionRate = conversionRate_.factorNum / conversionRate_.factorDen;
+    result.offset =
+        (conversionRate_.sourceOffset * (conversionRate_.factorNum / conversionRate_.factorDen)) -
+        conversionRate_.targetOffset;
+    result.reciprocal = conversionRate_.reciprocal;
+
     return result;
 }
 

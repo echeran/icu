@@ -82,8 +82,10 @@ public:
    void TestKeywordVariantParsing(void);
    void TestCreateKeywordSet(void);
    void TestCreateKeywordSetEmpty(void);
+   void TestCreateKeywordSetWithPrivateUse(void);
    void TestCreateUnicodeKeywordSet(void);
    void TestCreateUnicodeKeywordSetEmpty(void);
+   void TestCreateUnicodeKeywordSetWithPrivateUse(void);
    void TestGetKeywordValueStdString(void);
    void TestGetUnicodeKeywordValueStdString(void);
 
@@ -154,6 +156,8 @@ public:
     void TestSetUnicodeKeywordValueInLongLocale();
     void TestSetUnicodeKeywordValueNullInLongLocale();
     void TestLeak21419();
+    void TestLongLocaleSetKeywordAssign();
+    void TestLongLocaleSetKeywordMoveAssign();
 
 private:
     void _checklocs(const char* label,

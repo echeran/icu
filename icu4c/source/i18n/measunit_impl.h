@@ -14,32 +14,28 @@
 
 U_NAMESPACE_BEGIN
 
-// Export an explicit template instantiation of the LocalPointer that is used as a
-// data member of MeasureUnitImpl.
-// (When building DLLs for Windows this is required.)
-#if U_PF_WINDOWS <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN
-#if defined(_MSC_VER)
-// Ignore warning 4661 as LocalPointerBase does not use operator== or operator!=
-#pragma warning(push)
-#pragma warning(disable : 4661)
-#endif
-template class U_I18N_API LocalPointerBase<MeasureUnitImpl>;
-template class U_I18N_API LocalPointer<MeasureUnitImpl>;
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-#endif
+namespace number {
+namespace impl {
+class LongNameHandler;
+}
+} // namespace number
 
 static const char16_t kDefaultCurrency[] = u"XXX";
 static const char kDefaultCurrency8[] = "XXX";
 
-struct U_I18N_API MeasureUnitImplWithIndex : public UMemory {
-    const int32_t index;
-    LocalPointer<MeasureUnitImpl> unitImpl;
-    // Takes ownership of unitImpl.
-    MeasureUnitImplWithIndex(int32_t index, MeasureUnitImpl *unitImpl)
-        : index(index), unitImpl(unitImpl) {}
-};
+/**
+ * Looks up the "unitQuantity" (aka "type" or "category") of a base unit
+ * identifier. The category is returned via `result`, which must initially be
+ * empty.
+ *
+ * This only supports base units: other units must be resolved to base units
+ * before passing to this function, otherwise U_UNSUPPORTED_ERROR status will be
+ * returned.
+ *
+ * Categories are found in `unitQuantities` in the `units` resource (see
+ * `units.txt`).
+ */
+CharString U_I18N_API getUnitQuantity(StringPiece baseUnitIdentifier, UErrorCode &status);
 
 /**
  * A struct representing a single unit (optional SI or binary prefix, and dimensionality).
@@ -71,8 +67,18 @@ struct U_I18N_API SingleUnitImpl : public UMemory {
     void appendNeutralIdentifier(CharString &result, UErrorCode &status) const;
 
     /**
+     * Returns the index of this unit's "quantity" in unitQuantities (in
+     * measunit_extra.cpp). The value of this index determines sort order for
+     * normalization of unit identifiers.
+     */
+    int32_t getUnitCategoryIndex() const;
+
+    /**
      * Compare this SingleUnitImpl to another SingleUnitImpl for the sake of
      * sorting and coalescing.
+     *
+     * Sort order of units is specified by UTS #35
+     * (https://unicode.org/reports/tr35/tr35-info.html#Unit_Identifier_Normalization).
      *
      * Takes the sign of dimensionality into account, but not the absolute
      * value: per-meter is not considered the same as meter, but meter is
@@ -90,14 +96,25 @@ struct U_I18N_API SingleUnitImpl : public UMemory {
         if (dimensionality > 0 && other.dimensionality < 0) {
             return -1;
         }
+        // Sort by official quantity order
+        int32_t thisQuantity = this->getUnitCategoryIndex();
+        int32_t otherQuantity = other.getUnitCategoryIndex();
+        if (thisQuantity < otherQuantity) {
+            return -1;
+        }
+        if (thisQuantity > otherQuantity) {
+            return 1;
+        }
+        // If quantity order didn't help, then we go by index.
         if (index < other.index) {
             return -1;
         }
         if (index > other.index) {
             return 1;
         }
-        // TODO(icu-units#70): revisit when fixing normalization. For now we're
-        // sorting binary prefixes before SI prefixes, as per enum values order.
+        // TODO: revisit if the spec dictates prefix sort order - it doesn't
+        // currently. For now we're sorting binary prefixes before SI prefixes,
+        // as per enum values order.
         if (unitPrefix < other.unitPrefix) {
             return -1;
         }
@@ -128,7 +145,8 @@ struct U_I18N_API SingleUnitImpl : public UMemory {
 
     /**
      * Simple unit index, unique for every simple unit, -1 for the dimensionless
-     * unit. This is an index into a string list in measunit_extra.cpp.
+     * unit. This is an index into a string list in measunit_extra.cpp, as
+     * loaded by SimpleUnitIdentifiersSink.
      *
      * The default value is -1, meaning the dimensionless unit:
      * isDimensionless() will return true, until index is changed.
@@ -150,6 +168,9 @@ struct U_I18N_API SingleUnitImpl : public UMemory {
     int32_t dimensionality = 1;
 };
 
+// Forward declaration
+struct MeasureUnitImplWithIndex;
+
 // Export explicit template instantiations of MaybeStackArray, MemoryPool and
 // MaybeStackVector. This is required when building DLLs for Windows. (See
 // datefmt.h, collationiterator.h, erarules.h and others for similar examples.)
@@ -157,9 +178,6 @@ struct U_I18N_API SingleUnitImpl : public UMemory {
 template class U_I18N_API MaybeStackArray<SingleUnitImpl *, 8>;
 template class U_I18N_API MemoryPool<SingleUnitImpl, 8>;
 template class U_I18N_API MaybeStackVector<SingleUnitImpl, 8>;
-template class U_I18N_API MaybeStackArray<MeasureUnitImplWithIndex *, 8>;
-template class U_I18N_API MemoryPool<MeasureUnitImplWithIndex, 8>;
-template class U_I18N_API MaybeStackVector<MeasureUnitImplWithIndex, 8>;
 #endif
 
 /**
@@ -170,7 +188,8 @@ class U_I18N_API MeasureUnitImpl : public UMemory {
   public:
     MeasureUnitImpl() = default;
     MeasureUnitImpl(MeasureUnitImpl &&other) = default;
-    MeasureUnitImpl(const MeasureUnitImpl &other, UErrorCode &status);
+    // No copy constructor, use MeasureUnitImpl::copy() to make it explicit.
+    MeasureUnitImpl(const MeasureUnitImpl &other, UErrorCode &status) = delete;
     MeasureUnitImpl(const SingleUnitImpl &singleUnit, UErrorCode &status);
 
     MeasureUnitImpl &operator=(MeasureUnitImpl &&other) noexcept = default;
@@ -274,7 +293,46 @@ class U_I18N_API MeasureUnitImpl : public UMemory {
      * Normalizes a MeasureUnitImpl and generate the identifier string in place.
      */
     void serialize(UErrorCode &status);
+
+    // For calling serialize
+    // TODO(icu-units#147): revisit serialization
+    friend class number::impl::LongNameHandler;
 };
+
+struct U_I18N_API MeasureUnitImplWithIndex : public UMemory {
+    const int32_t index;
+    MeasureUnitImpl unitImpl;
+    // Makes a copy of unitImpl.
+    MeasureUnitImplWithIndex(int32_t index, const MeasureUnitImpl &unitImpl, UErrorCode &status)
+        : index(index), unitImpl(unitImpl.copy(status)) {
+    }
+    MeasureUnitImplWithIndex(int32_t index, const SingleUnitImpl &singleUnitImpl, UErrorCode &status)
+        : index(index), unitImpl(MeasureUnitImpl(singleUnitImpl, status)) {
+    }
+};
+
+// Export explicit template instantiations of MaybeStackArray, MemoryPool and
+// MaybeStackVector. This is required when building DLLs for Windows. (See
+// datefmt.h, collationiterator.h, erarules.h and others for similar examples.)
+#if U_PF_WINDOWS <= U_PLATFORM && U_PLATFORM <= U_PF_CYGWIN
+template class U_I18N_API MaybeStackArray<MeasureUnitImplWithIndex *, 8>;
+template class U_I18N_API MemoryPool<MeasureUnitImplWithIndex, 8>;
+template class U_I18N_API MaybeStackVector<MeasureUnitImplWithIndex, 8>;
+
+// Export an explicit template instantiation of the LocalPointer that is used as a
+// data member of MeasureUnitImpl.
+// (When building DLLs for Windows this is required.)
+#if defined(_MSC_VER)
+// Ignore warning 4661 as LocalPointerBase does not use operator== or operator!=
+#pragma warning(push)
+#pragma warning(disable : 4661)
+#endif
+template class U_I18N_API LocalPointerBase<MeasureUnitImpl>;
+template class U_I18N_API LocalPointer<MeasureUnitImpl>;
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+#endif
 
 U_NAMESPACE_END
 
