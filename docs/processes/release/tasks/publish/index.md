@@ -1,8 +1,13 @@
 ---
 layout: default
 parent: Release & Milestone Tasks
+grand_parent: Contributors
 nav_order: 9
 ---
+<!--
+© 2021 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html
+-->
 
 # Publish
 {: .no_toc }

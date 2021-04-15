@@ -4,6 +4,10 @@ parent: Release & Milestone Tasks
 grand_parent: Contributors
 nav_order: 1
 ---
+<!--
+© 2021 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html
+-->
 
 # Announcements
 {: .no_toc }
