@@ -6,8 +6,15 @@ nav_order: 10
 ---
 
 # Release Build
+{: .no_toc }
 
-[TOC]
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Building ICU4J Release Files
 

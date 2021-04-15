@@ -5,8 +5,15 @@ nav_order: 9
 ---
 
 # Publish
+{: .no_toc }
 
-## [TOC]
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ### Create a release branch in GitHub
 

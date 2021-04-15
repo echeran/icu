@@ -6,8 +6,15 @@ nav_order: 5
 ---
 
 # Healthy Code
+{: .no_toc }
 
-[TOC]
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Check for ClassID in new class hierarchies
 

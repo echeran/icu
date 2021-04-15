@@ -6,6 +6,15 @@ nav_order: 3
 ---
 
 # Build Updates
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Regenerate configure
 

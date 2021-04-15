@@ -6,8 +6,15 @@ nav_order: 1
 ---
 
 # Announcements
+{: .no_toc }
 
-[TOC]
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## First milestone/candidate for a release
 

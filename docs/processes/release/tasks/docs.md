@@ -6,8 +6,15 @@ nav_order: 2
 ---
 
 # APIs & Docs
+{: .no_toc }
 
-[TOC]
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Update API status comments
 

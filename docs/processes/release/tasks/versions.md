@@ -6,8 +6,15 @@ nav_order: 13
 ---
 
 # Version Numbers
+{: .no_toc }
 
-[TOC]
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## ICU Version Number
 

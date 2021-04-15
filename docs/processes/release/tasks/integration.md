@@ -6,8 +6,15 @@ nav_order: 6
 ---
 
 # Integration Tests
+{: .no_toc }
 
-[TOC]
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Run ICU4J Locale Service Provider tests
 
