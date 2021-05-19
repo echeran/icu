@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Integration Tests
 parent: Release & Milestone Tasks
 grand_parent: Contributors
 nav_order: 60

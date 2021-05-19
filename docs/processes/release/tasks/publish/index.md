@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Publish
 parent: Release & Milestone Tasks
 grand_parent: Contributors
 nav_order: 90

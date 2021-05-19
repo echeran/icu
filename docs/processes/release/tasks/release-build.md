@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Release Build
 parent: Release & Milestone Tasks
 grand_parent: Contributors
 nav_order: 100
