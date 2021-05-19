@@ -24,7 +24,7 @@ License & terms of use: http://www.unicode.org/copyright.html
 
 *[This page's last thorough update was on [5 August
 2010](https://sites.google.com/site/icusite/system/app/pages/admin/revisions?wuid=wuid:gx:6c0edddbaea77d12).]*
-<!-- TODO: move into release/tasks/ if that's where it belongs? Else update the nav info. >
+<!-- TODO: move into release/tasks/ if that's where it belongs? Else update the nav info. -->
 
 The International Components for Unicode (ICU) implement the Unicode Standard
 and many of its Standard Annexes faithfully and are updated to a new Unicode
