@@ -27,8 +27,6 @@ License & terms of use: http://www.unicode.org/copyright.html
 Nag all the reviewers to finish reviewing the code and change the status of
 bugs.
 
-[TOC]
-
 ---
 
 ## Check in serialization compatibility test data
@@ -39,8 +37,9 @@ and use it for future testing.
 
 1.  Run "ant serialTestData" at ICU4J root directory
 2.  The target generates test data and runs some serialization test cases.
-3.  Once you confirm the test runs clean, copy out/serialTestData/ICU_<version>
-    to main/tests/core/src/com/ibm/icu/dev/test/serializable/data/ICU_<version>.
+3.  Once you confirm the test runs clean, copy
+    `out/serialTestData/ICU_<version>` to
+    `main/tests/core/src/com/ibm/icu/dev/test/serializable/data/ICU_<version>`.
 
 ---
 
