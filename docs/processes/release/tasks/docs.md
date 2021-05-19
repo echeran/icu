@@ -27,8 +27,8 @@ License & terms of use: http://www.unicode.org/copyright.html
 ### ICU4C
 
 1.  **Note: for ICU4C 49m2 or later, will require Doxygen 1.7.5.1 or later (
-    see** [#8862](http://bugs.icu-project.org/trac/ticket/8862) **).** On Linux
-    with debian style package management,
+    see** [ICU-8862](https://unicode-org.atlassian.net/browse/ICU-8862) **).**
+    On Linux with debian style package management,
     ` sudo apt-get install doxygen`
     Or, to install manually
     1.  To update Doxygen, first [download binary or source release
@@ -284,7 +284,7 @@ elsewhere, etc.
 
 *Ignore this step for ICU49 and later. In ICU 49 and above, these header files
 and the gendraft/genheaders.pl tool are gone. (Ticket
-[#8571](http://bugs.icu-project.org/trac/ticket/8571))*
+[ICU-8571](https://unicode-org.atlassian.net/browse/ICU-8571))*
 
 Instructions ==for ICU4C 4.8.x and earlier==:
 
@@ -312,7 +312,7 @@ Build the API documentation pages for the new release. Run Doxygen to create the
 javadoc files. Create icu4c-X_X_X-docs.zip
 
 **Note: for ICU4C 49m2 or later, requires Doxygen 1.7.5.1 or later ( see
-[#8862](http://bugs.icu-project.org/trac/ticket/8862) )**
+[ICU-8862](https://unicode-org.atlassian.net/browse/ICU-8862) )**
 
 #### Steps:
 

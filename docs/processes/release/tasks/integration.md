@@ -296,7 +296,7 @@ $ make check
 **Note:** The following instruction does not work. Please read the comments with
 orange background. There are some issues in the current ICU XLIFF tools and the
 test case below. See the comments in
-[ticket#6383](http://bugs.icu-project.org/trac/ticket/6383).
+[ticket ICU-6383](https://unicode-org.atlassian.net/browse/ICU-6383).
 Instructions for verifying the XLIFF conversion tools.
 
 *   Convert icu/source/test/testdata/ra.txt to XLIFF

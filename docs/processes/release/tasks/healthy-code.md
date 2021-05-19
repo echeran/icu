@@ -195,6 +195,10 @@ should be fixed, like in [changeset
 of API that require conversion should depend on it; for example, group
 formattable_cnv depends on group unistr_cnv, but then nothing inside ICU depends
 on that.
+<!-- I did not find 30186 - I only found X-SVN-Rev's 30184 and 30188:
+https://github.com/unicode-org/icu/commit/b22717a642c2d416c56931efee61aa4ee386c027
+https://github.com/unicode-org/icu/commit/8cc8801c031f7e29b87d075ad39afd39dc4e95d6
+-->
 
 ---
 
@@ -335,7 +339,7 @@ The command line is simply
 ~/git.icu/icu4c/source$ test/hdrtst/testinternalheaders.sh
 ```
 
-See <http://bugs.icu-project.org/trac/ticket/12141> "every header file should
+See https://unicode-org.atlassian.net/browse/ICU-12141 "every header file should
 include all other headers if it depends on definitions from them"
 
 **As of ICU 68, the internal header test is now automated as part of Travis
@@ -453,7 +457,7 @@ make -j12 check
 ### ***Only necessary up to ICU4C 49.***
 
 *   ICU 50m1 removes ICU_USE_THREADS from the runtime code (ticket
-    [#9010](http://bugs.icu-project.org/trac/ticket/9010)).
+    [ICU-9010](https://unicode-org.atlassian.net/browse/ICU-9010)).
 *   It is still possible to build and test intltest with ICU_USE_THREADS=0 but
     not nearly as important.
 *   In ICU 50m1, the `--disable-threads` configure option is gone. If you want

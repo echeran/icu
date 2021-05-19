@@ -117,7 +117,7 @@ forward slash '/'. For example:
 
 > *Note: Maven Ant Tasks is no longer maintained. ICU team should find out
 > another method to publish ICU artifacts to the repository
-> (ticket[#12811](http://bugs.icu-project.org/trac/ticket/12811))*
+> (ticket [ICU-12811](https://unicode-org.atlassian.net/browse/ICU-12811))*
 
 *   Create maven local setting file `$HOME/.m2/settings.xml` if absent. Then add
     the Sonatype Nexus Repository Manager account information in the file. For

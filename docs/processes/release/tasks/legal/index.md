@@ -49,5 +49,5 @@ number only). The easiest way to get the updated license is to do View Source on
 unicode.org/copyright.html and scroll down to the plaintext version of the
 software license ("Exhibit A").
 
-See <http://bugs.icu-project.org/trac/changeset/39632> for an example; there
-should be only two files to update.
+See [X-SVN-Rev: 39632](https://github.com/unicode-org/icu/commit/0001f6c5e92f6f3a8d66c7dbc47cc24df7633a71)
+for an example; there should be only two files to update.

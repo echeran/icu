@@ -106,9 +106,10 @@ or key structure, to capture the changing set of key strings.
         [icu4c/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt)
 
 If there are new bundle trees that should use pool.res files (like the "unit"
-tree in ICU 54 ticket [#11092](http://bugs.icu-project.org/trac/ticket/11092)),
-then first modify the data makefiles (Windows and Linux) to add the new pool.res
-to the appropriate file lists and initially add --writePoolBundle which at the
-end also needs to be turned into --usePoolBundle. Or, simpler, initially copy
-(svn cp) the parent tree's pool bundle, and update it later (maybe during
-release task work).
+tree in ICU 54 ticket
+[ICU-11092](https://unicode-org.atlassian.net/browse/ICU-11092)), then first
+modify the data makefiles (Windows and Linux) to add the new pool.res to the
+appropriate file lists and initially add --writePoolBundle which at the end also
+needs to be turned into --usePoolBundle. Or, simpler, initially copy (svn cp)
+the parent tree's pool bundle, and update it later (maybe during release task
+work).

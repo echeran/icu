@@ -340,7 +340,7 @@ run \`make dist\`.
     *   ~~$ cd icu~~
     *   ~~$ PATH=/opt/IBM/xlC/13.1.3/bin:$PATH source/runConfigureICU AIX~~
     *   ~~(The above command line doesn't actually work, see [ICU Ticket
-        #13639](http://bugs.icu-project.org/trac/ticket/13639) for a
+        ICU-13639](https://unicode-org.atlassian.net/browse/ICU-13639) for a
         workaround.)~~
     *   ~~$ gmake DESTDIR=/tmp/icu releaseDist~~
     *   ~~That last step will create a directory in **/tmp/icu** - zip that up
