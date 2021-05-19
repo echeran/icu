@@ -30,8 +30,12 @@ modified. It also should be done whenever the version numbers change in
 **uvernum.h**
 
 On a Linux system,
-`cd icu4c/source`
-`autoconf`
+
+```sh
+cd icu4c/source
+autoconf
+```
+
 Review the changes to configure, most commonly just an updated ICU version
 number. Sometimes there are differences due to different versions of the
 autoconf tool being used.
@@ -57,7 +61,7 @@ and **U_NAMESPACE_END** around the class and member definitions.
 
 ## Update the pool bundles
 
-==*Obsolete for ICU 64+*==: The pool bundles are no longer checked in. Instead,
+*Obsolete for ICU 64+*: The pool bundles are no longer checked in. Instead,
 they are built on the fly. (And smaller if the data is filtered.)
 
 The locale data resource bundles use pool.res bundles (one per bundle tree) for
