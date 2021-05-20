@@ -22,7 +22,7 @@ License & terms of use: http://www.unicode.org/copyright.html
 
 ---
 
-### Create a release branch in GitHub
+## Create a release branch in GitHub
 
 Once the branch is created, only changes necessary for the target release are
 merged in from the trunk.
@@ -72,12 +72,12 @@ For details see the comments at the start of the build.sh file.
 numbers. Adjust them for the current release! Easiest: Paste into an editor,
 fix, then paste into the terminal.
 
-#### Creating Maintenance Branch.
+### Creating Maintenance Branch.
 
 Sanity check: Update to the latest repository revision. (Master branch if you
 copy from master, maintenance branch if you copy from there.)
 
-```none
+```sh
 git checkout master 
 git pull upstream master 
 git log -n1 
@@ -91,7 +91,7 @@ Build & test ICU4C & ICU4J on your machine.
 
 Create the maintenance branch from the current known good master ref.
 
-```none
+```sh
 git checkout -b maint/maint-63 
 git push -u upstream maint/maint-63
 ```
@@ -111,7 +111,7 @@ possibly re-use some of the generic text, such as links to the API docs, etc.)
 
 Your screen should look like this:
 
-![image](maint-63-rc-screenshot.png){width="320" height="171"}
+![image](maint-63-rc-screenshot.png)
 
 For the release candidate tag, please check the box that says "Pre-Release".
 
@@ -209,7 +209,7 @@ For a maintenance release, look at the ICU 60 page which includes 60.2.
 
 We had the following HTML on the main download page for ICU 4.8M1 = 4.7.1:
 
-```none
+```html
 <h3 style="background-color:rgb(102, 102, 102);color:white;margin-bottom:0pt;margin-top:12pt;padding-left:0.75em;font-size:1em;font-family:Arial,Helvetica,sans-serif">Development Milestones</h3>
 <table border="0"><p style="font-size:10pt;font-family:Arial,Helvetica,sans-serif">Development milestone versions of ICU can be downloaded below. A development milestone is a stable snapshot build for next ICU major version.  These binaries and source code are provided for evaluation purpose and should be not be used in production environments.  New APIs or features in a milestone release might be changed or removed without notice.&nbsp;</p>
 <tbody>
@@ -238,22 +238,22 @@ Download Directories are located at, for example,
 corresponding to <http://download.icu-project.org/ex/files/icu4c/4.4.2/>
 Look at previous releases for an example.
 
-### **Java Source/Bin:**
+### Java Source/Bin:
 
 Follow instructions here: [Building ICU4J Release Files](../release-build.md)
 
-### **C source/binary:**
+### C source/binary:
 
 ***WORK IN PROGRESS***
 
-#### **Source and Linux Binaries:**
+#### Source and Linux Binaries:
 
 #### Important: this step works with Unix make + docker.
 
 First, install *docker* and *docker-compose. D*o not proceed until *docker run
 hello-world* works!
 
-```none
+```sh
 $ git clone https://github.com/unicode-org/icu-docker.git
 $ cd icu-docker/src
 $ git clone --branch release-64-rc --depth 1 https://github.com/unicode-org/icu.git
@@ -279,7 +279,7 @@ run \`make dist\`.
 *   Note that the source is taken from the git repository itself, and not your
     local checkout. (Thus it will exclude any local uncommitted changes).
 
-#### **Windows Binary:**
+#### Windows Binary:
 
 *   Manual process:
     *   Build with MSVC x64 Release. (See the ICU
@@ -349,18 +349,18 @@ run \`make dist\`.
         archive](https://sourceforge.net/p/icu/mailman/message/36275940/) for
         advice.~~
 
-### **Signing archives and creating checksums:**
+### Signing archives and creating checksums:
 
-#### **Step 1. PGP files:**
+#### Step 1. PGP files:
 
 Sign all archives created above with your own personal PGP key. This creates a
 file with .asc as the suffix.
 
-```none
+```sh
 $ gpg --armor --detach-sign icu4c-xxx-xxx.zip# To verify$ gpg --verify icu4c-xxx-xxx.zip.asc
 ```
 
-#### **Step 2. MD5 files:**
+#### Step 2. MD5 files:
 
 **Use md5sum or [cfv](http://cfv.sf.net) to create [md5](https://en.wikipedia.org/wiki/MD5) hash sums for three groups of files:**
 
@@ -375,7 +375,7 @@ $ gpg --armor --detach-sign icu4c-xxx-xxx.zip# To verify$ gpg --verify icu4c-xx
 
 **Alternatively, use cfv to create and verify md5 files:**
 
-```none
+```sh
 cfv -t md5 -C -f icu-……-src.md5 somefile.zip somefile.tgz …
  # To verify 
 cfv -f icu-……-src.md5
@@ -385,7 +385,7 @@ cfv -f icu-……-src.md5
 
 Create an additional hash sum file SHASUM512.txt file with:
 
-```none
+```sh
 shasum -a 512 *.zip *.tgz | tee SHASUM512.txt
 ```
 
