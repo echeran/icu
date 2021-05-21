@@ -234,7 +234,7 @@ We had the following HTML on the main download page for ICU 4.8M1 = 4.7.1:
 ## Upload Release Source / Binaries
 
 Download Directories are located at, for example,
-**icu-project.org:/home/htdocs/ex/files/icu4c/4.4.2**
+`icu-project.org:/home/htdocs/ex/files/icu4c/4.4.2`
 corresponding to <http://download.icu-project.org/ex/files/icu4c/4.4.2/>
 Look at previous releases for an example.
 
@@ -244,11 +244,11 @@ Follow instructions here: [Building ICU4J Release Files](../release-build.md)
 
 ### C source/binary:
 
-***WORK IN PROGRESS***
+<span style="background:yellow">***WORK IN PROGRESS***</a>
 
 #### Source and Linux Binaries:
 
-#### Important: this step works with Unix make + docker.
+Important: this step works with Unix make + docker.
 
 First, install *docker* and *docker-compose. D*o not proceed until *docker run
 hello-world* works!
@@ -286,11 +286,13 @@ run \`make dist\`.
         [readme.html](https://github.com/unicode-org/icu/blob/master/icu4c/readme.html)
         file for details).
     *   Open a command prompt.
-    *   > cd C:\\icu\\icu4c\\ (or wherever you have ICU located).
-    *   > powershell
-    *   > Set-ExecutionPolicy -Scope Process Unrestricted
-    *   > .\\packaging\\distrelease.ps1 -arch x64
-    *   This will produce the file "source\\dist\\icu-windows.zip", which will
+        ```
+        cd C:\icu\icu4c\ (or wherever you have ICU located).
+        powershell
+        Set-ExecutionPolicy -Scope Process Unrestricted
+        .\packaging\distrelease.ps1 -arch x64
+        ```
+        This will produce the file "source\dist\icu-windows.zip", which will
         need to be renamed before uploading.
         *   For example, the binaries for ICU4C v61.1 generated with VS2017 were
             named "icu4c-61_1-Win64-MSVC2017.zip".
@@ -298,27 +300,27 @@ run \`make dist\`.
             MSVC2017.
 *   Using the output from the build bots:
     *   Navigate to the GitHub page for the commits on the
-        "maint/maint-<version>" branch.
+        `maint/maint-<version>` branch.
         *   Ex: https://github.com/unicode-org/icu/commits/maint/maint-64
     *   Click on the green check mark (✔) on the most recent/last commit. (It
         might be a red X if the builds failed, hopefully not).
         *   This will open up a pop-up with links to various CI builds.
     *   Click on one of the various links that says "Details" for the Azure CI
         builds.
-        *   This will open up the GitHub overview of the build status.
-
+        *   This will open up the GitHub overview of the build status.<br>
+            ![image](azure-ci-builds.png)<br>
     *   Click on the link "View more details on Azure Pipelines" link.
         *   This will take you to the actual Azure CI build page.
     *   On the top right of the page there should be a button titled
         "Artifacts". Click this and it should show a drop-down with various ZIP
-        files that you can download.
-
+        files that you can download.<br>
+        ![image](azure-ci-builds-artifacts.png)<br>
     *   The ZIP may automatically download for you.
     *   However, if you are signed-in to visualstudio.com then you might see a
         dialog titled "Artifacts explorer".
     *   In this case click on the name, then the "..." button to download the
-        zip file.
-
+        zip file.<br>
+        ![image](azure-ci-builds-artifacts-download.png)<br>
     *   Download both the x64 (64-bit) and x86 (32-bit) ZIP files.
     *   For each architecture:
         *   Extract the Zip file. (It will have a name like
@@ -357,27 +359,29 @@ Sign all archives created above with your own personal PGP key. This creates a
 file with .asc as the suffix.
 
 ```sh
-$ gpg --armor --detach-sign icu4c-xxx-xxx.zip# To verify$ gpg --verify icu4c-xxx-xxx.zip.asc
+$ gpg --armor --detach-sign icu4c-xxx-xxx.zip
+# To verify
+$ gpg --verify icu4c-xxx-xxx.zip.asc
 ```
 
 #### Step 2. MD5 files:
 
-**Use md5sum or [cfv](http://cfv.sf.net) to create [md5](https://en.wikipedia.org/wiki/MD5) hash sums for three groups of files:**
+Use md5sum or [cfv](http://cfv.sf.net) to create [md5](https://en.wikipedia.org/wiki/MD5) hash sums for three groups of files:
 
-*   **icu4j (all files),**
-*   **icu4c (source),**
-*   **icu4c (binaries).**
+*   icu4j (all files),
+*   icu4c (source),
+*   icu4c (binaries).
 
-**Using md5sum to create and verify the checksum files:**
+Using md5sum to create and verify the checksum files:
 
 <pre><code><b><b>md5sum source1 source2 ... sourceN &gt; icu4c_sources.md5</b></b> # To verifymd5sum -c icu4c_sources.md5 
 </code></pre>
 
-**Alternatively, use cfv to create and verify md5 files:**
+Alternatively, use cfv to create and verify md5 files:
 
 ```sh
 cfv -t md5 -C -f icu-……-src.md5 somefile.zip somefile.tgz …
- # To verify 
+# To verify 
 cfv -f icu-……-src.md5
 ```
 
@@ -403,18 +407,18 @@ binaries.
     1.  For example: The ICU4C 63.1 Binaries URL was:
         <http://apps.icu-project.org/icu-jsp/downloadSection.jsp?ver=63.1&base=c&svn=release-63-1>
 
-## Check the ICU public site for the new release
+#### Check the ICU public site for the new release
 
 Make sure that, aside from download pages, homepages, news items, feature lists
 and feature comparisons, etc. are updated. Upload the new API references. Update
 the User Guide.
 
-## Update the Trac release number list for ICU4C and ICU4J. <<?? STILL VALID ??>>
+#### Update the Trac release number list for ICU4C and ICU4J. <<?? STILL VALID ??>>
 
 Update the ICU release number list by going to "Admin>Versions" in Trac, and add
 the new ICU version.
 
-## Post-release cleanup
+#### Post-release cleanup
 
 *   Cleanup the milestone in the ICU Trac. Move left over items to future
     milestones. Close the milestone.
@@ -434,12 +438,12 @@ Update online demos/tools to the latest version:
 *   CLDR Survey tool (eg <http://unicode.org/cldr/apps/about.jsp>)
 *   Unicode Utilities (eg <http://unicode.org/cldr/utility/character.jsp>)
 
-## Online information update
+### Online information update
 
 Collation and [comparison](../../../../charts/comparison/index.md) charts need
 to be updated. See [charts/Performance & Size](../../../../charts/index.md).
 
-## Old sensitive tickets
+### Old sensitive tickets
 
 Unset the "sensitive" flag on old tickets. For example, on tickets that were
 fixed two or more releases ago.
@@ -491,7 +495,7 @@ Jira.
 2.  Use the drop-down to change the fix version to the next ICU version
 3.  Click "Save" next to the filter title
 
-### Update readme
+## Update readme
 
 Update [ICU4C
 readme.html](https://github.com/unicode-org/icu/blob/master/icu4c/readme.html)
