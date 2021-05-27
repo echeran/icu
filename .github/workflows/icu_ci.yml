@@ -58,7 +58,7 @@ jobs:
           pushd java7-tarball ; gunzip java_package.tar.gz ; tar xvf java_package.tar; popd
       - name: Configure Ant build to use Java 7 JRE
         run: |
-          echo "java7.bootclasspath" > $RUNNER_TEMP/draft ; ls $java7-tarball/java-se-7u75-ri/jre/lib/*.jar|paste -sd ":" - >> $RUNNER_TEMP/draft
+          echo "java7.bootclasspath" > $RUNNER_TEMP/draft ; ls java7-tarball/java-se-7u75-ri/jre/lib/*.jar|paste -sd ":" - >> $RUNNER_TEMP/draft
           cat $RUNNER_TEMP/draft | paste -sd "=" - >  icu4j/build-local.properties
       - name: ICU4J
         run: |
