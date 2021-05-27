@@ -43,12 +43,22 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '8'
-      - name: Download Java7
+      - name: Cache for Java 7 tarball
+        id: cache-java7
+        uses: actions/cache@v2
+        with:
+          path: java7-tarball
+          key: ${{ runner.os }}-java7-tarball
+      - name: Download Java 7
+        if: steps.cache-java7.outputs.cache-hit != 'true'
         run: |
+          mkdir -p java7-tarball
           download_url="https://download.java.net/openjdk/jdk7u75/ri/openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz"
-          wget -O $RUNNER_TEMP/java_package.tar.gz $download_url
-          pushd $RUNNER_TEMP ; gunzip java_package.tar.gz ; tar xvf java_package.tar; popd
-          echo "java7.bootclasspath" > $RUNNER_TEMP/draft ; ls $RUNNER_TEMP/java-se-7u75-ri/jre/lib/*.jar|paste -sd ":" - >> $RUNNER_TEMP/draft
+          wget -O java7-tarball/java_package.tar.gz $download_url
+          pushd java7-tarball ; gunzip java_package.tar.gz ; tar xvf java_package.tar; popd
+      - name: Configure Ant build to use Java 7 JRE
+        run: |
+          echo "java7.bootclasspath" > $RUNNER_TEMP/draft ; ls $java7-tarball/java-se-7u75-ri/jre/lib/*.jar|paste -sd ":" - >> $RUNNER_TEMP/draft
           cat $RUNNER_TEMP/draft | paste -sd "=" - >  icu4j/build-local.properties
       - name: ICU4J
         run: |
