@@ -40,7 +40,7 @@ size of the Unihan data).
 ## Update process
 
 For the last several updates, there is a [change log
-here](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt).
+here](https://github.com/unicode-org/icu/blob/main/icu4c/source/data/unidata/changes.txt).
 In short, most of the ucd .txt files are copied into the ICU repository, either
 without modification or, for some files, with comments removed and lines merged
 to reduce their size.
@@ -54,11 +54,11 @@ them alone until there was a way to verify that they contain precisely the same
 data as the .txt files. Also, using the XML files would require a partial
 rewrite of the existing tools. (There was an outdated, experimental, partial UCD
 XML parser here:
-<https://github.com/unicode-org/icu-docs/tree/master/design/properties/genudata>)
+<https://github.com/unicode-org/icu-docs/tree/main/design/properties/genudata>)
 
 The ICU Unicode tools parse the text files, process the data somewhat, and write
 binary data for runtime use. Most of these tools live in a [source
-tree](https://github.com/unicode-org/icu/tree/master/tools/unicode) separate
+tree](https://github.com/unicode-org/icu/tree/main/tools/unicode) separate
 from the ICU4C/ICU4J sources, and link with ICU4C.
 
 The following steps are necessarily manual:

@@ -48,7 +48,7 @@ License & terms of use: http://www.unicode.org/copyright.html
 4.  ./configure
 5.  make doc
 6.  Follow instructions in
-    [tools/release/java/readme.txt](https://htmlpreview.github.io/?https://github.com/unicode-org/icu/blob/master/tools/release/java/readme.txt)
+    [tools/release/java/readme.txt](https://htmlpreview.github.io/?https://github.com/unicode-org/icu/blob/main/tools/release/java/readme.txt)
     to generate API status change report.
 7.  Make sure that ICU headers work with U_HIDE_DRAFT_API and other such
     switches.
@@ -70,7 +70,7 @@ See the [User Guide, ICU Architectural Design, ICU API
 compatibility](http://userguide.icu-project.org/design#TOC-ICU-API-compatibility).
 
 On ICU4J, run
-[com.ibm.icu.dev.tool.docs.CheckTags](https://github.com/unicode-org/icu/blob/master/icu4j/tools/build/src/com/ibm/icu/dev/tool/docs/CheckTags.java)
+[com.ibm.icu.dev.tool.docs.CheckTags](https://github.com/unicode-org/icu/blob/main/icu4j/tools/build/src/com/ibm/icu/dev/tool/docs/CheckTags.java)
 (see file for instructions). This requires a JDK with javadoc available. The
 tool will need to change to reflect the release number to search for.
 
@@ -157,7 +157,7 @@ This work is done in the root of icu4c:
 3.  `source/configure`
 4.  `make doc`
 5.  Follow instructions in
-    [tools/release/java/readme.txt](https://github.com/unicode-org/icu/blob/master/tools/release/java/readme.txt).
+    [tools/release/java/readme.txt](https://github.com/unicode-org/icu/blob/main/tools/release/java/readme.txt).
 
 ### ICU4J
 
@@ -306,7 +306,7 @@ Instructions ***for ICU4C 4.8.x and earlier***:
 
 Run the ICU4J versus JDK API comparison tool against the target JDK (anything
 that will come out before our next release, basically) with the tool
-[com.ibm.icu.dev.tool.docs.ICUJDKCompare](https://github.com/unicode-org/icu/blob/master/icu4j/tools/build/src/com/ibm/icu/dev/tool/docs/ICUJDKCompare.java)
+[com.ibm.icu.dev.tool.docs.ICUJDKCompare](https://github.com/unicode-org/icu/blob/main/icu4j/tools/build/src/com/ibm/icu/dev/tool/docs/ICUJDKCompare.java)
 and make sure ICU4J adequately covers the JDK API for the classes we replicate.
 
 ---

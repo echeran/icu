@@ -381,7 +381,7 @@ option. When it's not available, you would do the following:
 ## Run the environment tests
 
 Run
-[environmentTest.sh](https://github.com/unicode-org/icu/blob/master/tools/release/c/environmentTest.sh)
+[environmentTest.sh](https://github.com/unicode-org/icu/blob/main/tools/release/c/environmentTest.sh)
 on a Linux machine which has many (all possible?) POSIX locales installed. This
 test verifies that the ICU test suite will work regardless of a user's default
 locale and timezone. This test should be run on a fast machine with several CPU

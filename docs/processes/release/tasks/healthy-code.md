@@ -41,14 +41,14 @@ One easy way to check for this is to search through the API change report and
 look for "UClassID" or similar.
 
 *   Latest trunk report:
-    [icu/icu4c/APIChangeReport.html](https://github.com/unicode-org/icu/blob/master/icu4c/APIChangeReport.html)
+    [icu/icu4c/APIChangeReport.html](https://github.com/unicode-org/icu/blob/main/icu4c/APIChangeReport.html)
 *   ~~The automated build system creates a new report:
     <https://cldr-build.unicode.org/jenkins/job/icu/job/icu-apidocs/>~~
     *   Click "ICU4C API Change Report vs Latest"
 *   Old: was http://bugs.icu-project.org/trac/build/icu4cdocs
     *   Go into the latest successful build, the report is an attachment there.
     *   Download the style sheet next to it:
-        https://github.com/unicode-org/icu/blob/master/icu4c/icu4c.css
+        https://github.com/unicode-org/icu/blob/main/icu4c/icu4c.css
 
 ---
 
@@ -144,7 +144,7 @@ We want to keep dependencies between .c/.cpp/.o files reasonable, both between
 and inside ICU's libraries.
 
 On Linux, run
-[source/test/depstest/depstest.py](https://github.com/unicode-org/icu/blob/master/icu4c/source/test/depstest/dependencies.py),
+[source/test/depstest/depstest.py](https://github.com/unicode-org/icu/blob/main/icu4c/source/test/depstest/dependencies.py),
 for example:
 ```sh
 ~/icu/mine/src/icu4c/source/test/depstest$ ./depstest.py ~/icu/mine/dbg/icu4c
@@ -357,12 +357,12 @@ Test ICU completely, and run the header test (above) with:
     exception regarding [UCONFIG_NO_CONVERSION test](healthy-code.md) below.
 
 (See
-[common/unicode/uconfig.h](https://github.com/unicode-org/icu/blob/master/icu4c/source/common/unicode/uconfig.h)
+[common/unicode/uconfig.h](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/unicode/uconfig.h)
 for more documentation.)
 
 There is a script available which will automatically test ICU in this way on
 UNIXes, it lives in:
-[tools/release/c/uconfigtest.sh](https://github.com/unicode-org/icu/blob/master/tools/release/c/uconfigtest.sh).
+[tools/release/c/uconfigtest.sh](https://github.com/unicode-org/icu/blob/main/tools/release/c/uconfigtest.sh).
 See docs at top of script for information.
 
 <span style="background-color:yellow">When guard conditionals (e.g. #ifndef
@@ -497,13 +497,13 @@ script for each configuration, and ensure that they are successful.
 
 ## **Test ICU4C Demos via Docker**
 
-See <https://github.com/unicode-org/icu-demos/blob/master/icu-kube/README.md>
+See <https://github.com/unicode-org/icu-demos/blob/main/icu-kube/README.md>
 
 ---
 
 ## **Test ICU4J Web Demos via Docker**
 
-See: <https://github.com/unicode-org/icu-demos/blob/master/icu4jweb/README.md>
+See: <https://github.com/unicode-org/icu-demos/blob/main/icu4jweb/README.md>
 
 ---
 

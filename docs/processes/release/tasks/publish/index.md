@@ -53,7 +53,7 @@ available collators.
     1.  Otherwise, the data build may not pick up a new locale into the
         coll/res_index.txt file.
 2.  Run [icu-demos >
-    webdemo/collation/build.sh](https://github.com/unicode-org/icu-demos/blob/master/webdemo/collation/build.sh)
+    webdemo/collation/build.sh](https://github.com/unicode-org/icu-demos/blob/main/webdemo/collation/build.sh)
     (after modifying it for your system).
 3.  Copy-paste the output `available-collators.txt` into `index.html`.
     1.  Or, easier: Use a GUI difftool (e.g., meld) to compare the two and move
@@ -74,14 +74,14 @@ fix, then paste into the terminal.
 
 ### Creating Maintenance Branch.
 
-Sanity check: Update to the latest repository revision. (Master branch if you
-copy from master, maintenance branch if you copy from there.)
+Sanity check: Update to the latest repository revision. (Main branch if you
+copy from main, maintenance branch if you copy from there.)
 
 ```sh
-git checkout master 
-git pull upstream master 
+git checkout main 
+git pull upstream main 
 git log -n1 
-commit bcd0... (HEAD -> master, upstream/master, ...)
+commit bcd0... (HEAD -> main, upstream/main, ...)
 ```
 
 Ensure that your local branch is in sync with the upstream branch. Make sure you
@@ -89,7 +89,7 @@ are checking the upstream remote, and not your fork!
 
 Build & test ICU4C & ICU4J on your machine.
 
-Create the maintenance branch from the current known good master ref.
+Create the maintenance branch from the current known good main ref.
 
 ```sh
 git checkout -b maint/maint-63 
@@ -261,7 +261,7 @@ $ cd icu
 $ git lfs fetch
 $ git lfs checkout
 $ cd ../..
-$ less [README.md](https://github.com/unicode-org/icu-docker/blob/master/README.md)  # Follow these instructions.
+$ less [README.md](https://github.com/unicode-org/icu-docker/blob/main/README.md)  # Follow these instructions.
 ```
 
 *   Source and binaries are created in ./dist/.
@@ -283,7 +283,7 @@ run \`make dist\`.
 
 *   Manual process:
     *   Build with MSVC x64 Release. (See the ICU
-        [readme.html](https://github.com/unicode-org/icu/blob/master/icu4c/readme.html)
+        [readme.html](https://github.com/unicode-org/icu/blob/main/icu4c/readme.html)
         file for details).
     *   Open a command prompt.
         ```
@@ -498,9 +498,9 @@ Jira.
 ## Update readme
 
 Update [ICU4C
-readme.html](https://github.com/unicode-org/icu/blob/master/icu4c/readme.html)
+readme.html](https://github.com/unicode-org/icu/blob/main/icu4c/readme.html)
 and [ICU4J
-readme.html](https://github.com/unicode-org/icu/blob/master/icu4j/readme.html)
+readme.html](https://github.com/unicode-org/icu/blob/main/icu4j/readme.html)
 before every milestone (GA / RC / Milestone-N). Make sure the following items
 are up to date.
 

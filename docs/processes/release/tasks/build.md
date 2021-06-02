@@ -44,7 +44,7 @@ autoconf tool being used.
 
 Update urename.h to catch all possible ICU4C library exports (especially on
 non-Windows systems that tend to ignore export qualifiers). See
-[icu4c/source/tools/genren/README](https://github.com/unicode-org/icu/blob/master/icu4c/source/tools/genren/README).
+[icu4c/source/tools/genren/README](https://github.com/unicode-org/icu/blob/main/icu4c/source/tools/genren/README).
 
 Diff the new one with the previous one; there are typically a few bad #defines
 in there.
@@ -101,9 +101,9 @@ or key structure, to capture the changing set of key strings.
 9.  Build ICU4C & run tests
 10. Rebuild the ICU4J data .jar files
     1.  See
-        [icu4c/source/data/icu4j-readme.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/icu4j-readme.txt)
+        [icu4c/source/data/icu4j-readme.txt](https://github.com/unicode-org/icu/blob/main/icu4c/source/data/icu4j-readme.txt)
     2.  And/or see "update Java data files" in
-        [icu4c/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/master/icu4c/source/data/unidata/changes.txt)
+        [icu4c/source/data/unidata/changes.txt](https://github.com/unicode-org/icu/blob/main/icu4c/source/data/unidata/changes.txt)
 
 If there are new bundle trees that should use pool.res files (like the "unit"
 tree in ICU 54 ticket
