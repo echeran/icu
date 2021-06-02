@@ -30,8 +30,53 @@ jobs:
            # Regex note: (?! ... ) is a negative lookahead. Succeed if the pattern is not present. 
           set +o pipefail && make doc 2>&1 | tee doxygen.log && ( ! grep -P 'warning:(?! .* file .?Doxyfile)' doxygen.log )
 
-  # ICU4J build and unit test
-  icu4j-build-and-test:
+  # Java7 ICU4J build and unit test
+  java7-icu4j-build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and setup
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout lfs objects
+        run: git lfs pull
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+      - name: Cache for Java 7 tarball
+        id: cache-java7
+        uses: actions/cache@v2
+        with:
+          path: java7-tarball
+          key: ${{ runner.os }}-java7-tarball
+      - name: Download Java 7
+        if: steps.cache-java7.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p java7-tarball
+          download_url="https://download.java.net/openjdk/jdk7u75/ri/openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz"
+          wget -O java7-tarball/java_package.tar.gz $download_url
+          pushd java7-tarball
+          gunzip java_package.tar.gz
+          tar xvf java_package.tar
+          popd
+      - name: Configure Ant build to use Java 7 JRE
+        run: |
+          echo "java7.bootclasspath" > $RUNNER_TEMP/draft
+          ls java7-tarball/java-se-7u75-ri/jre/lib/*.jar|paste -sd ":" - >> $RUNNER_TEMP/draft
+          paste -sd "=" < $RUNNER_TEMP/draft >  icu4j/build-local.properties
+      - name: ICU4J
+        run: |
+          cd icu4j;
+          ant init;
+          ant check;
+      - name: List failures (if any)
+        run: |
+          [ -d icu4j/out/junit-results ] && cd icu4j && cat `find out/junit-results -name "*.txt" -exec grep -l FAILED {} \;`;
+        if: ${{ failure() }}
+
+
+  # ICU4J build and unit test under Java11
+  java11-icu4j-build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and setup
@@ -43,6 +88,59 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '11'
+      - name: ICU4J
+        run: |
+          cd icu4j;
+          ant init;
+          ant check;
+      - name: List failures (if any)
+        run: |
+          [ -d icu4j/out/junit-results ] && cd icu4j && cat `find out/junit-results -name "*.txt" -exec grep -l FAILED {} \;`;
+        if: ${{ failure() }}
+
+  # ICU4J build and unit test under Java16
+  java16-icu4j-build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and setup
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout lfs objects
+        run: git lfs pull
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '16'
+      - name: ICU4J
+        run: |
+          cd icu4j;
+          ant init;
+          ant check;
+      - name: List failures (if any)
+        run: |
+          [ -d icu4j/out/junit-results ] && cd icu4j && cat `find out/junit-results -name "*.txt" -exec grep -l FAILED {} \;`;
+        if: ${{ failure() }}
+
+  # ICU4J build and unit test under lstm
+  lstm-icu4j-build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and setup
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout lfs objects
+        run: git lfs pull
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: Config LSTM and Rebuild data jar
+        run: |
+          cd icu4c/source;
+          ICU_DATA_BUILDTOOL_OPTS=--include_uni_core_data ICU_DATA_FILTER_FILE=../../.github/lstm_for_th_my.json ./runConfigureICU --enable-debug --disable-release Linux -disable-layoutex;
+          make clean;
+          make -j2 ICU4J_ROOT=../../../icu4j icu4j-data-install;
+          cd ../..
       - name: ICU4J
         run: |
           cd icu4j;
@@ -213,6 +311,17 @@ jobs:
       - run: |
           cd icu4c/source;
           ./runConfigureICU Linux CPPFLAGS="-DU_OVERRIDE_CXX_ALLOCATION=0";
+          make clean;
+          make -j2 check
+
+  # Test LSTM
+  lstm-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          cd icu4c/source;
+          ICU_DATA_FILTER_FILE=../../.github/lstm_for_th_my.json ./runConfigureICU --enable-debug --disable-release Linux -disable-layoutex;
           make clean;
           make -j2 check
 
