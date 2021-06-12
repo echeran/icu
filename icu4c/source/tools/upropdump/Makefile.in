@@ -1,4 +1,4 @@
-## Makefile.in for ICU - tools/propdump
+## Makefile.in for ICU - tools/upropdump
 ## Copyright (C) 2016 and later: Unicode, Inc. and others.
 ## License & terms of use: http://www.unicode.org/copyright.html
 ## Copyright (c) 1999-2011, International Business Machines Corporation and
@@ -14,9 +14,9 @@ top_builddir = ../..
 include $(top_builddir)/icudefs.mk
 
 ## Build directory information
-subdir = tools/propdump
+subdir = tools/upropdump
 
-TARGET_STUB_NAME = propdump
+TARGET_STUB_NAME = upropdump
 
 SECTION = 1
 

@@ -29,21 +29,21 @@
   <!-- Options that are common to *all* configurations -->
   <ItemDefinitionGroup>
     <Midl>
-      <TypeLibraryName>$(OutDir)/propdump.tlb</TypeLibraryName>
+      <TypeLibraryName>$(OutDir)/upropdump.tlb</TypeLibraryName>
     </Midl>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <CompileAs>Default</CompileAs>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <AdditionalIncludeDirectories>..\..\..\include;..\..\common;..\toolutil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderOutputFile>$(OutDir)/propdump.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(OutDir)/upropdump.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(OutDir)/</AssemblerListingLocation>
       <ObjectFileName>$(OutDir)/</ObjectFileName>
-      <ProgramDataBaseFileName>$(OutDir)/propdump.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)/upropdump.pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <OutputFile>$(OutDir)/propdump.exe</OutputFile>
+      <OutputFile>$(OutDir)/upropdump.exe</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\$(IcuLibOutputDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuildStep>
@@ -72,7 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="propdump.cpp" />
+    <ClCompile Include="upropdump.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="propdump.cpp">
+    <ClCompile Include="upropdump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
