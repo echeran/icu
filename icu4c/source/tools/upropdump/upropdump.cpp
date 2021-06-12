@@ -5,10 +5,12 @@
 #include "toolutil.h"
 #include "uoptions.h"
 #include "cmemory.h"
+#include "charstr.h"
 #include "unicode/uchar.h"
 #include "unicode/errorcode.h"
 #include "unicode/uniset.h"
 #include "unicode/putil.h"
+#include "writesrc.h"
 
 U_NAMESPACE_USE
 
@@ -88,15 +90,41 @@ int main(int argc, char* argv[]) {
     VERBOSE = options[OPT_VERBOSE].doesOccur;
     QUIET = options[OPT_QUIET].doesOccur;
 
-    std::cout << "hello from upropdump" << std::endl;
-    for (int i=0; i<argc; i++) {
-        std::cout << "arg" << i << ": " << argv[i] << std::endl;
-    }
+    for (int i=1; i<argc; i++) {
+        auto propName = argv[i];
+        UProperty propEnum = u_getPropertyEnum(propName);
+        if (propEnum == UCHAR_INVALID_CODE) {
+            std::cerr << "Error: Invalid property alias: " << propName << std::endl;
+            exit(1);
+        }
 
-    ErrorCode status;
-    const USet* whitespace = u_getBinaryPropertySet(UCHAR_WHITE_SPACE, status);
-    const UnicodeSet* uniset = UnicodeSet::fromUSet(whitespace);
-    for (int32_t i=0; i<uniset->getRangeCount(); i++) {
-        std::cout << "range: " << uniset->getRangeStart(i) << " - " << uniset->getRangeEnd(i) << std::endl;
+        ErrorCode status;
+        const USet* uset = u_getBinaryPropertySet(propEnum, status);
+        if (status.isFailure()) {
+            std::cerr << "Error: " << propName << ": " << status.errorName() << std::endl;
+            exit(status.get());
+        }
+
+        CharString outFileName;
+        if (destdir != nullptr || *destdir != 0) {
+            outFileName.append(destdir, status).ensureEndsWithFileSeparator(status);
+        }
+        outFileName.append(propName, status);
+        outFileName.append(".toml", status);
+
+        FILE* f = fopen(outFileName.data(), "w");
+        if (f == nullptr) {
+            std::cerr << "Unable to open file: " << outFileName.data() << std::endl;
+            exit(1);
+        }
+        if (!QUIET) {
+            std::cout << "Writing to: " << outFileName.data() << std::endl;
+        }
+
+        usrc_writeCopyrightHeader(f, "#", 2021);
+        usrc_writeFileNameGeneratedBy(f, "#", propName, "upropdump.cpp");
+        fputs("[unicode_set.data]\n", f);
+        usrc_writeUnicodeSet(f, propName, uset, UPRV_TARGET_SYNTAX_TOML, status);
+        fclose(f);
     }
 }

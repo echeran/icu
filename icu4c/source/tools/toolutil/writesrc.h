@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include "unicode/utypes.h"
 #include "unicode/ucptrie.h"
+#include "unicode/uset.h"
 #include "utrie2.h"
 
 /**
@@ -130,6 +131,17 @@ usrc_writeUCPTrieStruct(FILE *f,
  */
 U_CAPI void U_EXPORT2
 usrc_writeUCPTrie(FILE *f, const char *name, const UCPTrie *pTrie, UTargetSyntax syntax);
+
+/**
+ * Writes the UnicodeSet inversion list.
+ */
+U_CAPI void U_EXPORT2
+usrc_writeUnicodeSet(
+    FILE *f,
+    const char *name,
+    const USet *pSet,
+    UTargetSyntax syntax,
+    UErrorCode *pErrorCode);
 
 /**
  * Writes the contents of an array of mostly invariant characters.

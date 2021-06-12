@@ -23,6 +23,7 @@
 #include "unicode/utypes.h"
 #include "unicode/putil.h"
 #include "unicode/ucptrie.h"
+#include "unicode/errorcode.h"
 #include "utrie2.h"
 #include "cstring.h"
 #include "writesrc.h"
@@ -355,6 +356,48 @@ usrc_writeUCPTrie(FILE *f, const char *name, const UCPTrie *pTrie, UTargetSyntax
         UPRV_UNREACHABLE;
     }
     usrc_writeUCPTrieStruct(f, line, pTrie, line2, line3, line4, syntax);
+}
+
+U_CAPI void U_EXPORT2
+usrc_writeUnicodeSet(
+        FILE *f,
+        const char *name,
+        const USet *pSet,
+        UTargetSyntax syntax,
+        UErrorCode* pErrorCode) {
+    if (U_FAILURE(*pErrorCode)) {
+        return;
+    }
+
+    switch (syntax) {
+    case UPRV_TARGET_SYNTAX_TOML:
+        fprintf(f, "name = \"%s\"\n", name);
+        break;
+    default:
+        // ccode is unimplemented and unreachable
+        UPRV_UNREACHABLE;
+    }
+
+    // First write as the uset serialized format
+    icu::ErrorCode localStatus;
+    int32_t length = uset_serialize(pSet, NULL, 0, localStatus);
+    localStatus.reset();
+    std::unique_ptr<uint16_t[]> arr(new uint16_t[length]);
+    uset_serialize(pSet, arr.get(), length, pErrorCode);
+    const char* indent = (syntax == UPRV_TARGET_SYNTAX_TOML) ? "  " : "";
+    usrc_writeArray(f, "serialized = [\n  ", arr.get(), 16, length, indent, "\n]\n");
+
+    // Now write it also as a list of ranges
+    USerializedSet serializedSet;
+    uset_getSerializedSet(&serializedSet, arr.get(), length);
+    fprintf(f, "ranges = [\n");
+    for (int32_t i=0; i<uset_getSerializedRangeCount(&serializedSet); i++) {
+        UChar32 start;
+        UChar32 end;
+        uset_getSerializedRange(&serializedSet, i, &start, &end);
+        fprintf(f, "  [0x%lx, 0x%lx],\n", start, end);
+    }
+    fprintf(f, "]\n");
 }
 
 U_CAPI void U_EXPORT2
