@@ -395,7 +395,7 @@ usrc_writeUnicodeSet(
         UChar32 start;
         UChar32 end;
         uset_getSerializedRange(&serializedSet, i, &start, &end);
-        fprintf(f, "  [0x%lx, 0x%lx],\n", start, end);
+        fprintf(f, "  [0x%x, 0x%x],\n", start, end);
     }
     fprintf(f, "]\n");
 }
