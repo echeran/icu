@@ -10,6 +10,7 @@
 #include "unicode/errorcode.h"
 #include "unicode/uniset.h"
 #include "unicode/putil.h"
+#include "unicode/umutablecptrie.h"
 #include "writesrc.h"
 
 U_NAMESPACE_USE
@@ -20,7 +21,52 @@ U_NAMESPACE_USE
 UBool VERBOSE = FALSE;
 UBool QUIET = FALSE;
 
-UBool haveCopyright=TRUE;
+UBool haveCopyright = TRUE;
+UCPTrieType trieType = UCPTRIE_TYPE_SMALL;
+
+void handleError(const ErrorCode& status, const char* context) {
+    if (status.isFailure()) {
+        std::cerr << "Error: " << context << ": " << status.errorName() << std::endl;
+        exit(status.get());
+    }
+}
+
+void dumpBinaryProperty(UProperty uproperty, FILE* f) {
+    ErrorCode status;
+    const char* fullPropName = u_getPropertyName(uproperty, U_LONG_PROPERTY_NAME);
+    const char* shortPropName = u_getPropertyName(uproperty, U_SHORT_PROPERTY_NAME);
+    const USet* uset = u_getBinaryPropertySet(uproperty, status);
+    handleError(status, fullPropName);
+
+    fputs("[unicode_set.data]\n", f);
+    fprintf(f, "long_name = \"%s\"\n", fullPropName);
+    usrc_writeUnicodeSet(f, shortPropName, uset, UPRV_TARGET_SYNTAX_TOML);
+}
+
+void dumpEnumeratedProperty(UProperty uproperty, FILE* f) {
+    ErrorCode status;
+    const char* fullPropName = u_getPropertyName(uproperty, U_LONG_PROPERTY_NAME);
+    const char* shortPropName = u_getPropertyName(uproperty, U_SHORT_PROPERTY_NAME);
+    const UCPMap* umap = u_getIntPropertyMap(uproperty, status);
+    handleError(status, fullPropName);
+
+    fputs("[code_point_map.data]\n", f);
+    fprintf(f, "long_name = \"%s\"\n", fullPropName);
+    usrc_writeUCPMap(f, shortPropName, umap, uproperty, UPRV_TARGET_SYNTAX_TOML);
+    fputs("\n", f);
+
+    LocalUMutableCPTriePointer builder(umutablecptrie_fromUCPMap(umap, status));
+    LocalUCPTriePointer utrie(umutablecptrie_buildImmutable(
+        builder.getAlias(),
+        trieType,
+        UCPTRIE_VALUE_BITS_32, // TODO(review): What is the best way to pick the value width?
+        status));
+    handleError(status, fullPropName);
+
+    fputs("[code_point_trie.struct]\n", f);
+    fprintf(f, "long_name = \"%s\"\n", fullPropName);
+    usrc_writeUCPTrie(f, shortPropName, utrie.getAlias(), UPRV_TARGET_SYNTAX_TOML);
+}
 
 enum {
     OPT_HELP_H,
@@ -99,18 +145,13 @@ int main(int argc, char* argv[]) {
         }
 
         ErrorCode status;
-        const USet* uset = u_getBinaryPropertySet(propEnum, status);
-        if (status.isFailure()) {
-            std::cerr << "Error: " << propName << ": " << status.errorName() << std::endl;
-            exit(status.get());
-        }
-
         CharString outFileName;
         if (destdir != nullptr || *destdir != 0) {
             outFileName.append(destdir, status).ensureEndsWithFileSeparator(status);
         }
         outFileName.append(propName, status);
         outFileName.append(".toml", status);
+        handleError(status, propName);
 
         FILE* f = fopen(outFileName.data(), "w");
         if (f == nullptr) {
@@ -121,10 +162,17 @@ int main(int argc, char* argv[]) {
             std::cout << "Writing to: " << outFileName.data() << std::endl;
         }
 
-        usrc_writeCopyrightHeader(f, "#", 2021);
+        if (haveCopyright) {
+            usrc_writeCopyrightHeader(f, "#", 2021);
+        }
         usrc_writeFileNameGeneratedBy(f, "#", propName, "upropdump.cpp");
-        fputs("[unicode_set.data]\n", f);
-        usrc_writeUnicodeSet(f, propName, uset, UPRV_TARGET_SYNTAX_TOML, status);
+
+        if (propEnum < UCHAR_BINARY_LIMIT) {
+            dumpBinaryProperty(propEnum, f);
+        } else {
+            dumpEnumeratedProperty(propEnum, f);
+        }
+
         fclose(f);
     }
 }

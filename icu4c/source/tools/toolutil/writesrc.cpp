@@ -363,27 +363,19 @@ usrc_writeUnicodeSet(
         FILE *f,
         const char *name,
         const USet *pSet,
-        UTargetSyntax syntax,
-        UErrorCode* pErrorCode) {
-    if (U_FAILURE(*pErrorCode)) {
-        return;
-    }
+        UTargetSyntax syntax) {
+    // ccode is not yet supported
+    U_ASSERT(syntax == UPRV_TARGET_SYNTAX_TOML);
 
-    switch (syntax) {
-    case UPRV_TARGET_SYNTAX_TOML:
-        fprintf(f, "name = \"%s\"\n", name);
-        break;
-    default:
-        // ccode is unimplemented and unreachable
-        UPRV_UNREACHABLE;
-    }
+    fprintf(f, "name = \"%s\"\n", name);
 
     // First write as the uset serialized format
     icu::ErrorCode localStatus;
     int32_t length = uset_serialize(pSet, NULL, 0, localStatus);
     localStatus.reset();
     std::unique_ptr<uint16_t[]> arr(new uint16_t[length]);
-    uset_serialize(pSet, arr.get(), length, pErrorCode);
+    uset_serialize(pSet, arr.get(), length, localStatus);
+    U_ASSERT(localStatus.isSuccess());
     const char* indent = (syntax == UPRV_TARGET_SYNTAX_TOML) ? "  " : "";
     usrc_writeArray(f, "serialized = [\n  ", arr.get(), 16, length, indent, "\n]\n");
 
@@ -396,6 +388,35 @@ usrc_writeUnicodeSet(
         UChar32 end;
         uset_getSerializedRange(&serializedSet, i, &start, &end);
         fprintf(f, "  [0x%x, 0x%x],\n", start, end);
+    }
+    fprintf(f, "]\n");
+}
+
+U_CAPI void U_EXPORT2
+usrc_writeUCPMap(
+        FILE *f,
+        const char *name,
+        const UCPMap *pMap,
+        UProperty uproperty,
+        UTargetSyntax syntax) {
+    // ccode is not yet supported
+    U_ASSERT(syntax == UPRV_TARGET_SYNTAX_TOML);
+
+    fprintf(f, "name = \"%s\"\n", name);
+
+    // Print out list of ranges
+    UChar32 start = 0, end;
+    uint32_t value;
+    fprintf(f, "ranges = [\n");
+    while ((end = ucpmap_getRange(pMap, start, UCPMAP_RANGE_NORMAL, 0, NULL, NULL, &value)) >= 0) {
+        if (uproperty != UCHAR_INVALID_CODE) {
+            const char* name1 = u_getPropertyValueName(uproperty, value, U_LONG_PROPERTY_NAME);
+            const char* name2 = u_getPropertyValueName(uproperty, value, U_SHORT_PROPERTY_NAME);
+            fprintf(f, "  [0x%x, 0x%x, %d, \"%s\", \"%s\"],\n", start, end, value, name1, name2);
+        } else {
+            fprintf(f, "  [0x%x, 0x%x, %d],\n", start, end, value);
+        }
+        start = end + 1;
     }
     fprintf(f, "]\n");
 }
