@@ -136,6 +136,64 @@ int main(int argc, char* argv[]) {
     VERBOSE = options[OPT_VERBOSE].doesOccur;
     QUIET = options[OPT_QUIET].doesOccur;
 
+    auto firstPropName = argv[1];
+    if (strcmp(firstPropName, "planes") == 0) {
+        // Create a UCPTrie that represents the Unicode plane number (0-16)
+        // for each code point in the Unicode character space.
+
+        UErrorCode errorCode = U_ZERO_ERROR;
+        icu::LocalUMutableCPTriePointer mutableTrie(
+            umutablecptrie_open(0, 0, &errorCode));
+        if (U_FAILURE(errorCode)) { exit(1); }
+
+        const int32_t plane_size = 65536; // 2^16
+        for (int8_t plane = 0; plane < 17; plane++) {
+            int32_t start = plane * plane_size;
+            int32_t end = ((plane + 1) * plane_size) - 1;
+            umutablecptrie_setRange(mutableTrie.getAlias(), start, end, plane, &errorCode);
+        }
+
+        UCPTrieType type = UCPTRIE_TYPE_SMALL;
+        UCPTrieValueWidth valueWidth = UCPTRIE_VALUE_BITS_8;
+        UCPTrie *trie = umutablecptrie_buildImmutable(mutableTrie.getAlias(), type, valueWidth, &errorCode);
+        UCPMap *umap = reinterpret_cast<UCPMap *>(trie);
+        if (U_FAILURE(errorCode)) { exit(1); }
+
+        // duplicating output file code from below
+        CharString outFileName;
+        if (destdir != nullptr || *destdir != 0) {
+            outFileName.append(destdir, errorCode).ensureEndsWithFileSeparator(errorCode);
+        }
+        outFileName.append("planes", errorCode);
+        outFileName.append(".toml", errorCode);
+        FILE* f = fopen(outFileName.data(), "w");
+        if (f == nullptr) {
+            std::cerr << "Unable to open file: " << outFileName.data() << std::endl;
+            exit(1);
+        }
+        if (!QUIET) {
+            std::cout << "Writing to: " << outFileName.data() << std::endl;
+        }
+
+        ErrorCode status;
+        // duplicating logic from dumpEnumeratedProperty to dump UCPTrie but 
+        // not associated with an actual Unicode property.
+        const char* fullPropName = "planes";
+        const char* shortPropName = "planes";
+        handleError(status, fullPropName);
+        fputs("[code_point_map.data]\n", f);
+        fprintf(f, "long_name = \"%s\"\n", fullPropName);
+        // fake Unicode property implies UProperty enum for invalid property
+        usrc_writeUCPMap(f, shortPropName, umap, UCHAR_INVALID_CODE, UPRV_TARGET_SYNTAX_TOML);
+        fputs("\n", f);
+        fputs("[code_point_trie.struct]\n", f);
+        fprintf(f, "long_name = \"%s\"\n", fullPropName);
+        LocalUCPTriePointer utrie(trie);
+        usrc_writeUCPTrie(f, shortPropName, utrie.getAlias(), UPRV_TARGET_SYNTAX_TOML);
+
+        exit(0);
+    }
+
     for (int i=1; i<argc; i++) {
         auto propName = argv[i];
         UProperty propEnum = u_getPropertyEnum(propName);
