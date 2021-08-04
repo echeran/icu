@@ -19,3 +19,8 @@ a hash map. Where whole-string-lookup is the only relevant operation, we could
 consider implementing an easily serialized hash map.
 
 See also [ICU Code Point Tries](../utrie.md).
+
+Subpages:
+
+* [BytesTrie](./bytestrie/)
+* [UCharsTrie](./ucharstrie)

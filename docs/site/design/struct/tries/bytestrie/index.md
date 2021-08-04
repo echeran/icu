@@ -19,7 +19,7 @@ two bytes per character, and the rest to three bytes per character. (We could
 also use this for CJK DBBI, to reduce the number of such "converters".) Or, we
 use a [UCharsTrie](../ucharstrie.md) for those.
 
-Sample code is attached.
+Sample code is linked below.
 
 See the [UCharsTrie](../ucharstrie.md) sibling page for some more details. The
 BytesTrie and UCharsTrie structures are nearly the same, except that the
@@ -100,3 +100,24 @@ mappings](https://docs.google.com/drawings/edit?id=1-doZNpcByYItcDAcvKmIpwJMWFgX
     duplicate nodes. This is possible when whole trees of nodes are the same and
     at least one is reached via a "jump" delta which can "jump" to the
     previously written serialization of such a tree.
+
+## Sample Code
+
+The following demo code was last updaed Nov. 2010:
+
+* [`bytetrie.h`](./bytetrie.h)
+* [`bytetriebuilder.h`](./bytetriebuilder.h)
+* [`bytetriedemo.cpp`](./bytetriedemo.cpp)
+* [`bytetrieiterator.h`](./bytetrieiterator.h)
+* [`denseranges.h`](./denseranges.h)
+* [`genpname.cpp`](./genpname.cpp)
+
+### Latest versions of source code
+
+The latest versions of the above sample code (except for `bytetriedemo.cpp`) exist in the ICU repository, sometimes under slightly different names and reorganized:
+
+* [icu4c/source/common/unicode/**bytestrie.h**](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/unicode/bytestrie.h)
+* [icu4c/source/common/unicode/**bytestriebuilder.h**](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/unicode/bytestriebuilder.h)
+* [icu4c/source/tools/toolutil/**denseranges.h**](https://github.com/unicode-org/icu/blob/main/icu4c/source/tools/toolutil/denseranges.h)
+* [tools/unicode/c/genprops/**pnamesbuilder.cpp**](https://github.com/unicode-org/icu/blob/main/tools/unicode/c/genprops/pnamesbuilder.cpp)
+

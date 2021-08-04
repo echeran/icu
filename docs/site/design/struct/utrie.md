@@ -62,7 +62,7 @@ supplementary code points using custom values for lead surrogate units. This
 custom data and code made this structure relatively hard to use.
 
 11:5 bits for the BMP and effectively 5:5:5:5 bits for supplementary code points
-provide for good compaction. The BMP index table is always 211 uint16_t = 4kB.
+provide for good compaction. The BMP index table is always 2<sup>11</sup> uint16_t = 4kB.
 Small index blocks for the supplementary range are added as needed.
 
 The structure stores different values for lead surrogate code *units* (for fast
