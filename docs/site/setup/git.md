@@ -1,4 +1,6 @@
-# Setup: git difftool & mergetool
+# Setup: Local tooling configs for git and Github
+
+## git difftool & mergetool
 
 The `git diff` command prints changes to stdout, normally to the terminal
 screen.
@@ -14,50 +16,51 @@ This is easily avoided using the -d option: `git difftool -d`
 This shows all changed files in the diff program, and you can view and skip
 files there as appropriate.
 
-## Linux example
+### Linux example
 
 [stackoverflow/.../setting-up-and-using-meld-as-your-git-difftool-and-mergetool](https://stackoverflow.com/questions/34119866/setting-up-and-using-meld-as-your-git-difftool-and-mergetool)
 
-### Linux meld
+#### Linux meld
 
 `gedit ~/.gitconfig` →
 
-```none
+```
 [diff]
-```
-
-```none
     tool = meld
-```
-
-```none
 [difftool]
-```
-
-```none
     prompt = false
-```
-
-```none
 [difftool "meld"]
-```
-
-```none
     cmd = meld "$LOCAL" "$REMOTE"
-```
-
-```none
 [merge]
-```
-
-```none
     tool = meld
-```
-
-```none
 [mergetool "meld"]
-```
-
-```none
     cmd = meld "$LOCAL" "$MERGED" "$REMOTE" --output "$MERGED"
 ```
+
+## Auto-link from GitHub to Jira tickets
+
+GitHub itself does not linkify text like "ICU-23456" to point to the Jira
+ticket. You can get links via browser extensions.
+
+### Chrome Jira HotLinker
+
+Install the [Jira
+HotLinker](https://chrome.google.com/webstore/detail/jira-hotlinker/lbifpcpomdegljfpfhgfcjdabbeallhk)
+from the Chrome Web Store.
+
+Configuration Options:
+
+*   Jira instance url: https://unicode-org.atlassian.net/
+*   Locations: https://github.com/
+
+### Safari extension from SRL
+
+<https://github.com/unicode-org/icu-jira-safari>
+
+### Firefox extension from JefGen
+
+Install from the Mozilla Firefox Add-ons site:
+<https://addons.mozilla.org/en-US/firefox/addon/github-jira-issue-linkifier/>
+
+Source:
+<https://github.com/jefgen/github-jira-linkifier-webextension>
