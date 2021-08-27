@@ -572,3 +572,17 @@ COMMIT option in GitHub to land the PR!!==***
 
 There may be times when a PR is landed manually. This dangerous topic is covered
 in a [separate subpage](manual-land.md).
+
+**Requesting an Exhaustive Test run on a Pull-Request (PR)**
+
+The ICU4C and ICU4J Exhaustive Tests run on the main branch after a pull-request
+has been submitted. They do not run on pull-requests by default as they take 1-2
+hours to run.
+
+However, you can manually request the CI builds to run the exhaustive tests on a
+PR by commenting with the following text:
+
+/azp run CI-Exhaustive
+
+This will trigger the test run on the PR. This is covered more in a separate
+[document](https://docs.google.com/document/d/1kmcFFUozpWah_y7dk_Inlw_BIq3vG3-ZR2A28tIiXJc/edit?usp=sharing).
