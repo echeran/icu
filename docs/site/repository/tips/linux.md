@@ -8,7 +8,7 @@ or else `gcc`. Clang produces superior error messages and warnings.
 Most Linuxes should have clang available to install. On Ubuntu or other
 Debian-based systems, install it with
 
-```none
+```
 sudo apt-get install clang
 ```
 

@@ -1,7 +1,5 @@
 # Tips (for developers)
 
-[TOC]
-
 ## C/C++ workspace structure
 
 It is best to keep the source file tree and the build-output files separate
@@ -11,7 +9,7 @@ build, build with special flags such as no-using-namespace). You could keep the
 source and build trees in parallel folders.
 
 **Important:** If you use runConfigureICU together with CXXFLAGS or similar, the
-==*custom flags must be before the runConfigureICU invocation*==. (So that they
+*custom flags must be before the runConfigureICU invocation*. (So that they
 are visible as environment variables in the runConfigureICU shell script, rather
 than just options text.) See the sample runConfigureICU invocations below.
 

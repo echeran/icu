@@ -1,7 +1,5 @@
 # Ant Setup for Java Developers
 
-## [TOC]
-
 ## Overview
 
 ICU4J source layout was changed after 4.2. There are several ways to set up the

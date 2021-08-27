@@ -1,7 +1,5 @@
 # Eclipse Setup for Java Developers
 
-[TOC]
-
 ICU4J source layout was changed after 4.2. There are several ways to set up the ICU4J development environment.
 
 *If you want to use Eclipse, you should create a new clean workspace first.*

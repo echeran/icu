@@ -4,8 +4,6 @@
 Java Developers](../java/eclipse-setup-for-java-developers/index.md), so please
 read that page instead.*
 
-[TOC]
-
 **Note:** This document explains how to build and debug ICU4J 4.4 on Eclipse
 IDE. If you plan to contribute code to ICU4J, please also refer following links.
 
@@ -92,10 +90,10 @@ the menu. Now, ICU4J projects imported into the workplace is completely built
 and ready to work.
 
 6. If you are going to work on sample/demo code, also import the projects under
-the **==demos==** tree parallel to main.
+the **demos** tree parallel to main.
 
 7. If you are going to work on tools, also import the projects under the
-==**tools**== tree parallel to main.
+**tools** tree parallel to main.
 
 ## Run the ICU4J Test Suite
 

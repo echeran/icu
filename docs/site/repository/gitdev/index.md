@@ -6,8 +6,6 @@ page.
 For setup with Eclipse, Xcode, etc. see the [Setup](../../setup/index.md) page
 and its subpages.
 
-[TOC]
-
 ## Overview
 
 ICU development is on GitHub, in the **main** branch of the git repository.
@@ -31,38 +29,38 @@ sure to delete this branch when you are done.
 
 ## Development
 
-We do ==*not*== develop directly on the main repository. Do ==*not*== clone from
+We do *not* develop directly on the main repository. Do *not* clone from
 there to commit and push back into the main repository.
 
 Instead, use the GitHub UI (top right) to create a fork of the repository in
 your own GitHub account. Then clone that to your local machine. You need only
 one fork for all of your ICU work.
 
-```none
+```
 Linux:
 ```
 
-```none
+```
 mkdir -p icu/mine/src
 ```
 
-```none
+```
 git clone git@github.com:markusicu/icu.git icu/mine/src
 ```
 
-```none
+```
 cd icu/mine/src
 ```
 
 You should be in the **main** branch of your fork's clone.
 
-Do ==*not*== do any development in your own **main** branch either! That would
+Do *not* do any development in your own **main** branch either! That would
 lead to messy merging with the upstream **main** branch.
 
 Instead, create a new branch in your local clone for each piece of work. You
 need a separate branch for each pull request. More on that later.
 
-```none
+```
 Linux: git checkout -b mybranchname
 ```
 
@@ -87,7 +85,7 @@ requests per ticket. Each pull request needs a ticket in Accepted state.
 
 Always prefix your commit statements with the Jira ticket number using this
 pattern (including the space after the number; note: no colon):
-`**==ICU-23456==** what I changed`
+`**ICU-23456** what I changed`
 
 Local commits are only on your local machine. If your local disk crashes, your
 changes are gone. `git push` your commits to your GitHub fork.
@@ -109,7 +107,7 @@ edit the file in the GitHub GUI, in the main unicode-org/icu repository.
 You still need a Jira ticket.
 
 Once you are done editing, the GUI lets you create a branch and a commit right
-in the main repository. Use the usual **==ICU-23456==** what I changed pattern
+in the main repository. Use the usual **ICU-23456** what I changed pattern
 for the commit message.
 
 Pull request, review, merge as usual, see the next section.
@@ -176,7 +174,7 @@ flow to squash your branch.
 Warning: do not git pull after you use the remote tool! If you subsequently need
 to update your local branch to the squash commit, you need to fetch and reset:
 
-```none
+```
 git fetch origin BRANCHNAME
 git checkout BRANCHNAME
 git reset origin/BRANCHNAME
@@ -196,7 +194,7 @@ conflicts in your history. Plenty of examples:
 *Option 3:* Use git merge. This is a little tricker but works even if you have
 merge commits with conflicts. Assuming your feature branch is called BRANCHNAME:
 
-```none
+```
 # Make sure your branch is up-to-date with main and that the tests pass:
 git checkout BRANCHNAME
 git merge main
@@ -271,7 +269,7 @@ Unicode **main**. If you find a way to do this, please update this section.
 
 Switch to your local **main**.
 
-```none
+```
 git checkout main
 ```
 
@@ -280,11 +278,11 @@ pulls form your out-of-date fork), push to your fork's main.
 
 *Norbert’s version:*
 
-```none
+```
 git pull git@github.com:unicode-org/icu.git
 ```
 
-```none
+```
 git push
 ```
 
@@ -293,15 +291,15 @@ git push
 Once per local git repo, set up an additional "remote". Something like the
 following, but this may be incomplete!
 
-```none
+```
 git remote add upstream https://github.com/unicode-org/icu.git
 ```
 
-```none
+```
 git pull upstream main
 ```
 
-```none
+```
 git push origin main
 ```
 
@@ -310,7 +308,7 @@ git push origin main
 Set the local main to track the upstream (unicode-org) main instead of your
 fork's main (orign). Your fork's main is effectively out of the loop.
 
-```none
+```
 # one time setup
 git branch -u upstream/main
 # subsequent pulls from upstream (unicode.org) main
@@ -329,7 +327,7 @@ keeps track of comment history better when shas don't change.
 *Option 1: Merge.* Switch to your dev branch, then merge in main. I like to use
 the --no-commit option:
 
-```none
+```
 git checkout mybranchname
 git merge main --no-commit
 ```
@@ -338,7 +336,7 @@ If you have conflicts, resolve them. Then, review the merge commit. It should
 have all changes from main that were not yet on your branch. If it looks good,
 commit the merge. You can push the merge commit without having to use -f.
 
-```none
+```
 git commit
 git push
 ```
@@ -346,13 +344,13 @@ git push
 *Option 2: Rebase.* First switch back to your dev branch (without the -b option
 which is for creating a new branch).
 
-```none
+```
 git checkout mybranchname
 ```
 
 Then rebase, which reapplies your branch changes on top of the new main commits.
 
-```none
+```
 git rebase main
 ```
 
@@ -361,7 +359,7 @@ prints or look for help...
 
 If it had stopped and you are done resolving conflicts, continue rebasing.
 
-```none
+```
 git rebase --continue
 ```
 
@@ -369,7 +367,7 @@ You might get conflicts at several stages; resolve & continue until done.
 
 When done, push to your GitHub fork. You need to force-push after rebasing.
 
-```none
+```
 git push -f
 ```
 
@@ -397,7 +395,7 @@ branch will be merged *from maint to main* as a BRS task (see the next section).
 
 Check out the current maint branch:
 
-```none
+```
 git fetch upstream maint/maint-64
 git checkout maint/maint-64
 ```
@@ -405,7 +403,7 @@ git checkout maint/maint-64
 Next, make a local branch off of the maint branch. For example, to use the
 branch name "ICU-12345-maint-64", you can do:
 
-```none
+```
 git checkout -b ICU-12345-maint-64
 ```
 
@@ -428,7 +426,7 @@ this later when cherry-picking into the maint branch.
 Next, checkout the maintenance branch locally. For example, for the ICU 63
 maintenance branch:
 
-```none
+```
 git fetch upstream maint/maint-64
 git checkout maint/maint-64
 ```
@@ -438,7 +436,7 @@ for your cherry-pick.
 
 For example, to use the branch name "ICU-12345-maint-64", you can do:
 
-```none
+```
 git checkout -b ICU-12345-maint-64
 ```
 
@@ -446,7 +444,7 @@ Next, cherry-pick the commit(s) you want to apply to the maintenance branch.
 (Note: If you only have one commit to merge to the maint branch then you would
 only have one command below).
 
-```none
+```
 git cherry-pick 7d99ba4
 git cherry-pick e578f3f
 ...
@@ -460,7 +458,7 @@ intended commits.
 Finally, push your branch to your fork (should be "origin"), and open a PR into
 the Unicode ICU branch maint/maint-64.
 
-```none
+```
 git push -u your-fork ICU-12345-maint-64
 ```
 
@@ -478,12 +476,12 @@ The reviewer of the PR has the following special responsibilities:
 
 It is not hard to accidentally make a commit against main that should have been
 against maint. As a BRS task before tagging, you should check the list of
-commits that are on main but not maint and make sure none of them belong on
+commits that are on main but not maint and make sure  of them belong on
 maint.
 
 To get the list, run:
 
-```none
+```
 git fetch upstream
 git cherry -v upstream/maint/maint-64 upstream/main
 ```
@@ -525,7 +523,7 @@ history.
 
 Create a new branch based on the tag you want to merge:
 
-```none
+```
 git fetch upstream
 git checkout main
 git checkout -b 64-merge-branch  # use any name you like
@@ -534,7 +532,7 @@ git checkout -b 64-merge-branch  # use any name you like
 *If you already have this branch from a previous release tag*, you could either
 use a new branch, or merge the latest main into your branch:
 
-```none
+```
 git checkout 64-merge-branch
 # DANGER: Please make sure your workspace is clean before proceeding!
 # If it's not, you might sneak in unreviewed changes.
@@ -544,7 +542,7 @@ git commit -am "ICU-##### Merge tag 'main' into 64-merge-branch"
 
 Now, merge in maint:
 
-```none
+```
 # DANGER: Please make sure your workspace is clean before proceeding!
 # If it's not, you might sneak in unreviewed changes.
 git merge --no-commit upstream/maint/maint-39
@@ -556,7 +554,7 @@ files, you may need to re-generate them.
 
 Remember to prefix your commit message with the ticket number:
 
-```none
+```
 git commit -am "ICU-##### Merge branch 'maint/maint-39' into 64-merge-branch"
 git push -u origin 64-merge-branch
 ```
@@ -565,8 +563,7 @@ As in the Easy Way, you may need to add "DISABLE_JIRA_ISSUE_MATCH=true" and/or
 "ALLOW_MANY_COMMITS=true" to the PR description to silence errors coming from
 the Unicode bot.
 
-Send the PR off for review. As in the Easy Way, ***==you should use the MERGE
-COMMIT option in GitHub to land the PR!!==***
+Send the PR off for review. As in the Easy Way, **you should use the MERGE COMMIT option in GitHub to land the PR!!**
 
 ## Manually Landing PRs
 
