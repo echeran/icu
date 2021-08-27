@@ -21,11 +21,11 @@ or
 git clone git@github.com:unicode-org/icu.git
 ```
 
-This will check out a new directory "`**icu**`" which contains **icu4c** and
+This will check out a new directory `icu` which contains **icu4c** and
 **icu4j** subdirectories as detailed below.
 
 *For ICU development*, do *not* work directly with the Unicode ICU `main` branch!
-See the [git for ICU Developers](repository/gitdev/index.md) page instead.
+See the [git for ICU Developers](../index) page instead.
 
 For cloning from your own fork, replace `unicode-org` with your GitHub user
 name.
@@ -77,10 +77,10 @@ There are many resources available to help you work with git, here are a few:
 
 *   <https://git-scm.com/> - the homepage of the git project
 *   <https://help.github.com/> - GitHub’s help page
-*   https://try.github.io/ - Resources to learn Git
+*   <https://try.github.io/> - Resources to learn Git
 
 Want to contribute back to ICU? See [How to
-contribute](processes/contribute.md).
+contribute](../../processes/contribute.md).
 
 ## Repository Layout
 
