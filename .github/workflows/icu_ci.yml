@@ -402,6 +402,7 @@ jobs:
 
   # Test ICU4J with little-endian ICU4C data only
   icu4j-little-endian-data-test:
+    needs: clang-release-build-and-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and setup
@@ -422,4 +423,4 @@ jobs:
           cp -P data/out/tmp/icudt70l* /tmp/icu4j_data_test/
           cd ../../icu4j;
           ant clean;
-          ant -Dicu4c.data.path=/tmp/icu4j_data_tst check;
+          ant -Dicu4c.data.path=/tmp/icu4j_data_test check;
