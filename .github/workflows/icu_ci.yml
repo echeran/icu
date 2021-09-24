@@ -420,7 +420,7 @@ jobs:
         with:
           java-version: '11'
       - name: ICU4J little-endian
-      - run: |
+        run: |
           cd icu4c/source;
           ICU_DATA_BUILDTOOL_OPTS=--include_uni_core_data ./runConfigureICU Linux;
           make -j2 check;
