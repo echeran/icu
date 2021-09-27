@@ -6,7 +6,9 @@ on:
       - main	
       - 'maint/maint*'
 
-# Test ICU4J with little-endian ICU4C data only
+jobs:
+
+  # Test ICU4J with little-endian ICU4C data only
   icu4j-little-endian-data-test:
     needs: clang-release-build-and-test
     runs-on: ubuntu-latest
