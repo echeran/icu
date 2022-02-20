@@ -33,7 +33,11 @@ import com.ibm.icu.impl.StandardPlural;
 import com.ibm.icu.impl.number.range.StandardPluralRanges;
 import com.ibm.icu.number.FormattedNumber;
 import com.ibm.icu.number.FormattedNumberRange;
+import com.ibm.icu.number.LocalizedNumberFormatter;
+import com.ibm.icu.number.Notation;
 import com.ibm.icu.number.NumberFormatter;
+import com.ibm.icu.number.Precision;
+import com.ibm.icu.number.Scale;
 import com.ibm.icu.util.Output;
 import com.ibm.icu.util.ULocale;
 
@@ -327,7 +331,8 @@ public class PluralRules implements Serializable {
      * unique value to return.
      * @stable ICU 4.8
      */
-    public static final double NO_UNIQUE_VALUE = -0.00123456777;
+    public static final FormattedNumber NO_UNIQUE_VALUE =
+        NumberFormatter.withLocale(ULocale.ROOT).format(-0.00123456777);
 
     /**
      * Type of plurals and PluralRules.
@@ -868,50 +873,6 @@ public class PluralRules implements Serializable {
         }
 
         /**
-         * @internal CLDR
-         * @deprecated This API is ICU internal only.
-         */
-        @Deprecated
-        public FixedDecimal (String n) {
-            // Ugly, but for samples we don't care.
-            this(parseDecimalSampleRangeNumString(n));
-        }
-
-        /**
-         * @internal CLDR
-         * @deprecated This API is ICU internal only
-         */
-        @Deprecated
-        private static FixedDecimal parseDecimalSampleRangeNumString(String num) {
-            if (num.contains("e") || num.contains("c")) {
-                int ePos = num.lastIndexOf('e');
-                if (ePos < 0) {
-                    ePos = num.lastIndexOf('c');
-                }
-                int expNumPos = ePos + 1;
-                String exponentStr = num.substring(expNumPos);
-                int exponent = Integer.parseInt(exponentStr);
-                String fractionStr = num.substring(0, ePos);
-                return FixedDecimal.createWithExponent(
-                        Double.parseDouble(fractionStr),
-                        getVisibleFractionCount(fractionStr),
-                        exponent);
-            } else {
-                return new FixedDecimal(Double.parseDouble(num), getVisibleFractionCount(num));
-            }
-        }
-
-        private static int getVisibleFractionCount(String value) {
-            value = value.trim();
-            int decimalPos = value.indexOf('.') + 1;
-            if (decimalPos == 0) {
-                return 0;
-            } else {
-                return value.length() - decimalPos;
-            }
-        }
-
-        /**
          * {@inheritDoc}
          *
          * @internal CLDR
@@ -1070,19 +1031,6 @@ public class PluralRules implements Serializable {
             return (isNegative ? -source : source) * Math.pow(10, exponent);
         }
 
-        /**
-         * @internal CLDR
-         * @deprecated This API is ICU internal only.
-         */
-        @Deprecated
-        public long getShiftedValue() {
-            if (exponent != 0 && visibleDecimalDigitCount == 0 && decimalDigits == 0) {
-                // Need to take exponent into account if we have it
-                return (long)(source * Math.pow(10, exponent));
-            }
-            return integerValue * baseFactor + decimalDigits;
-        }
-
         private void writeObject(
                 ObjectOutputStream out)
                         throws IOException {
@@ -1141,31 +1089,32 @@ public class PluralRules implements Serializable {
     }
 
     /**
-     * A range of NumberInfo that includes all values with the same visibleFractionDigitCount.
+     * A range of FormattedNumber representing PluralRules samples that includes
+     * all values with the same visibleFractionDigitCount.
      * @internal CLDR
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public static class FixedDecimalRange {
+    public static class FormattedNumberSamplesRange {
         /**
          * @internal CLDR
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public final FixedDecimal start;
+        public final FormattedNumber start;
         /**
          * @internal CLDR
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public final FixedDecimal end;
+        public final FormattedNumber end;
         /**
          * @internal CLDR
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public FixedDecimalRange(FixedDecimal start, FixedDecimal end) {
-            if (start.visibleDecimalDigitCount != end.visibleDecimalDigitCount) {
+        public FormattedNumberSamplesRange(FormattedNumber start, FormattedNumber end) {
+            if (start.getFixedDecimal().getPluralOperand(Operand.v)!= end.getFixedDecimal().getPluralOperand(Operand.v)) {
                 throw new IllegalArgumentException("Ranges must have the same number of visible decimals: " + start + "~" + end);
             }
             this.start = start;
@@ -1183,12 +1132,13 @@ public class PluralRules implements Serializable {
     }
 
     /**
-     * A list of NumberInfo that includes all values with the same visibleFractionDigitCount.
+     * A list of FormattedNumber representing PluralRules that includes all
+     * values with the same visibleFractionDigitCount.
      * @internal CLDR
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public static class FixedDecimalSamples {
+    public static class FormattedNumberSamples {
         /**
          * @internal CLDR
          * @deprecated This API is ICU internal only.
@@ -1200,7 +1150,7 @@ public class PluralRules implements Serializable {
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public final Set<FixedDecimalRange> samples;
+        public final Set<FormattedNumberSamplesRange> samples;
         /**
          * @internal CLDR
          * @deprecated This API is ICU internal only.
@@ -1212,7 +1162,7 @@ public class PluralRules implements Serializable {
          * @param sampleType
          * @param samples
          */
-        private FixedDecimalSamples(SampleType sampleType, Set<FixedDecimalRange> samples, boolean bounded) {
+        private FormattedNumberSamples(SampleType sampleType, Set<FormattedNumberSamplesRange> samples, boolean bounded) {
             super();
             this.sampleType = sampleType;
             this.samples = samples;
@@ -1221,11 +1171,11 @@ public class PluralRules implements Serializable {
         /*
          * Parse a list of the form described in CLDR. The source must be trimmed.
          */
-        static FixedDecimalSamples parse(String source) {
+        static FormattedNumberSamples parse(String source) {
             SampleType sampleType2;
             boolean bounded2 = true;
             boolean haveBound = false;
-            Set<FixedDecimalRange> samples2 = new LinkedHashSet<>();
+            Set<FormattedNumberSamplesRange> samples2 = new LinkedHashSet<>();
 
             if (source.startsWith("integer")) {
                 sampleType2 = SampleType.INTEGER;
@@ -1248,25 +1198,25 @@ public class PluralRules implements Serializable {
                 String[] rangeParts = TILDE_SEPARATED.split(range);
                 switch (rangeParts.length) {
                 case 1:
-                    FixedDecimal sample = new FixedDecimal(rangeParts[0]);
+                    FormattedNumber sample = parseSampleNumString(rangeParts[0]);
                     checkDecimal(sampleType2, sample);
-                    samples2.add(new FixedDecimalRange(sample, sample));
+                    samples2.add(new FormattedNumberSamplesRange(sample, sample));
                     break;
                 case 2:
-                    FixedDecimal start = new FixedDecimal(rangeParts[0]);
-                    FixedDecimal end = new FixedDecimal(rangeParts[1]);
+                    FormattedNumber start = parseSampleNumString(rangeParts[0]);
+                    FormattedNumber end = parseSampleNumString(rangeParts[1]);
                     checkDecimal(sampleType2, start);
                     checkDecimal(sampleType2, end);
-                    samples2.add(new FixedDecimalRange(start, end));
+                    samples2.add(new FormattedNumberSamplesRange(start, end));
                     break;
                 default: throw new IllegalArgumentException("Ill-formed number range: " + range);
                 }
             }
-            return new FixedDecimalSamples(sampleType2, Collections.unmodifiableSet(samples2), bounded2);
+            return new FormattedNumberSamples(sampleType2, Collections.unmodifiableSet(samples2), bounded2);
         }
 
-        private static void checkDecimal(SampleType sampleType2, FixedDecimal sample) {
-            if ((sampleType2 == SampleType.INTEGER) != (sample.getVisibleDecimalDigitCount() == 0)) {
+        private static void checkDecimal(SampleType sampleType2, FormattedNumber sample) {
+            if ((sampleType2 == SampleType.INTEGER) != (sample.getFixedDecimal().getPluralOperand(Operand.v) == 0)) {  // is this double == 0 comparison fine? I think it is, just want to make sure.
                 throw new IllegalArgumentException("Ill-formed number range: " + sample);
             }
         }
@@ -1276,14 +1226,20 @@ public class PluralRules implements Serializable {
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public Set<Double> addSamples(Set<Double> result) {
-            for (FixedDecimalRange item : samples) {
+        public Set<FormattedNumber> addSamples(Set<FormattedNumber> result) {
+            for (FormattedNumberSamplesRange range : samples) {
                 // we have to convert to longs so we don't get strange double issues
-                long startDouble = item.start.getShiftedValue();
-                long endDouble = item.end.getShiftedValue();
+                double startDouble = getShiftedValue(range.start);
+                double endDouble = getShiftedValue(range.end);
+                double baseFactor = PluralRules.getBaseFactor(range.start);
 
-                for (long d = startDouble; d <= endDouble; d += 1) {
-                    result.add(d/(double)item.start.baseFactor);
+                for (double d = startDouble; d <= endDouble; d += 1) {
+                    LocalizedNumberFormatter numFmtr = NumberFormatter.withLocale(ULocale.ROOT);
+                    if (range.start.getFixedDecimal().getPluralOperand(Operand.e) != 0) {
+                        numFmtr = numFmtr.notation(Notation.compactShort());
+                    }
+                    FormattedNumber nextFmtNum = numFmtr.format(d/baseFactor);
+                    result.add(nextFmtNum);
                 }
             }
             return result;
@@ -1298,7 +1254,7 @@ public class PluralRules implements Serializable {
         public String toString() {
             StringBuilder b = new StringBuilder("@").append(sampleType.toString().toLowerCase(Locale.ENGLISH));
             boolean first = true;
-            for (FixedDecimalRange item : samples) {
+            for (FormattedNumberSamplesRange item : samples) {
                 if (first) {
                     first = false;
                 } else {
@@ -1317,7 +1273,7 @@ public class PluralRules implements Serializable {
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public Set<FixedDecimalRange> getSamples() {
+        public Set<FormattedNumberSamplesRange> getSamples() {
             return samples;
         }
 
@@ -1326,10 +1282,10 @@ public class PluralRules implements Serializable {
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public void getStartEndSamples(Set<FixedDecimal> target) {
-            for (FixedDecimalRange item : samples) {
-                target.add(item.start);
-                target.add(item.end);
+        public void getStartEndSamples(Set<FormattedNumber> target) {
+            for (FormattedNumberSamplesRange range : samples) {
+                target.add(range.start);
+                target.add(range.end);
             }
         }
     }
@@ -1610,19 +1566,19 @@ public class PluralRules implements Serializable {
         description = description.substring(x+1).trim();
         String[] constraintOrSamples = AT_SEPARATED.split(description);
         boolean sampleFailure = false;
-        FixedDecimalSamples integerSamples = null, decimalSamples = null;
+        FormattedNumberSamples integerSamples = null, decimalSamples = null;
         switch (constraintOrSamples.length) {
         case 1: break;
         case 2:
-            integerSamples = FixedDecimalSamples.parse(constraintOrSamples[1]);
+            integerSamples = FormattedNumberSamples.parse(constraintOrSamples[1]);
             if (integerSamples.sampleType == SampleType.DECIMAL) {
                 decimalSamples = integerSamples;
                 integerSamples = null;
             }
             break;
         case 3:
-            integerSamples = FixedDecimalSamples.parse(constraintOrSamples[1]);
-            decimalSamples = FixedDecimalSamples.parse(constraintOrSamples[2]);
+            integerSamples = FormattedNumberSamples.parse(constraintOrSamples[1]);
+            decimalSamples = FormattedNumberSamples.parse(constraintOrSamples[2]);
             if (integerSamples.sampleType != SampleType.INTEGER || decimalSamples.sampleType != SampleType.DECIMAL) {
                 throw new IllegalArgumentException("Must have @integer then @decimal in " + description);
             }
@@ -1857,10 +1813,10 @@ public class PluralRules implements Serializable {
         private static final long serialVersionUID = 1;
         private final String keyword;
         private final Constraint constraint;
-        private final FixedDecimalSamples integerSamples;
-        private final FixedDecimalSamples decimalSamples;
+        private final FormattedNumberSamples integerSamples;
+        private final FormattedNumberSamples decimalSamples;
 
-        public Rule(String keyword, Constraint constraint, FixedDecimalSamples integerSamples, FixedDecimalSamples decimalSamples) {
+        public Rule(String keyword, Constraint constraint, FormattedNumberSamples integerSamples, FormattedNumberSamples decimalSamples) {
             this.keyword = keyword;
             this.constraint = constraint;
             this.integerSamples = integerSamples;
@@ -1972,7 +1928,7 @@ public class PluralRules implements Serializable {
 
         public boolean isLimited(String keyword, SampleType sampleType) {
             if (hasExplicitBoundingInfo) {
-                FixedDecimalSamples mySamples = getDecimalSamples(keyword, sampleType);
+                FormattedNumberSamples mySamples = getDecimalSamples(keyword, sampleType);
                 return mySamples == null ? true : mySamples.bounded;
             }
 
@@ -2024,7 +1980,7 @@ public class PluralRules implements Serializable {
             return false;
         }
 
-        public FixedDecimalSamples getDecimalSamples(String keyword, SampleType sampleType) {
+        public FormattedNumberSamples getDecimalSamples(String keyword, SampleType sampleType) {
             for (Rule rule : rules) {
                 if (rule.getKeyword().equals(keyword)) {
                     return sampleType == SampleType.INTEGER ? rule.integerSamples : rule.decimalSamples;
@@ -2284,8 +2240,8 @@ public class PluralRules implements Serializable {
      * @return The unique value for the keyword, or NO_UNIQUE_VALUE.
      * @stable ICU 4.8
      */
-    public double getUniqueKeywordValue(String keyword) {
-        Collection<Double> values = getAllKeywordValues(keyword);
+    public FormattedNumber getUniqueKeywordValue(String keyword) {
+        Collection<FormattedNumber> values = getAllKeywordValues(keyword);
         if (values != null && values.size() == 1) {
             return values.iterator().next();
         }
@@ -2301,7 +2257,7 @@ public class PluralRules implements Serializable {
      * is immutable. It will be empty if the keyword is not defined.
      * @stable ICU 4.8
      */
-    public Collection<Double> getAllKeywordValues(String keyword) {
+    public Collection<FormattedNumber> getAllKeywordValues(String keyword) {
         return getAllKeywordValues(keyword, SampleType.INTEGER);
     }
 
@@ -2318,11 +2274,11 @@ public class PluralRules implements Serializable {
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public Collection<Double> getAllKeywordValues(String keyword, SampleType type) {
+    public Collection<FormattedNumber> getAllKeywordValues(String keyword, SampleType type) {
         if (!isLimited(keyword, type)) {
             return null;
         }
-        Collection<Double> samples = getSamples(keyword, type);
+        Collection<FormattedNumber> samples = getSamples(keyword, type);
         return samples == null ? null : Collections.unmodifiableCollection(samples);
     }
 
@@ -2336,7 +2292,7 @@ public class PluralRules implements Serializable {
      * @return a list of values matching the keyword.
      * @stable ICU 4.8
      */
-    public Collection<Double> getSamples(String keyword) {
+    public Collection<FormattedNumber> getSamples(String keyword) {
         return getSamples(keyword, SampleType.INTEGER);
     }
 
@@ -2355,14 +2311,14 @@ public class PluralRules implements Serializable {
      * @deprecated ICU internal only
      */
     @Deprecated
-    public Collection<Double> getSamples(String keyword, SampleType sampleType) {
+    public Collection<FormattedNumber> getSamples(String keyword, SampleType sampleType) {
         if (!keywords.contains(keyword)) {
             return null;
         }
-        Set<Double> result = new TreeSet<>();
+        Set<FormattedNumber> result = new TreeSet<>();
 
         if (rules.hasExplicitBoundingInfo) {
-            FixedDecimalSamples samples = rules.getDecimalSamples(keyword, sampleType);
+            FormattedNumberSamples samples = rules.getDecimalSamples(keyword, sampleType);
             return samples == null ? Collections.unmodifiableSet(result)
                     : Collections.unmodifiableSet(samples.addSamples(result));
         }
@@ -2370,36 +2326,119 @@ public class PluralRules implements Serializable {
         // hack in case the rule is created without explicit samples
         int maxCount = isLimited(keyword, sampleType) ? Integer.MAX_VALUE : 20;
 
+        LocalizedNumberFormatter numFmtr = NumberFormatter.withLocale(ULocale.ROOT);
+
         switch (sampleType) {
         case INTEGER:
             for (int i = 0; i < 200; ++i) {
-                if (!addSample(keyword, i, maxCount, result)) {
+                if (!addSample(keyword, numFmtr.format(i), maxCount, result)) {
                     break;
                 }
             }
-            addSample(keyword, 1000000, maxCount, result); // hack for Welsh
+            addSample(keyword, numFmtr.format(1000000), maxCount, result); // hack for Welsh
             break;
         case DECIMAL:
+            LocalizedNumberFormatter decNumFmtr = numFmtr.precision(Precision.minMaxFraction(1, 1));
             for (int i = 0; i < 2000; ++i) {
-                if (!addSample(keyword, new FixedDecimal(i/10d, 1), maxCount, result)) {
+                if (!addSample(keyword, decNumFmtr.format(i/10d), maxCount, result)) {
                     break;
                 }
             }
-            addSample(keyword, new FixedDecimal(1000000d, 1), maxCount, result); // hack for Welsh
+            addSample(keyword, decNumFmtr.format(1000000d), maxCount, result); // hack for Welsh
             break;
         }
         return result.size() == 0 ? null : Collections.unmodifiableSet(result);
     }
 
-    private boolean addSample(String keyword, Number sample, int maxCount, Set<Double> result) {
-        String selectedKeyword = sample instanceof FixedDecimal ? select((FixedDecimal)sample) : select(sample.doubleValue());
+    private boolean addSample(String keyword, FormattedNumber sample, int maxCount, Set<FormattedNumber> result) {
+        String selectedKeyword = select(sample);
         if (selectedKeyword.equals(keyword)) {
-            result.add(sample.doubleValue());
+            result.add(sample);
             if (--maxCount < 0) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * @internal CLDR
+     * @deprecated This API is ICU internal only
+     */
+    @Deprecated
+    private static FormattedNumber parseSampleNumString(String num) {
+        if (num.contains("e") || num.contains("c")) {
+            int ePos = num.lastIndexOf('e');
+            if (ePos < 0) {
+                ePos = num.lastIndexOf('c');
+            }
+            int expNumPos = ePos + 1;
+            String exponentStr = num.substring(expNumPos);
+            int exponent = Integer.parseInt(exponentStr);
+            String fractionStr = num.substring(0, ePos);
+
+            return NumberFormatter
+                .withLocale(ULocale.ROOT)
+                .scale(Scale.powerOfTen(exponent))
+                .notation(Notation.scientific())
+                .format(Double.parseDouble(fractionStr));  // should it be .format(BigDecimal(fractionStr))?
+        } else {
+            int numVisibleFrac = getVisibleFractionCount(num);
+            return NumberFormatter
+                .withLocale(ULocale.ROOT)
+                .precision(Precision.minMaxFraction(numVisibleFrac, numVisibleFrac))
+                .format(Double.parseDouble(num));
+        }
+    }
+
+    /**
+     * @internal CLDR
+     * @deprecated This API is ICU internal only
+     */
+    @Deprecated
+    private static int getVisibleFractionCount(String value) {
+        value = value.trim();
+        int decimalPos = value.indexOf('.') + 1;
+        if (decimalPos == 0) {
+            return 0;
+        } else {
+            return value.length() - decimalPos;
+        }
+    }
+
+    /**
+     * @internal CLDR
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    private static double getShiftedValue(FormattedNumber fn) {
+        IFixedDecimal dq = fn.getFixedDecimal();
+        double value = dq.getPluralOperand(Operand.n);
+        double exponent = dq.getPluralOperand(Operand.e);
+        if (exponent > 0) {
+            // Need to take exponent into account if we have it
+            return value;
+        } else {
+            double decimalDigits = dq.getPluralOperand(Operand.f);
+            double baseFactor = getBaseFactor(fn);
+            return value * baseFactor + decimalDigits;
+        }
+    }
+
+    private static FormattedNumber formatUnshiftedValue(LocalizedNumberFormatter origNumFtr, double newValue) {
+        return origNumFtr.format(newValue);
+    }
+
+
+    /**
+     * @internal CLDR
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    private static double getBaseFactor(FormattedNumber fn) {
+        IFixedDecimal dq = fn.getFixedDecimal();
+        double visibleDecimalDigitCount = dq.getPluralOperand(Operand.v);
+        return Math.pow(10, visibleDecimalDigitCount);
     }
 
     /**
@@ -2416,7 +2455,7 @@ public class PluralRules implements Serializable {
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public FixedDecimalSamples getDecimalSamples(String keyword, SampleType sampleType) {
+    public FormattedNumberSamples getDecimalSamples(String keyword, SampleType sampleType) {
         return rules.getDecimalSamples(keyword, sampleType);
     }
 
@@ -2531,8 +2570,8 @@ public class PluralRules implements Serializable {
      * @return the KeywordStatus
      * @draft ICU 50
      */
-    public KeywordStatus getKeywordStatus(String keyword, int offset, Set<Double> explicits,
-            Output<Double> uniqueValue) {
+    public KeywordStatus getKeywordStatus(String keyword, int offset, Set<FormattedNumber> explicits,
+            Output<FormattedNumber> uniqueValue) {
         return getKeywordStatus(keyword, offset, explicits, uniqueValue, SampleType.INTEGER);
     }
     /**
@@ -2554,8 +2593,8 @@ public class PluralRules implements Serializable {
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public KeywordStatus getKeywordStatus(String keyword, int offset, Set<Double> explicits,
-            Output<Double> uniqueValue, SampleType sampleType) {
+    public KeywordStatus getKeywordStatus(String keyword, int offset, Set<FormattedNumber> explicits,
+            Output<FormattedNumber> uniqueValue, SampleType sampleType) {
         if (uniqueValue != null) {
             uniqueValue.value = null;
         }
@@ -2568,7 +2607,7 @@ public class PluralRules implements Serializable {
             return KeywordStatus.UNBOUNDED;
         }
 
-        Collection<Double> values = getSamples(keyword, sampleType);
+        Collection<FormattedNumber> values = getSamples(keyword, sampleType);
 
         int originalSize = values.size();
 
@@ -2590,8 +2629,8 @@ public class PluralRules implements Serializable {
 
         // Compute if the quick test is insufficient.
 
-        HashSet<Double> subtractedSet = new HashSet<>(values);
-        for (Double explicit : explicits) {
+        HashSet<FormattedNumber> subtractedSet = new HashSet<>(values);
+        for (FormattedNumber explicit : explicits) {
             subtractedSet.remove(explicit - offset);
         }
         if (subtractedSet.size() == 0) {

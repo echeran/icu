@@ -51,8 +51,8 @@ import com.ibm.icu.number.UnlocalizedNumberFormatter;
 import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.PluralRules;
 import com.ibm.icu.text.PluralRules.FixedDecimal;
-import com.ibm.icu.text.PluralRules.FixedDecimalRange;
-import com.ibm.icu.text.PluralRules.FixedDecimalSamples;
+import com.ibm.icu.text.PluralRules.FormattedNumberSamples;
+import com.ibm.icu.text.PluralRules.FormattedNumberSamplesRange;
 import com.ibm.icu.text.PluralRules.KeywordStatus;
 import com.ibm.icu.text.PluralRules.PluralType;
 import com.ibm.icu.text.PluralRules.SampleType;
@@ -262,7 +262,7 @@ public class PluralRulesTest extends TestFmwk {
     public void checkNewSamples(String description, PluralRules test, String keyword, SampleType sampleType,
             String samplesString, boolean isBounded, FixedDecimal firstInRange) {
         String title = description + ", " + sampleType;
-        FixedDecimalSamples samples = test.getDecimalSamples(keyword, sampleType);
+        FormattedNumberSamples samples = test.getDecimalSamples(keyword, sampleType);
         if (samples != null) {
             assertEquals("samples; " + title, samplesString, samples.toString());
             assertEquals("bounded; " + title, isBounded, samples.bounded);
@@ -393,11 +393,11 @@ public class PluralRulesTest extends TestFmwk {
         main: for (ULocale locale : factory.getAvailableULocales()) {
             PluralRules rules = factory.forLocale(locale);
             Map<String, PluralRules> keywordToRule = new HashMap<>();
-            Collection<FixedDecimalSamples> samples = new LinkedHashSet<>();
+            Collection<FormattedNumberSamples> samples = new LinkedHashSet<>();
 
             for (String keyword : rules.getKeywords()) {
                 for (SampleType sampleType : SampleType.values()) {
-                    FixedDecimalSamples samples2 = rules.getDecimalSamples(keyword, sampleType);
+                    FormattedNumberSamples samples2 = rules.getDecimalSamples(keyword, sampleType);
                     if (samples2 != null) {
                         samples.add(samples2);
                     }
@@ -418,14 +418,14 @@ public class PluralRulesTest extends TestFmwk {
                 continue;
             }
             Map<FixedDecimal, String> collisionTest = new TreeMap();
-            for (FixedDecimalSamples sample3 : samples) {
-                Set<FixedDecimalRange> samples2 = sample3.getSamples();
+            for (FormattedNumberSamples sample3 : samples) {
+                Set<FormattedNumberSamplesRange> samples2 = sample3.getSamples();
                 if (samples2 == null) {
                     continue;
                 }
-                for (FixedDecimalRange sample : samples2) {
+                for (FormattedNumberSamplesRange sample : samples2) {
                     for (int i = 0; i < 1; ++i) {
-                        FixedDecimal item = i == 0 ? sample.start : sample.end;
+                        FormattedNumber item = i == 0 ? sample.start : sample.end;
                         collisionTest.clear();
                         for (Entry<String, PluralRules> entry : keywordToRule.entrySet()) {
                             PluralRules rule = entry.getValue();
@@ -796,8 +796,8 @@ public class PluralRulesTest extends TestFmwk {
                 if (list.size() == 0) {
                     // when the samples (meaning integer samples) are null, then then integerSamples must be, and the
                     // decimalSamples must not be
-                    FixedDecimalSamples integerSamples = rules.getDecimalSamples(keyword, SampleType.INTEGER);
-                    FixedDecimalSamples decimalSamples = rules.getDecimalSamples(keyword, SampleType.DECIMAL);
+                    FormattedNumberSamples integerSamples = rules.getDecimalSamples(keyword, SampleType.INTEGER);
+                    FormattedNumberSamples decimalSamples = rules.getDecimalSamples(keyword, SampleType.DECIMAL);
                     assertTrue(getAssertMessage("List is not null", locale, rules, keyword), integerSamples == null
                             && decimalSamples != null && decimalSamples.samples.size() != 0);
                 } else {
@@ -1317,7 +1317,7 @@ public class PluralRulesTest extends TestFmwk {
                 System.out.print("        \"" + CollectionUtilities.join(locales, ","));
                 for (StandardPluralCategories spc : set) {
                     String keyword = spc.toString();
-                    FixedDecimalSamples samples = rule.getDecimalSamples(keyword, SampleType.INTEGER);
+                    FormattedNumberSamples samples = rule.getDecimalSamples(keyword, SampleType.INTEGER);
                     System.out.print("; " + spc + ": " + samples);
                 }
                 System.out.println("\",");
