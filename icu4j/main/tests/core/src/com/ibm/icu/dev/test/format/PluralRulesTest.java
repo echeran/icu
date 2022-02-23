@@ -252,7 +252,7 @@ public class PluralRulesTest extends TestFmwk {
 
     public void checkOldSamples(String description, PluralRules rules, String keyword, SampleType sampleType,
             Double... expected) {
-        Collection<Double> oldSamples = rules.getSamples(keyword, sampleType);
+        Collection<FormattedNumber> oldSamples = rules.getSamples(keyword, sampleType);
         if (!assertEquals("getOldSamples; " + keyword + "; " + description, new HashSet(Arrays.asList(expected)),
                 oldSamples)) {
             rules.getSamples(keyword, sampleType);
@@ -417,7 +417,7 @@ public class PluralRulesTest extends TestFmwk {
             if (compactExponentLocales.contains(locale.getLanguage()) && logKnownIssue("21714", "PluralRules.select treats 1c6 as 1")) {
                 continue;
             }
-            Map<FixedDecimal, String> collisionTest = new TreeMap();
+            Map<FormattedNumber, String> collisionTest = new TreeMap();
             for (FormattedNumberSamples sample3 : samples) {
                 Set<FormattedNumberSamplesRange> samples2 = sample3.getSamples();
                 if (samples2 == null) {
@@ -465,7 +465,7 @@ public class PluralRulesTest extends TestFmwk {
     }
 
     public void checkValue(String title1, PluralRules rules, String expected, String value) {
-        FixedDecimal fdNum = new FixedDecimal(value);
+        FormattedNumber fdNum = PluralRules.parseSampleNumString(value);
 
         String result = rules.select(fdNum);
         ULocale locale = null;
@@ -738,11 +738,11 @@ public class PluralRulesTest extends TestFmwk {
         }
     }
 
-    private void assertRuleValue(String rule, double value) {
+    private void assertRuleValue(String rule, FormattedNumber value) {
         assertRuleKeyValue("a:" + rule, "a", value);
     }
 
-    private void assertRuleKeyValue(String rule, String key, double value) {
+    private void assertRuleKeyValue(String rule, String key, FormattedNumber value) {
         PluralRules pr = PluralRules.createRules(rule);
         assertEquals(rule, value, pr.getUniqueKeywordValue(key));
     }
@@ -752,21 +752,23 @@ public class PluralRulesTest extends TestFmwk {
      */
     @Test
     public void TestGetUniqueKeywordValue() {
+        LocalizedNumberFormatter fmtr = NumberFormatter.withLocale(ULocale.ROOT);
+
         assertRuleKeyValue("a: n is 1", "not_defined", PluralRules.NO_UNIQUE_VALUE); // key not defined
-        assertRuleValue("n within 2..2", 2);
-        assertRuleValue("n is 1", 1);
-        assertRuleValue("n in 2..2", 2);
+        assertRuleValue("n within 2..2", fmtr.format(2));
+        assertRuleValue("n is 1", fmtr.format(1));
+        assertRuleValue("n in 2..2", fmtr.format(2));
         assertRuleValue("n in 3..4", PluralRules.NO_UNIQUE_VALUE);
         assertRuleValue("n within 3..4", PluralRules.NO_UNIQUE_VALUE);
-        assertRuleValue("n is 2 or n is 2", 2);
-        assertRuleValue("n is 2 and n is 2", 2);
+        assertRuleValue("n is 2 or n is 2", fmtr.format(2));
+        assertRuleValue("n is 2 and n is 2", fmtr.format(2));
         assertRuleValue("n is 2 or n is 3", PluralRules.NO_UNIQUE_VALUE);
         assertRuleValue("n is 2 and n is 3", PluralRules.NO_UNIQUE_VALUE);
         assertRuleValue("n is 2 or n in 2..3", PluralRules.NO_UNIQUE_VALUE);
-        assertRuleValue("n is 2 and n in 2..3", 2);
+        assertRuleValue("n is 2 and n in 2..3", fmtr.format(2));
         assertRuleKeyValue("a: n is 1", "other", PluralRules.NO_UNIQUE_VALUE); // key matches default rule
         assertRuleValue("n in 2,3", PluralRules.NO_UNIQUE_VALUE);
-        assertRuleValue("n in 2,3..6 and n not in 2..3,5..6", 4);
+        assertRuleValue("n in 2,3..6 and n not in 2..3,5..6", fmtr.format(4));
     }
 
     /**
@@ -788,7 +790,7 @@ public class PluralRulesTest extends TestFmwk {
             logln("\nlocale: " + (locale == ULocale.ROOT ? "root" : locale.toString()) + ", rules: " + rules);
             Set<String> keywords = rules.getKeywords();
             for (String keyword : keywords) {
-                Collection<Double> list = rules.getSamples(keyword);
+                Collection<FormattedNumber> list = rules.getSamples(keyword);
                 logln("keyword: " + keyword + ", samples: " + list);
                 // with fractions, the samples can be empty and thus the list null. In that case, however, there will be
                 // FixedDecimal values.
@@ -808,7 +810,7 @@ public class PluralRulesTest extends TestFmwk {
                     if (rules.toString().contains(": j")) {
                         // hack until we remove j
                     } else {
-                        for (double value : list) {
+                        for (FormattedNumber value : list) {
                             assertEquals(getAssertMessage("Match keyword", locale, rules, keyword) + "; value '"
                                     + value + "'", keyword, rules.select(value));
                         }
@@ -887,7 +889,7 @@ public class PluralRulesTest extends TestFmwk {
                 if (valueList != null) {
                     valueList = valueList.trim();
                 }
-                Collection<Double> values;
+                Collection<FormattedNumber> values;
                 if (valueList == null || valueList.length() == 0) {
                     values = Collections.EMPTY_SET;
                 } else if ("null".equals(valueList)) {
@@ -895,11 +897,11 @@ public class PluralRulesTest extends TestFmwk {
                 } else {
                     values = new TreeSet<>();
                     for (String value : valueList.split(",")) {
-                        values.add(Double.parseDouble(value));
+                        values.add(PluralRules.parseSampleNumString(value));
                     }
                 }
 
-                Collection<Double> results = p.getAllKeywordValues(keyword);
+                Collection<FormattedNumber> results = p.getAllKeywordValues(keyword);
                 assertEquals(keyword + " in " + ruleDescription, values, results == null ? null : new HashSet(results));
 
                 if (results != null) {
@@ -976,7 +978,7 @@ public class PluralRulesTest extends TestFmwk {
                             assertEquals(getAssertMessage("computeLimited == isLimited", locale, rules, keyword),
                                     computeLimited, isLimited);
                         }
-                        Collection<Double> samples = rules.getSamples(keyword, sampleType);
+                        Collection<FormattedNumber> samples = rules.getSamples(keyword, sampleType);
                         assertNotNull(getAssertMessage("Samples must not be null", locale, rules, keyword), samples);
                         /* FixedDecimalSamples decimalSamples = */rules.getDecimalSamples(keyword, sampleType);
                         // assertNotNull(getAssertMessage("Decimal samples must be null if unlimited", locale, rules,
@@ -990,29 +992,30 @@ public class PluralRulesTest extends TestFmwk {
     @Test
     public void TestKeywords() {
         Set<String> possibleKeywords = new LinkedHashSet(Arrays.asList("zero", "one", "two", "few", "many", "other"));
+        FormattedNumber ONE_DOUBLE = NumberFormatter.withLocale(ULocale.ROOT).format(1.0d);
         Object[][][] tests = {
                 // format is locale, explicits, then triples of keyword, status, unique value.
-                { { "en", null }, { "one", KeywordStatus.UNIQUE, 1.0d }, { "other", KeywordStatus.UNBOUNDED, null } },
-                { { "pl", null }, { "one", KeywordStatus.UNIQUE, 1.0d }, { "few", KeywordStatus.UNBOUNDED, null },
+                { { "en", null }, { "one", KeywordStatus.UNIQUE, ONE_DOUBLE }, { "other", KeywordStatus.UNBOUNDED, null } },
+                { { "pl", null }, { "one", KeywordStatus.UNIQUE, ONE_DOUBLE }, { "few", KeywordStatus.UNBOUNDED, null },
                         { "many", KeywordStatus.UNBOUNDED, null },
                         { "other", KeywordStatus.SUPPRESSED, null, KeywordStatus.UNBOUNDED, null } // note that it is
                                                                                                    // suppressed in
                                                                                                    // INTEGER but not
                                                                                                    // DECIMAL
-                }, { { "en", new HashSet<>(Arrays.asList(1.0d)) }, // check that 1 is suppressed
+                }, { { "en", new HashSet<>(Arrays.asList(ONE_DOUBLE)) }, // check that 1 is suppressed
                         { "one", KeywordStatus.SUPPRESSED, null }, { "other", KeywordStatus.UNBOUNDED, null } }, };
-        Output<Double> uniqueValue = new Output<>();
+        Output<FormattedNumber> uniqueValue = new Output<>();
         for (Object[][] test : tests) {
             ULocale locale = new ULocale((String) test[0][0]);
             // NumberType numberType = (NumberType) test[1];
-            Set<Double> explicits = (Set<Double>) test[0][1];
+            Set<FormattedNumber> explicits = (Set<FormattedNumber>) test[0][1];
             PluralRules pluralRules = factory.forLocale(locale);
             LinkedHashSet<String> remaining = new LinkedHashSet(possibleKeywords);
             for (int i = 1; i < test.length; ++i) {
                 Object[] row = test[i];
                 String keyword = (String) row[0];
                 KeywordStatus statusExpected = (KeywordStatus) row[1];
-                Double uniqueExpected = (Double) row[2];
+                FormattedNumber uniqueExpected = (FormattedNumber) row[2];
                 remaining.remove(keyword);
                 KeywordStatus status = pluralRules.getKeywordStatus(keyword, 0, explicits, uniqueValue);
                 assertEquals(getAssertMessage("Unique Value", locale, pluralRules, keyword), uniqueExpected,
@@ -1020,8 +1023,8 @@ public class PluralRulesTest extends TestFmwk {
                 assertEquals(getAssertMessage("Keyword Status", locale, pluralRules, keyword), statusExpected, status);
                 if (row.length > 3) {
                     statusExpected = (KeywordStatus) row[3];
-                    uniqueExpected = (Double) row[4];
-                    status = pluralRules.getKeywordStatus(keyword, 0, explicits, uniqueValue, SampleType.DECIMAL);
+                    uniqueExpected = (FormattedNumber) row[4];
+                    status = pluralRules.getKeywordStatus(keyword, 0, NumberFormatter.withLocale(ULocale.ROOT), explicits, uniqueValue, SampleType.DECIMAL);
                     assertEquals(getAssertMessage("Unique Value - decimal", locale, pluralRules, keyword),
                             uniqueExpected, uniqueValue.value);
                     assertEquals(getAssertMessage("Keyword Status - decimal", locale, pluralRules, keyword),

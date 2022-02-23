@@ -2366,7 +2366,7 @@ public class PluralRules implements Serializable {
      * @deprecated This API is ICU internal only
      */
     @Deprecated
-    private static FormattedNumber parseSampleNumString(String num) {
+    public static FormattedNumber parseSampleNumString(String num) {
         if (num.contains("e") || num.contains("c")) {
             int ePos = num.lastIndexOf('e');
             if (ePos < 0) {
@@ -2572,7 +2572,8 @@ public class PluralRules implements Serializable {
      */
     public KeywordStatus getKeywordStatus(String keyword, int offset, Set<FormattedNumber> explicits,
             Output<FormattedNumber> uniqueValue) {
-        return getKeywordStatus(keyword, offset, explicits, uniqueValue, SampleType.INTEGER);
+        LocalizedNumberFormatter defaultFormatter = NumberFormatter.withLocale(ULocale.ROOT);
+        return getKeywordStatus(keyword, offset, defaultFormatter, explicits, uniqueValue, SampleType.INTEGER);
     }
     /**
      * Find the status for the keyword, given a certain set of explicit values.
@@ -2593,8 +2594,8 @@ public class PluralRules implements Serializable {
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public KeywordStatus getKeywordStatus(String keyword, int offset, Set<FormattedNumber> explicits,
-            Output<FormattedNumber> uniqueValue, SampleType sampleType) {
+    public KeywordStatus getKeywordStatus(String keyword, int offset, LocalizedNumberFormatter formatter,
+            Set<FormattedNumber> explicits, Output<FormattedNumber> uniqueValue, SampleType sampleType) {
         if (uniqueValue != null) {
             uniqueValue.value = null;
         }
@@ -2631,7 +2632,9 @@ public class PluralRules implements Serializable {
 
         HashSet<FormattedNumber> subtractedSet = new HashSet<>(values);
         for (FormattedNumber explicit : explicits) {
-            subtractedSet.remove(explicit - offset);
+            double valToRemove = explicit.getFixedDecimal().getPluralOperand(Operand.n) - offset;
+            FormattedNumber fmtNumToRemove = formatter.format(valToRemove);
+            subtractedSet.remove(fmtNumToRemove);
         }
         if (subtractedSet.size() == 0) {
             return KeywordStatus.SUPPRESSED;
