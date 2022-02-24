@@ -25,7 +25,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import com.ibm.icu.impl.PluralRulesLoader;
@@ -2315,7 +2314,7 @@ public class PluralRules implements Serializable {
         if (!keywords.contains(keyword)) {
             return null;
         }
-        Set<FormattedNumber> result = new TreeSet<>();
+        Set<FormattedNumber> result = new LinkedHashSet<>();
 
         if (rules.hasExplicitBoundingInfo) {
             FormattedNumberSamples samples = rules.getDecimalSamples(keyword, sampleType);

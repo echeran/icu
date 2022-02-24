@@ -895,7 +895,7 @@ public class PluralRulesTest extends TestFmwk {
                 } else if ("null".equals(valueList)) {
                     values = null;
                 } else {
-                    values = new TreeSet<>();
+                    values = new LinkedHashSet<>();
                     for (String value : valueList.split(",")) {
                         values.add(PluralRules.parseSampleNumString(value));
                     }
