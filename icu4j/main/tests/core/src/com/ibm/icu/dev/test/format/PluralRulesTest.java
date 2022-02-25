@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -417,7 +418,7 @@ public class PluralRulesTest extends TestFmwk {
             if (compactExponentLocales.contains(locale.getLanguage()) && logKnownIssue("21714", "PluralRules.select treats 1c6 as 1")) {
                 continue;
             }
-            Map<FormattedNumber, String> collisionTest = new TreeMap();
+            Map<FormattedNumber, String> collisionTest = new LinkedHashMap();
             for (FormattedNumberSamples sample3 : samples) {
                 Set<FormattedNumberSamplesRange> samples2 = sample3.getSamples();
                 if (samples2 == null) {
