@@ -45,6 +45,7 @@ import com.ibm.icu.impl.Utility;
 import com.ibm.icu.number.FormattedNumber;
 import com.ibm.icu.number.FormattedNumberRange;
 import com.ibm.icu.number.LocalizedNumberFormatter;
+import com.ibm.icu.number.Notation;
 import com.ibm.icu.number.NumberFormatter;
 import com.ibm.icu.number.NumberRangeFormatter;
 import com.ibm.icu.number.Precision;
@@ -176,19 +177,28 @@ public class PluralRulesTest extends TestFmwk {
     public void testSamples() {
         String description = "one: n is 3 or f is 5 @integer  3,19, @decimal 3.50 ~ 3.53,   …; other:  @decimal 99.0~99.2, 999.0, …";
         PluralRules test = PluralRules.createRules(description);
+        LocalizedNumberFormatter fmtr = NumberFormatter.withLocale(ULocale.ROOT);
 
         checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 3, 19", true,
-                new FixedDecimal(3));
+                fmtr.format(3));
         checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 3.50~3.53, …", false,
-                new FixedDecimal(3.5, 2));
-        checkOldSamples(description, test, "one", SampleType.INTEGER, 3d, 19d);
-        checkOldSamples(description, test, "one", SampleType.DECIMAL, 3.5d, 3.51d, 3.52d, 3.53d);
+                fmtr.precision(Precision.fixedFraction(2)).format(3.5));
+        checkOldSamples(description, test, "one", SampleType.INTEGER, fmtr.format(3d), fmtr.format(19d));
+        checkOldSamples(description, test, "one", SampleType.DECIMAL,
+                fmtr.precision(Precision.fixedFraction(2)).format(3.5d),
+                fmtr.precision(Precision.fixedFraction(2)).format(3.51d),
+                fmtr.precision(Precision.fixedFraction(2)).format(3.52d),
+                fmtr.precision(Precision.fixedFraction(2)).format(3.53d));
 
         checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "", true, null);
         checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 99.0~99.2, 999.0, …",
-                false, new FixedDecimal(99d, 1));
+                false, fmtr.precision(Precision.fixedFraction(1)).format(99d));
         checkOldSamples(description, test, "other", SampleType.INTEGER);
-        checkOldSamples(description, test, "other", SampleType.DECIMAL, 99d, 99.1, 99.2d, 999d);
+        checkOldSamples(description, test, "other", SampleType.DECIMAL,
+                fmtr.precision(Precision.fixedFraction(1)).format(99d),
+                fmtr.precision(Precision.fixedFraction(1)).format(99.1),
+                fmtr.precision(Precision.fixedFraction(1)).format(99.2d),
+                fmtr.precision(Precision.fixedFraction(1)).format(999d));
     }
 
     /**
@@ -206,18 +216,20 @@ public class PluralRulesTest extends TestFmwk {
         // Creating the PluralRules object means being able to parse numbers
         // like 1e5 and 1.1e5
         PluralRules test = PluralRules.createRules(description);
+        LocalizedNumberFormatter fmtr = NumberFormatter.withLocale(ULocale.ROOT);
+
         checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 0, 1, 1e5", true,
-                new FixedDecimal(0));
+                fmtr.format(0));
         checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 0.0~1.5, 1.1e5", true,
-                new FixedDecimal(0, 1));
+                fmtr.precision(Precision.fixedFraction(1)).format(0));
         checkNewSamples(description, test, "many", PluralRules.SampleType.INTEGER, "@integer 1000000, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, …", false,
-                new FixedDecimal(1000000));
+                fmtr.format(1000000));
         checkNewSamples(description, test, "many", PluralRules.SampleType.DECIMAL, "@decimal 2.1e6, 3.1e6, 4.1e6, 5.1e6, 6.1e6, 7.1e6, …", false,
-                FixedDecimal.createWithExponent(2.1, 1, 6));
+                fmtr.notation(Notation.compactShort()).format(2_100_000));
         checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "@integer 2~17, 100, 1000, 10000, 100000, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, …", false,
-                new FixedDecimal(2));
+                fmtr.format(2));
         checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1e5, 3.1e5, 4.1e5, 5.1e5, 6.1e5, 7.1e5, …", false,
-                new FixedDecimal(2.0, 1));
+                fmtr.precision(Precision.fixedFraction(1)).format(2.0));
     }
 
     /**
@@ -237,22 +249,24 @@ public class PluralRulesTest extends TestFmwk {
         // Note: Since `c` is currently an alias to `e`, the toString() of
         // FixedDecimal will return "1e5" even when input is "1c5".
         PluralRules test = PluralRules.createRules(description);
+        LocalizedNumberFormatter fmtr = NumberFormatter.withLocale(ULocale.ROOT);
+
         checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 0, 1, 1e5", true,
-                new FixedDecimal(0));
+                fmtr.format(0));
         checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 0.0~1.5, 1.1e5", true,
-                new FixedDecimal(0, 1));
+                fmtr.precision(Precision.fixedFraction(1)).format(0));
         checkNewSamples(description, test, "many", PluralRules.SampleType.INTEGER, "@integer 1000000, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, …", false,
-                new FixedDecimal(1000000));
+                fmtr.format(1000000));
         checkNewSamples(description, test, "many", PluralRules.SampleType.DECIMAL, "@decimal 2.1e6, 3.1e6, 4.1e6, 5.1e6, 6.1e6, 7.1e6, …", false,
-                FixedDecimal.createWithExponent(2.1, 1, 6));
+                fmtr.notation(Notation.compactShort()).precision(Precision.fixedFraction(1)).format(2_100_000));
         checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "@integer 2~17, 100, 1000, 10000, 100000, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, …", false,
-                new FixedDecimal(2));
+                fmtr.format(2));
         checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1e5, 3.1e5, 4.1e5, 5.1e5, 6.1e5, 7.1e5, …", false,
-                new FixedDecimal(2.0, 1));
+                fmtr.precision(Precision.fixedFraction(1)).format(2.0));
     }
 
     public void checkOldSamples(String description, PluralRules rules, String keyword, SampleType sampleType,
-            Double... expected) {
+            FormattedNumber... expected) {
         Collection<FormattedNumber> oldSamples = rules.getSamples(keyword, sampleType);
         if (!assertEquals("getOldSamples; " + keyword + "; " + description, new HashSet(Arrays.asList(expected)),
                 oldSamples)) {
@@ -261,13 +275,13 @@ public class PluralRulesTest extends TestFmwk {
     }
 
     public void checkNewSamples(String description, PluralRules test, String keyword, SampleType sampleType,
-            String samplesString, boolean isBounded, FixedDecimal firstInRange) {
+            String samplesString, boolean isBounded, FormattedNumber firstInRange) {
         String title = description + ", " + sampleType;
         FormattedNumberSamples samples = test.getDecimalSamples(keyword, sampleType);
         if (samples != null) {
             assertEquals("samples; " + title, samplesString, samples.toString());
             assertEquals("bounded; " + title, isBounded, samples.bounded);
-            assertEquals("first; " + title, firstInRange, samples.samples.iterator().next().start);
+            assertEquals("first; " + title, firstInRange.getFixedDecimal(), samples.samples.iterator().next().start.getFixedDecimal());
         }
         assertEquals("limited: " + title, isBounded, test.isLimited(keyword, sampleType));
     }

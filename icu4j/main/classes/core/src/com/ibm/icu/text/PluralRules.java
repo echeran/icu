@@ -1261,7 +1261,9 @@ public class PluralRules implements Serializable {
                 } else {
                     b.append(",");
                 }
-                b.append(' ').append(item);
+                // Should I use UCharacter.toLowerCase(), or be consistent with line 1256 and add less deps?
+                String lowercasedFmtNum = item.toString().toLowerCase(Locale.ENGLISH);
+                b.append(' ').append(lowercasedFmtNum);
             }
             if (!bounded) {
                 b.append(", …");
