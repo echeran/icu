@@ -1215,7 +1215,9 @@ public class PluralRules implements Serializable {
         }
 
         private static void checkDecimal(SampleType sampleType2, FormattedNumber sample) {
-            if ((sampleType2 == SampleType.INTEGER) != (sample.getFixedDecimal().getPluralOperand(Operand.v) == 0)) {  // is this double == 0 comparison fine? I think it is, just want to make sure.
+            if ((sampleType2 == SampleType.INTEGER && sample.getFixedDecimal().getPluralOperand(Operand.v) != 0) ||
+                    (sampleType2 == SampleType.DECIMAL && sample.getFixedDecimal().getPluralOperand(Operand.v) == 0
+                            && sample.getFixedDecimal().getPluralOperand(Operand.e) == 0)) {  // is this double == 0 comparison fine? I think it is, just want to make sure.
                 throw new IllegalArgumentException("Ill-formed number range: " + sample);
             }
         }
@@ -2366,10 +2368,17 @@ public class PluralRules implements Serializable {
      */
     @Deprecated
     public static FormattedNumber parseSampleNumString(String num) {
-        if (num.contains("e") || num.contains("c")) {
+        if (num.contains("e") || num.contains("c")
+                || num.contains("E") || num.contains("C")) {
             int ePos = num.lastIndexOf('e');
             if (ePos < 0) {
                 ePos = num.lastIndexOf('c');
+            }
+            if (ePos < 0) {
+                ePos = num.lastIndexOf('E');
+            }
+            if (ePos < 0) {
+                ePos = num.lastIndexOf('C');
             }
             int expNumPos = ePos + 1;
             String exponentStr = num.substring(expNumPos);
