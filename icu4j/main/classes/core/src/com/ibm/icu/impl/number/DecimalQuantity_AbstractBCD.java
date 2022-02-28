@@ -717,7 +717,7 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
         }
 
         StringBuilder sb = new StringBuilder();
-        toScientificString(sb);
+        toScientificString(sb, true);
         return Double.valueOf(sb.toString());
     }
 
@@ -1073,17 +1073,21 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
 
     public String toScientificString() {
         StringBuilder sb = new StringBuilder();
-        toScientificString(sb);
+        toScientificString(sb, true);
         return sb.toString();
     }
 
-    public void toScientificString(StringBuilder result) {
+    public void toScientificString(StringBuilder result, boolean scientificNotExponent) {
         assert(!isApproximate);
         if (isNegative()) {
             result.append('-');
         }
         if (precision == 0) {
-            result.append("0E+0");
+            if (scientificNotExponent) {
+                result.append("0E+0");
+            } else {
+                result.append("0c+0");
+            }
             return;
         }
         // NOTE: It is not safe to add to lOptPos (aka maxInt) or subtract from
@@ -1098,7 +1102,11 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
                 result.append((char) ('0' + getDigitPos(p)));
             }
         }
-        result.append('E');
+        if (scientificNotExponent) {
+            result.append('E');
+        } else {
+            result.append('c');
+        }
         int _scale = upperPos + scale + exponent;
         if (_scale == Integer.MIN_VALUE) {
             result.append("-2147483648");
@@ -1119,6 +1127,19 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
             result.insert(insertIndex, (char) ('0' + rem));
             _scale = quot;
         }
+    }
+
+    @Override
+    public String toExponentString() {
+        StringBuilder sb = new StringBuilder();
+
+        if (exponent == 0) {
+            toPlainString(sb);
+        } else {
+            toScientificString(sb, false);
+        }
+
+        return sb.toString();
     }
 
     @Override

@@ -1125,7 +1125,7 @@ public class PluralRules implements Serializable {
         @Deprecated
         @Override
         public String toString() {
-            return start + (end == start ? "" : "~" + end);
+            return start.toExponentString() + (end == start ? "" : "~" + end.toExponentString());
         }
     }
 
@@ -1262,9 +1262,8 @@ public class PluralRules implements Serializable {
                 } else {
                     b.append(",");
                 }
-                // Should I use UCharacter.toLowerCase(), or be consistent with line 1256 and add less deps?
-                String lowercasedFmtNum = item.toString().toLowerCase(Locale.ENGLISH);
-                b.append(' ').append(lowercasedFmtNum);
+                String dqStr = item.toString();
+                b.append(' ').append(dqStr);
             }
             if (!bounded) {
                 b.append(", …");
