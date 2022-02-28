@@ -1110,7 +1110,7 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
         } else if (_scale < 0) {
             _scale *= -1;
             result.append('-');
-        } else {
+        } else if (scientificNotExponent) {
             result.append('+');
         }
         if (_scale == 0) {
