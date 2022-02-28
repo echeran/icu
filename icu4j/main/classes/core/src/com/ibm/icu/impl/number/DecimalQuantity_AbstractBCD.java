@@ -1042,10 +1042,6 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
         if (isNegative()) {
             result.append('-');
         }
-        if (precision == 0) {
-            result.append('0');
-            return;
-        }
 
         int upper = scale + precision + exponent - 1;
         int lower = scale + exponent;
