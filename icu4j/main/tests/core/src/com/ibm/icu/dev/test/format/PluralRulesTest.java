@@ -250,17 +250,17 @@ public class PluralRulesTest extends TestFmwk {
         // FixedDecimal will return "1e5" even when input is "1c5".
         PluralRules test = PluralRules.createRules(description);
 
-        checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 0, 1, 1e5", true,
+        checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 0, 1, 1c5", true,
                 new DecimalQuantity_DualStorageBCD(0));
-        checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 0.0~1.5, 1.1e5", true,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("0.0")));
-        checkNewSamples(description, test, "many", PluralRules.SampleType.INTEGER, "@integer 1000000, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, …", false,
+        checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 0.0~1.5, 1.1c5", true,
+                PluralRules.parseSampleNumString("0.0"));
+        checkNewSamples(description, test, "many", PluralRules.SampleType.INTEGER, "@integer 1000000, 2c6, 3c6, 4c6, 5c6, 6c6, 7c6, …", false,
                 new DecimalQuantity_DualStorageBCD(1000000));
-        checkNewSamples(description, test, "many", PluralRules.SampleType.DECIMAL, "@decimal 2.1e6, 3.1e6, 4.1e6, 5.1e6, 6.1e6, 7.1e6, …", false,
+        checkNewSamples(description, test, "many", PluralRules.SampleType.DECIMAL, "@decimal 2.1c6, 3.1c6, 4.1c6, 5.1c6, 6.1c6, 7.1c6, …", false,
                 new DecimalQuantity_DualStorageBCD(new BigDecimal("2.1"), 6));
-        checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "@integer 2~17, 100, 1000, 10000, 100000, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, …", false,
+        checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "@integer 2~17, 100, 1000, 10000, 100000, 2c5, 3c5, 4c5, 5c5, 6c5, 7c5, …", false,
                 new DecimalQuantity_DualStorageBCD(2));
-        checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1e5, 3.1e5, 4.1e5, 5.1e5, 6.1e5, 7.1e5, …", false,
+        checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1c5, 3.1c5, 4.1c5, 5.1c5, 6.1c5, 7.1c5, …", false,
                 new DecimalQuantity_DualStorageBCD(new BigDecimal("2.0")));
     }
 
