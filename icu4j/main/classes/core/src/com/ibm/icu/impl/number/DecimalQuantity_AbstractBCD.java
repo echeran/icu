@@ -1128,14 +1128,43 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
     @Override
     public String toExponentString() {
         StringBuilder sb = new StringBuilder();
+        toExponentString(sb);
+        return sb.toString();
+    }
 
-        if (exponent == 0) {
-            toPlainString(sb);
-        } else {
-            toScientificString(sb, false);
+    private void toExponentString(StringBuilder result) {
+        assert(!isApproximate);
+        if (isNegative()) {
+            result.append('-');
         }
 
-        return sb.toString();
+        int upper = scale + precision - 1;
+        int lower = scale;
+        if (upper < lReqPos - 1) {
+            upper = lReqPos - 1;
+        }
+        if (lower > rReqPos) {
+            lower = rReqPos;
+        }
+
+        int p = upper;
+        if (p < 0) {
+            result.append('0');
+        }
+        for (; p >= 0; p--) {
+            result.append((char) ('0' + getDigitPos(p - scale)));
+        }
+        if (lower < 0) {
+            result.append('.');
+        }
+        for(; p >= lower; p--) {
+            result.append((char) ('0' + getDigitPos(p - scale)));
+        }
+
+        if (exponent != 0) {
+            result.append('c');
+            result.append(exponent);
+        }
     }
 
     @Override

@@ -428,6 +428,7 @@ public class PluralRulesTest extends TestFmwk {
                 }
                 keywordToRule.put(keyword, singleRule);
             }
+
             if (compactExponentLocales.contains(locale.getLanguage()) && logKnownIssue("21714", "PluralRules.select treats 1c6 as 1")) {
                 continue;
             }

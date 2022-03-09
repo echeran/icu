@@ -66,6 +66,7 @@ class NumberFormatterApiTest : public IntlTestWithFieldPosition {
     void unitUsageSkeletons();
     void unitCurrency();
     void unitInflections();
+    void unitNounClass();
     void unitGender();
     void unitNotConvertible();
     void unitPercent();
@@ -75,6 +76,7 @@ class NumberFormatterApiTest : public IntlTestWithFieldPosition {
     void roundingFractionFigures();
     void roundingOther();
     void roundingIncrementRegressionTest();
+    void roundingPriorityCoverageTest();
     void grouping();
     void padding();
     void integerWidth();
@@ -206,6 +208,7 @@ class DecimalQuantityTest : public IntlTest {
     void testNickelRounding();
     void testScientificAndCompactSuppressedExponent();
     void testSuppressedExponentUnchangedByInitialScaling();
+    void testDecimalQuantityParseFormatRoundTrip();
 
     void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par = 0) override;
 
