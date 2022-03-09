@@ -220,6 +220,9 @@ public class PluralRulesTest extends TestFmwk {
         // like 1e5 and 1.1e5
         PluralRules test = PluralRules.createRules(description);
 
+        // Currently, 'c' is the canonical representation of numbers with suppressed exponent, and 'e'
+        // is an alias. The test helpers here skip 'e' for round-trip sample string parsing and formatting.
+
         checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 0, 1, 1e5", true,
                 DecimalQuantity_DualStorageBCD.fromExponentString("0"));
         checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 0.0~1.5, 1.1e5", true,
@@ -280,7 +283,14 @@ public class PluralRulesTest extends TestFmwk {
         String title = description + ", " + sampleType;
         DecimalQuantitySamples samples = test.getDecimalSamples(keyword, sampleType);
         if (samples != null) {
-            assertEquals("samples; " + title, samplesString, samples.toString());
+
+            // for now, skip round-trip formatting test when samples string uses
+            // 'e' instead of 'c' for compact notation
+
+            if (!samplesString.matches(".*\\d+e[-]?\\d+.*")) {
+                assertEquals("samples; " + title, samplesString, samples.toString());
+            }
+
             assertEquals("bounded; " + title, isBounded, samples.bounded);
             assertEquals("first; " + title, firstInRange, samples.samples.iterator().next().start);
         }
@@ -1009,7 +1019,7 @@ public class PluralRulesTest extends TestFmwk {
     @Test
     public void TestKeywords() {
         Set<String> possibleKeywords = new LinkedHashSet(Arrays.asList("zero", "one", "two", "few", "many", "other"));
-        DecimalQuantity ONE_DOUBLE = new DecimalQuantity_DualStorageBCD(new BigDecimal("1.0"));
+        DecimalQuantity ONE_DOUBLE = DecimalQuantity_DualStorageBCD.fromExponentString("1.0");
         Object[][][] tests = {
                 // format is locale, explicits, then triples of keyword, status, unique value.
                 { { "en", null }, { "one", KeywordStatus.UNIQUE, ONE_DOUBLE }, { "other", KeywordStatus.UNBOUNDED, null } },
