@@ -717,7 +717,7 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
         }
 
         StringBuilder sb = new StringBuilder();
-        toScientificString(sb, true);
+        toScientificString(sb);
         return Double.valueOf(sb.toString());
     }
 
@@ -1069,21 +1069,17 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
 
     public String toScientificString() {
         StringBuilder sb = new StringBuilder();
-        toScientificString(sb, true);
+        toScientificString(sb);
         return sb.toString();
     }
 
-    public void toScientificString(StringBuilder result, boolean scientificNotExponent) {
+    public void toScientificString(StringBuilder result) {
         assert(!isApproximate);
         if (isNegative()) {
             result.append('-');
         }
         if (precision == 0) {
-            if (scientificNotExponent) {
-                result.append("0E+0");
-            } else {
-                result.append("0c+0");
-            }
+            result.append("0E+0");
             return;
         }
         // NOTE: It is not safe to add to lOptPos (aka maxInt) or subtract from
@@ -1098,11 +1094,7 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
                 result.append((char) ('0' + getDigitPos(p)));
             }
         }
-        if (scientificNotExponent) {
-            result.append('E');
-        } else {
-            result.append('c');
-        }
+        result.append('E');
         int _scale = upperPos + scale + exponent;
         if (_scale == Integer.MIN_VALUE) {
             result.append("-2147483648");
@@ -1110,7 +1102,7 @@ public abstract class DecimalQuantity_AbstractBCD implements DecimalQuantity {
         } else if (_scale < 0) {
             _scale *= -1;
             result.append('-');
-        } else if (scientificNotExponent) {
+        } else {
             result.append('+');
         }
         if (_scale == 0) {

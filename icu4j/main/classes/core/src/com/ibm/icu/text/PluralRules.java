@@ -15,7 +15,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1196,13 +1195,16 @@ public class PluralRules implements Serializable {
                 String[] rangeParts = TILDE_SEPARATED.split(range);
                 switch (rangeParts.length) {
                 case 1:
-                    DecimalQuantity sample = parseSampleNumString(rangeParts[0]);
+                    DecimalQuantity sample =
+                        DecimalQuantity_DualStorageBCD.fromExponentString(rangeParts[0]);
                     checkDecimal(sampleType2, sample);
                     samples2.add(new DecimalQuantitySamplesRange(sample, sample));
                     break;
                 case 2:
-                    DecimalQuantity start = parseSampleNumString(rangeParts[0]);
-                    DecimalQuantity end = parseSampleNumString(rangeParts[1]);
+                    DecimalQuantity start =
+                            DecimalQuantity_DualStorageBCD.fromExponentString(rangeParts[0]);
+                    DecimalQuantity end =
+                            DecimalQuantity_DualStorageBCD.fromExponentString(rangeParts[1]);
                     checkDecimal(sampleType2, start);
                     checkDecimal(sampleType2, end);
                     samples2.add(new DecimalQuantitySamplesRange(start, end));
@@ -2361,43 +2363,6 @@ public class PluralRules implements Serializable {
             }
         }
         return true;
-    }
-
-    /**
-     * @internal CLDR
-     * @deprecated This API is ICU internal only
-     */
-    @Deprecated
-    public static DecimalQuantity parseSampleNumString(String num) {
-        if (num.contains("e") || num.contains("c")
-                || num.contains("E") || num.contains("C")) {
-            int ePos = num.lastIndexOf('e');
-            if (ePos < 0) {
-                ePos = num.lastIndexOf('c');
-            }
-            if (ePos < 0) {
-                ePos = num.lastIndexOf('E');
-            }
-            if (ePos < 0) {
-                ePos = num.lastIndexOf('C');
-            }
-            int expNumPos = ePos + 1;
-            String exponentStr = num.substring(expNumPos);
-            int exponent = Integer.parseInt(exponentStr);
-            String fractionStr = num.substring(0, ePos);
-
-            int numFracDigit = getVisibleFractionCount(fractionStr);
-
-            DecimalQuantity_DualStorageBCD dq = new DecimalQuantity_DualStorageBCD(new BigDecimal(fractionStr), exponent);
-            dq.setMinFraction(numFracDigit);
-
-            return dq;
-        } else {
-            int numFracDigit = getVisibleFractionCount(num);
-            DecimalQuantity_DualStorageBCD dq = new DecimalQuantity_DualStorageBCD(new BigDecimal(num));
-            dq.setMinFraction(numFracDigit);
-            return dq;
-        }
     }
 
     /**

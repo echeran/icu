@@ -56,11 +56,6 @@ public final class DecimalQuantity_DualStorageBCD extends DecimalQuantity_Abstra
         setToBigDecimal(input);
     }
 
-    public DecimalQuantity_DualStorageBCD(BigDecimal fraction, int exponent) {
-        setToBigDecimal(fraction);
-        this.adjustExponent(exponent);
-    }
-
     public DecimalQuantity_DualStorageBCD(DecimalQuantity_DualStorageBCD other) {
         copyFrom(other);
     }

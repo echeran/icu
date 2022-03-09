@@ -181,25 +181,27 @@ public class PluralRulesTest extends TestFmwk {
         PluralRules test = PluralRules.createRules(description);
 
         checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 3, 19", true,
-                new DecimalQuantity_DualStorageBCD(3));
+                DecimalQuantity_DualStorageBCD.fromExponentString("3"));
         checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 3.50~3.53, …", false,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("3.50")));
-        checkOldSamples(description, test, "one", SampleType.INTEGER, new DecimalQuantity_DualStorageBCD(3), new DecimalQuantity_DualStorageBCD(19));
+                DecimalQuantity_DualStorageBCD.fromExponentString("3.50"));
+        checkOldSamples(description, test, "one", SampleType.INTEGER,
+                DecimalQuantity_DualStorageBCD.fromExponentString("3"),
+                DecimalQuantity_DualStorageBCD.fromExponentString("19"));
         checkOldSamples(description, test, "one", SampleType.DECIMAL,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("3.50")),
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("3.51")),
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("3.52")),
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("3.53")));
+                DecimalQuantity_DualStorageBCD.fromExponentString("3.50"),
+                DecimalQuantity_DualStorageBCD.fromExponentString("3.51"),
+                DecimalQuantity_DualStorageBCD.fromExponentString("3.52"),
+                DecimalQuantity_DualStorageBCD.fromExponentString("3.53"));
 
         checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "", true, null);
         checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 99.0~99.2, 999.0, …",
-                false, new DecimalQuantity_DualStorageBCD(new BigDecimal("99.0")));
+                false, DecimalQuantity_DualStorageBCD.fromExponentString("99.0"));
         checkOldSamples(description, test, "other", SampleType.INTEGER);
         checkOldSamples(description, test, "other", SampleType.DECIMAL,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("99.0")),
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("99.1")),
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("99.2")),
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("999.0")));
+                DecimalQuantity_DualStorageBCD.fromExponentString("99.0"),
+                DecimalQuantity_DualStorageBCD.fromExponentString("99.1"),
+                DecimalQuantity_DualStorageBCD.fromExponentString("99.2"),
+                DecimalQuantity_DualStorageBCD.fromExponentString("999.0"));
     }
 
     /**
@@ -219,17 +221,17 @@ public class PluralRulesTest extends TestFmwk {
         PluralRules test = PluralRules.createRules(description);
 
         checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 0, 1, 1e5", true,
-                new DecimalQuantity_DualStorageBCD(0));
+                DecimalQuantity_DualStorageBCD.fromExponentString("0"));
         checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 0.0~1.5, 1.1e5", true,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("0.0")));
+                DecimalQuantity_DualStorageBCD.fromExponentString("0.0"));
         checkNewSamples(description, test, "many", PluralRules.SampleType.INTEGER, "@integer 1000000, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, …", false,
-                new DecimalQuantity_DualStorageBCD(1000000));
+                DecimalQuantity_DualStorageBCD.fromExponentString("1000000"));
         checkNewSamples(description, test, "many", PluralRules.SampleType.DECIMAL, "@decimal 2.1e6, 3.1e6, 4.1e6, 5.1e6, 6.1e6, 7.1e6, …", false,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("2.1"), 6));
+                DecimalQuantity_DualStorageBCD.fromExponentString("2.1c6"));
         checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "@integer 2~17, 100, 1000, 10000, 100000, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, …", false,
-                new DecimalQuantity_DualStorageBCD(2));
+                DecimalQuantity_DualStorageBCD.fromExponentString("2"));
         checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1e5, 3.1e5, 4.1e5, 5.1e5, 6.1e5, 7.1e5, …", false,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("2.0")));
+                DecimalQuantity_DualStorageBCD.fromExponentString("2.0"));
     }
 
     /**
@@ -251,17 +253,17 @@ public class PluralRulesTest extends TestFmwk {
         PluralRules test = PluralRules.createRules(description);
 
         checkNewSamples(description, test, "one", PluralRules.SampleType.INTEGER, "@integer 0, 1, 1c5", true,
-                new DecimalQuantity_DualStorageBCD(0));
+                DecimalQuantity_DualStorageBCD.fromExponentString("0"));
         checkNewSamples(description, test, "one", PluralRules.SampleType.DECIMAL, "@decimal 0.0~1.5, 1.1c5", true,
-                PluralRules.parseSampleNumString("0.0"));
+                DecimalQuantity_DualStorageBCD.fromExponentString("0.0"));
         checkNewSamples(description, test, "many", PluralRules.SampleType.INTEGER, "@integer 1000000, 2c6, 3c6, 4c6, 5c6, 6c6, 7c6, …", false,
-                new DecimalQuantity_DualStorageBCD(1000000));
+                DecimalQuantity_DualStorageBCD.fromExponentString("1000000"));
         checkNewSamples(description, test, "many", PluralRules.SampleType.DECIMAL, "@decimal 2.1c6, 3.1c6, 4.1c6, 5.1c6, 6.1c6, 7.1c6, …", false,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("2.1"), 6));
+                DecimalQuantity_DualStorageBCD.fromExponentString("2.1c6"));
         checkNewSamples(description, test, "other", PluralRules.SampleType.INTEGER, "@integer 2~17, 100, 1000, 10000, 100000, 2c5, 3c5, 4c5, 5c5, 6c5, 7c5, …", false,
-                new DecimalQuantity_DualStorageBCD(2));
+                DecimalQuantity_DualStorageBCD.fromExponentString("2"));
         checkNewSamples(description, test, "other", PluralRules.SampleType.DECIMAL, "@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1c5, 3.1c5, 4.1c5, 5.1c5, 6.1c5, 7.1c5, …", false,
-                new DecimalQuantity_DualStorageBCD(new BigDecimal("2.0")));
+                DecimalQuantity_DualStorageBCD.fromExponentString("2.0"));
     }
 
     public void checkOldSamples(String description, PluralRules rules, String keyword, SampleType sampleType,
@@ -480,7 +482,7 @@ public class PluralRulesTest extends TestFmwk {
     }
 
     public void checkValue(String title1, PluralRules rules, String expected, String value) {
-        DecimalQuantity dqNum = PluralRules.parseSampleNumString(value);
+        DecimalQuantity dqNum = DecimalQuantity_DualStorageBCD.fromExponentString(value);
 
         String result = rules.select(dqNum);
         ULocale locale = null;
@@ -912,7 +914,7 @@ public class PluralRulesTest extends TestFmwk {
                 } else {
                     values = new LinkedHashSet<>();
                     for (String value : valueList.split(",")) {
-                        values.add(PluralRules.parseSampleNumString(value));
+                        values.add(DecimalQuantity_DualStorageBCD.fromExponentString(value));
                     }
                 }
 
