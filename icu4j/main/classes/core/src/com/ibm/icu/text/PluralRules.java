@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1231,19 +1232,19 @@ public class PluralRules implements Serializable {
         @Deprecated
         public Set<DecimalQuantity> addSamples(Set<DecimalQuantity> result) {
             for (DecimalQuantitySamplesRange range : samples) {
-                // we have to convert to longs so we don't get strange double issues
                 DecimalQuantity start = range.start;
-                double startDouble = start.toDouble();
-                double endDouble = range.end.toDouble();
-                double baseFactor = PluralRules.getBaseFactor(range.start);
+                DecimalQuantity end = range.end;
+                int numFracDigit = (int) start.getPluralOperand(Operand.v);
+                BigDecimal incrementBd = BigDecimal.ONE.movePointLeft(numFracDigit);
 
-                for (double d = startDouble; d <= endDouble; d += 1) {
-                    double nextDqNum = d/baseFactor;
-                    DecimalQuantity_DualStorageBCD nextDq = new DecimalQuantity_DualStorageBCD(nextDqNum);
-                    int startExp = start.getExponent();
-                    nextDq.adjustExponent(startExp);
-                    nextDq.adjustMagnitude(-startExp);
-                    result.add(nextDq);
+                for (DecimalQuantity dq = start.createCopy(); dq.toDouble() <= end.toDouble(); ) {
+                    result.add(dq);
+
+                    // Increment dq for next iteration
+                    java.math.BigDecimal dqBd = dq.toBigDecimal();
+                    java.math.BigDecimal newDqBd = dqBd.add(incrementBd);
+                    dq = new DecimalQuantity_DualStorageBCD(newDqBd);
+                    dq.setMinFraction(numFracDigit);
                 }
             }
             return result;

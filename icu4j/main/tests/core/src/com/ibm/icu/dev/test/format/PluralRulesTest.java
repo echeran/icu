@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -272,8 +271,14 @@ public class PluralRulesTest extends TestFmwk {
     public void checkOldSamples(String description, PluralRules rules, String keyword, SampleType sampleType,
             DecimalQuantity... expected) {
         Collection<DecimalQuantity> oldSamples = rules.getSamples(keyword, sampleType);
-        if (!assertEquals("getOldSamples; " + keyword + "; " + description, new HashSet(Arrays.asList(expected)),
-                oldSamples)) {
+
+        // Collect actual (oldSamples) and expected (expectedSamplesList) into the
+        // same concrete collection for comparison purposes.
+        ArrayList<DecimalQuantity> oldSamplesList = new ArrayList(oldSamples);
+        ArrayList<DecimalQuantity> expectedSamplesList = new ArrayList(Arrays.asList(expected));
+
+        if (!assertEquals("getOldSamples; " + keyword + "; " + description, expectedSamplesList,
+                oldSamplesList)) {
             rules.getSamples(keyword, sampleType);
         }
     }
@@ -929,7 +934,7 @@ public class PluralRulesTest extends TestFmwk {
                 }
 
                 Collection<DecimalQuantity> results = p.getAllKeywordValues(keyword);
-                assertEquals(keyword + " in " + ruleDescription, values, results == null ? null : new HashSet(results));
+                assertEquals(keyword + " in " + ruleDescription, values, results == null ? null : new LinkedHashSet(results));
 
                 if (results != null) {
                     try {
