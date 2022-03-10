@@ -1290,8 +1290,13 @@ public class PluralRulesTest extends TestFmwk {
 
     @Test
     public void TestLocales() {
+        // This test will fail when the locale snapshot gets out of sync with the real CLDR data.
+        // In that case, temporarily use "if (true)",
+        // copy & paste the output into the initializer above,
+        // and revert to "if (false)" for normal testing.
         if (false) {
             generateLOCALE_SNAPSHOT();
+            return;
         }
         for (String test : LOCALE_SNAPSHOT) {
             test = test.trim();
@@ -1300,10 +1305,6 @@ public class PluralRulesTest extends TestFmwk {
                 ULocale locale = new ULocale(localeString);
                 if (factory.hasOverride(locale)) {
                     continue; // skip for now
-                }
-                if (compactExponentLocales.contains(locale.getLanguage()) && logKnownIssue("21322", "PluralRules::getSamples cannot distinguish 1e5 from 100000")) {
-                    // or logKnownIssue("21714", "PluralRules.select treats 1c6 as 1") ?
-                    continue;
                 }
                 PluralRules rules = factory.forLocale(locale);
                 for (int i = 1; i < parts.length; ++i) {
@@ -1363,22 +1364,20 @@ public class PluralRulesTest extends TestFmwk {
 
     static final String[] LOCALE_SNAPSHOT = {
             // [other]
-            "bm,bo,dz,id,ig,ii,in,ja,jbo,jv,jw,kde,kea,km,ko,lkt,lo,ms,my,nqo,root,sah,ses,sg,th,to,vi,wo,yo,zh; other: @integer 0~15, 100, 1000, 10000, 100000, 1000000, …",
+            "bm,bo,dz,hnj,id,ig,ii,ja,jbo,jv,kde,kea,km,ko,lkt,lo,ms,my,nqo,osa,root,sah,ses,sg,su,th,to,tpi,vi,wo,yo,yue,zh; other: @integer 0~15, 100, 1000, 10000, 100000, 1000000, …",
 
             // [one, other]
-            "am,bn,fa,gu,hi,kn,mr,zu; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
+            "am,as,bn,doi,fa,gu,hi,kn,pcm,zu; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
             "ff,hy,kab; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
-            "ast,ca,de,en,et,fi,fy,gl,it,ji,nl,sv,sw,ur,yi; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
-            "pt; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
+            "ast,ca,de,en,et,fi,fy,gl,ia,io,lij,nl,sc,scn,sv,sw,ur,yi; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
             "si; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
             "ak,bho,guw,ln,mg,nso,pa,ti,wa; one: @integer 0, 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
             "tzm; one: @integer 0, 1, 11~24; other: @integer 2~10, 100~106, 1000, 10000, 100000, 1000000, …",
-            "af,asa,az,bem,bez,bg,brx,cgg,chr,ckb,dv,ee,el,eo,es,eu,fo,fur,gsw,ha,haw,hu,jgo,jmc,ka,kaj,kcg,kk,kkj,kl,ks,ksb,ku,ky,lb,lg,mas,mgo,ml,mn,nah,nb,nd,ne,nn,nnh,no,nr,ny,nyn,om,or,os,pap,ps,rm,rof,rwk,saq,seh,sn,so,sq,ss,ssy,st,syr,ta,te,teo,tig,tk,tn,tr,ts,ug,uz,ve,vo,vun,wae,xh,xog; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
-            "pt_PT; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
+            "af,an,asa,az,bal,bem,bez,bg,brx,ce,cgg,chr,ckb,dv,ee,el,eo,eu,fo,fur,gsw,ha,haw,hu,jgo,jmc,ka,kaj,kcg,kk,kkj,kl,ks,ksb,ku,ky,lb,lg,mas,mgo,ml,mn,mr,nah,nb,nd,ne,nn,nnh,no,nr,ny,nyn,om,or,os,pap,ps,rm,rof,rwk,saq,sd,sdh,seh,sn,so,sq,ss,ssy,st,syr,ta,te,teo,tig,tk,tn,tr,ts,ug,uz,ve,vo,vun,wae,xh,xog; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
             "da; one: @integer 1; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
             "is; one: @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
             "mk; one: @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, …",
-            "fil,tl; one: @integer 0~3, 5, 7, 8, 10~13, 15, 17, 18, 20, 21, 100, 1000, 10000, 100000, 1000000, …; other: @integer 4, 6, 9, 14, 16, 19, 24, 26, 104, 1004, …",
+            "ceb,fil; one: @integer 0~3, 5, 7, 8, 10~13, 15, 17, 18, 20, 21, 100, 1000, 10000, 100000, 1000000, …; other: @integer 4, 6, 9, 14, 16, 19, 24, 26, 104, 1004, …",
 
             // [zero, one, other]
             "lag; zero: @integer 0; one: @integer 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
@@ -1386,22 +1385,26 @@ public class PluralRulesTest extends TestFmwk {
             "ksh; zero: @integer 0; one: @integer 1; other: @integer 2~17, 100, 1000, 10000, 100000, 1000000, …",
 
             // [one, two, other]
-            "iu,naq,se,sma,smi,smj,smn,sms; one: @integer 1; two: @integer 2; other: @integer 0, 3~17, 100, 1000, 10000, 100000, 1000000, …",
-
-            // [one, many, other]
-            "fr; one: @integer 0, 1; many: @integer 1000000; other: @integer 2~17, 100, 1000, 10000, 100000, …",
+            "iu,naq,sat,se,sma,smi,smj,smn,sms; one: @integer 1; two: @integer 2; other: @integer 0, 3~17, 100, 1000, 10000, 100000, 1000000, …",
 
             // [one, few, other]
             "shi; one: @integer 0, 1; few: @integer 2~10; other: @integer 11~26, 100, 1000, 10000, 100000, 1000000, …",
-            "mo,ro; one: @integer 1; few: @integer 0, 2~16, 102, 1002, …; other: @integer 20~35, 100, 1000, 10000, 100000, 1000000, …",
-            "bs,hr,sh,sr; one: @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …; few: @integer 2~4, 22~24, 32~34, 42~44, 52~54, 62, 102, 1002, …; other: @integer 0, 5~19, 100, 1000, 10000, 100000, 1000000, …",
+            "ro; one: @integer 1; few: @integer 0, 2~16, 102, 1002, …; other: @integer 20~35, 100, 1000, 10000, 100000, 1000000, …",
+            "bs,hr,sr,sr_Latn; one: @integer 1, 21, 31, 41, 51, 61, 71, 81, 101, 1001, …; few: @integer 2~4, 22~24, 32~34, 42~44, 52~54, 62, 102, 1002, …; other: @integer 0, 5~19, 100, 1000, 10000, 100000, 1000000, …",
+
+            // [one, many, other]
+            "fr; one: @integer 0, 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 2~17, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
+            "pt; one: @integer 0, 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 2~17, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
+            "it,pt_PT; one: @integer 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
+            "es; one: @integer 1; many: @integer 1000000, 1c6, 2c6, 3c6, 4c6, 5c6, 6c6, …; other: @integer 0, 2~16, 100, 1000, 10000, 100000, 1c3, 2c3, 3c3, 4c3, 5c3, 6c3, …",
 
             // [one, two, few, other]
             "gd; one: @integer 1, 11; two: @integer 2, 12; few: @integer 3~10, 13~19; other: @integer 0, 20~34, 100, 1000, 10000, 100000, 1000000, …",
+            "dsb,hsb; one: @integer 1, 101, 201, 301, 401, 501, 601, 701, 1001, …; two: @integer 2, 102, 202, 302, 402, 502, 602, 702, 1002, …; few: @integer 3, 4, 103, 104, 203, 204, 303, 304, 403, 404, 503, 504, 603, 604, 703, 704, 1003, …; other: @integer 0, 5~19, 100, 1000, 10000, 100000, 1000000, …",
             "sl; one: @integer 1, 101, 201, 301, 401, 501, 601, 701, 1001, …; two: @integer 2, 102, 202, 302, 402, 502, 602, 702, 1002, …; few: @integer 3, 4, 103, 104, 203, 204, 303, 304, 403, 404, 503, 504, 603, 604, 703, 704, 1003, …; other: @integer 0, 5~19, 100, 1000, 10000, 100000, 1000000, …",
 
             // [one, two, many, other]
-            "he,iw; one: @integer 1; two: @integer 2; many: @integer 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000, 10000, 100000, 1000000, …; other: @integer 0, 3~17, 101, 1001, …",
+            "he; one: @integer 1; two: @integer 2; many: @integer 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000, 10000, 100000, 1000000, …; other: @integer 0, 3~17, 101, 1001, …",
 
             // [one, few, many, other]
             "cs,sk; one: @integer 1; few: @integer 2~4; many: null; other: @integer 0, 5~19, 100, 1000, 10000, 100000, 1000000, …",
@@ -1417,9 +1420,9 @@ public class PluralRulesTest extends TestFmwk {
             "gv; one: @integer 1, 11, 21, 31, 41, 51, 61, 71, 101, 1001, …; two: @integer 2, 12, 22, 32, 42, 52, 62, 72, 102, 1002, …; few: @integer 0, 20, 40, 60, 80, 100, 120, 140, 1000, 10000, 100000, 1000000, …; many: null; other: @integer 3~10, 13~19, 23, 103, 1003, …",
 
             // [zero, one, two, few, many, other]
-            "ar; zero: @integer 0; one: @integer 1; two: @integer 2; few: @integer 3~10, 103~110, 1003, …; many: @integer 11~26, 111, 1011, …; other: @integer 100~102, 200~202, 300~302, 400~402, 500~502, 600, 1000, 10000, 100000, 1000000, …",
-            "cy; zero: @integer 0; one: @integer 1; two: @integer 2; few: @integer 3; many: @integer 6; other: @integer 4, 5, 7~20, 100, 1000, 10000, 100000, 1000000, …",
-            "kw; zero: @integer 0; one: @integer 1; two: @integer 2, 22, 42, 62, 82, 102, 122, 142, 1002, …; few: @integer 3, 23, 43, 63, 83, 103, 123, 143, 1003, …; many: @integer 21, 41, 61, 81, 101, 121, 141, 161, 1001, …; other: @integer 4~19, 100, 1000000, …", };
+            "kw; zero: @integer 0; one: @integer 1; two: @integer 2, 22, 42, 62, 82, 102, 122, 142, 1000, 10000, 100000, …; few: @integer 3, 23, 43, 63, 83, 103, 123, 143, 1003, …; many: @integer 21, 41, 61, 81, 101, 121, 141, 161, 1001, …; other: @integer 4~19, 100, 1004, 1000000, …",
+            "ar,ars; zero: @integer 0; one: @integer 1; two: @integer 2; few: @integer 3~10, 103~110, 1003, …; many: @integer 11~26, 111, 1011, …; other: @integer 100~102, 200~202, 300~302, 400~402, 500~502, 600, 1000, 10000, 100000, 1000000, …",
+            "cy; zero: @integer 0; one: @integer 1; two: @integer 2; few: @integer 3; many: @integer 6; other: @integer 4, 5, 7~20, 100, 1000, 10000, 100000, 1000000, …", };
 
     private <T extends Serializable> T serializeAndDeserialize(T original, Output<Integer> size) {
         try {
