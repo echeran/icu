@@ -446,9 +446,6 @@ public class PluralRulesTest extends TestFmwk {
                 keywordToRule.put(keyword, singleRule);
             }
 
-            if (compactExponentLocales.contains(locale.getLanguage()) && logKnownIssue("21714", "PluralRules.select treats 1c6 as 1")) {
-                continue;
-            }
             Map<DecimalQuantity, String> collisionTest = new LinkedHashMap();
             for (DecimalQuantitySamples sample3 : samples) {
                 Set<DecimalQuantitySamplesRange> samples2 = sample3.getSamples();
@@ -814,10 +811,6 @@ public class PluralRulesTest extends TestFmwk {
             uniqueRuleSet.add(PluralRules.getFunctionalEquivalent(locale, null));
         }
         for (ULocale locale : uniqueRuleSet) {
-            //if (locale.getLanguage().equals("fr") &&
-            //        logKnownIssue("21322", "PluralRules::getSamples cannot distinguish 1e5 from 100000")) {
-            //    continue;
-            //}
             PluralRules rules = factory.forLocale(locale);
             logln("\nlocale: " + (locale == ULocale.ROOT ? "root" : locale.toString()) + ", rules: " + rules);
             Set<String> keywords = rules.getKeywords();
@@ -1006,13 +999,9 @@ public class PluralRulesTest extends TestFmwk {
                     for (String keyword : rules.getKeywords()) {
                         boolean isLimited = rules.isLimited(keyword, sampleType);
                         boolean computeLimited = rules.computeLimited(keyword, sampleType);
-                        if (!keyword.equals("other") && !(locale.getLanguage().equals("fr") && logKnownIssue("ICU-21322", "fr plurals many case computeLimited == isLimited"))) {
-                            assertEquals(getAssertMessage("computeLimited == isLimited", locale, rules, keyword),
-                                    computeLimited, isLimited);
-                        }
                         Collection<DecimalQuantity> samples = rules.getSamples(keyword, sampleType);
                         assertNotNull(getAssertMessage("Samples must not be null", locale, rules, keyword), samples);
-                        /* FixedDecimalSamples decimalSamples = */rules.getDecimalSamples(keyword, sampleType);
+                        rules.getDecimalSamples(keyword, sampleType);
                         // assertNotNull(getAssertMessage("Decimal samples must be null if unlimited", locale, rules,
                         // keyword), decimalSamples);
                     }
