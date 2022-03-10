@@ -2366,31 +2366,6 @@ public class PluralRules implements Serializable {
     }
 
     /**
-     * @internal CLDR
-     * @deprecated This API is ICU internal only
-     */
-    @Deprecated
-    private static int getVisibleFractionCount(String value) {
-        value = value.trim();
-        int decimalPos = value.indexOf('.') + 1;
-        if (decimalPos == 0) {
-            return 0;
-        } else {
-            return value.length() - decimalPos;
-        }
-    }
-
-    /**
-     * @internal CLDR
-     * @deprecated This API is ICU internal only.
-     */
-    @Deprecated
-    private static double getBaseFactor(DecimalQuantity dq) {
-        double visibleDecimalDigitCount = dq.getPluralOperand(Operand.v);
-        return Math.pow(10, visibleDecimalDigitCount);
-    }
-
-    /**
      * Returns a list of values for which select() would return that keyword,
      * or null if the keyword is not defined or no samples are available.
      * The returned collection is unmodifiable.
