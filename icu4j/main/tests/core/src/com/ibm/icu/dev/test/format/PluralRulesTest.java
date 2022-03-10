@@ -1024,17 +1024,17 @@ public class PluralRulesTest extends TestFmwk {
     @Test
     public void TestKeywords() {
         Set<String> possibleKeywords = new LinkedHashSet(Arrays.asList("zero", "one", "two", "few", "many", "other"));
-        DecimalQuantity ONE_DOUBLE = DecimalQuantity_DualStorageBCD.fromExponentString("1.0");
+        DecimalQuantity ONE_INTEGER = DecimalQuantity_DualStorageBCD.fromExponentString("1");
         Object[][][] tests = {
                 // format is locale, explicits, then triples of keyword, status, unique value.
-                { { "en", null }, { "one", KeywordStatus.UNIQUE, ONE_DOUBLE }, { "other", KeywordStatus.UNBOUNDED, null } },
-                { { "pl", null }, { "one", KeywordStatus.UNIQUE, ONE_DOUBLE }, { "few", KeywordStatus.UNBOUNDED, null },
+                { { "en", null }, { "one", KeywordStatus.UNIQUE, ONE_INTEGER }, { "other", KeywordStatus.UNBOUNDED, null } },
+                { { "pl", null }, { "one", KeywordStatus.UNIQUE, ONE_INTEGER }, { "few", KeywordStatus.UNBOUNDED, null },
                         { "many", KeywordStatus.UNBOUNDED, null },
                         { "other", KeywordStatus.SUPPRESSED, null, KeywordStatus.UNBOUNDED, null } // note that it is
                                                                                                    // suppressed in
                                                                                                    // INTEGER but not
                                                                                                    // DECIMAL
-                }, { { "en", new HashSet<>(Arrays.asList(ONE_DOUBLE)) }, // check that 1 is suppressed
+                }, { { "en", new HashSet<>(Arrays.asList(ONE_INTEGER)) }, // check that 1 is suppressed
                         { "one", KeywordStatus.SUPPRESSED, null }, { "other", KeywordStatus.UNBOUNDED, null } }, };
         Output<DecimalQuantity> uniqueValue = new Output<>();
         for (Object[][] test : tests) {

@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -2514,7 +2513,7 @@ public class PluralRules implements Serializable {
      *            the offset used, or 0.0d if not. Internally, the offset is subtracted from each explicit value before
      *            checking against the keyword values.
      * @param explicits
-     *            a set of Doubles that are used explicitly (eg [=0], "[=1]"). May be empty or null.
+     *            a set of {@code DecimalQuantity}s that are used explicitly (eg [=0], "[=1]"). May be empty or null.
      * @param uniqueValue
      *            If non null, set to the unique value.
      * @return the KeywordStatus
@@ -2533,7 +2532,7 @@ public class PluralRules implements Serializable {
      *            the offset used, or 0.0d if not. Internally, the offset is subtracted from each explicit value before
      *            checking against the keyword values.
      * @param explicits
-     *            a set of Doubles that are used explicitly (eg [=0], "[=1]"). May be empty or null.
+     *            a set of {@code DecimalQuantity}s that are used explicitly (eg [=0], "[=1]"). May be empty or null.
      * @param sampleType
      *            request KeywordStatus relative to INTEGER or DECIMAL values
      * @param uniqueValue
@@ -2579,11 +2578,12 @@ public class PluralRules implements Serializable {
 
         // Compute if the quick test is insufficient.
 
-        HashSet<DecimalQuantity> subtractedSet = new HashSet<>(values);
+        ArrayList<DecimalQuantity> subtractedSet = new ArrayList<>(values);
         for (DecimalQuantity explicit : explicits) {
-            double valToRemove = explicit.getPluralOperand(Operand.n) - offset;
-            DecimalQuantity fmtNumToRemove = new DecimalQuantity_DualStorageBCD(valToRemove);
-            subtractedSet.remove(fmtNumToRemove);
+            BigDecimal explicitBd = explicit.toBigDecimal();
+            BigDecimal valToRemoveBd = explicitBd.subtract(new BigDecimal(offset));
+            DecimalQuantity_DualStorageBCD valToRemove = new DecimalQuantity_DualStorageBCD(valToRemoveBd);
+            subtractedSet.remove(valToRemove);
         }
         if (subtractedSet.size() == 0) {
             return KeywordStatus.SUPPRESSED;
