@@ -372,8 +372,8 @@ PluralRules::getAllKeywordValues(const UnicodeString & /* keyword */, double * /
 
 /**
  * Helper method for the overrides of getSamples() for double and DecimalQuantity
- * return value types.  Provide only one of an allocated array of doubles or
- * <code>DecimalQuantity</code>s, and a nullptr for the other.
+ * return value types.  Provide only one of an allocated array of double or
+ * DecimalQuantity, and a nullptr for the other.
  */
 static int32_t
 getSamplesFromString(const UnicodeString &samples, double *destDbl,
