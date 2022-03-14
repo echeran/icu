@@ -1264,8 +1264,7 @@ public class PluralRules implements Serializable {
                 } else {
                     b.append(",");
                 }
-                String dqStr = item.toString();
-                b.append(' ').append(dqStr);
+                b.append(' ').append(item);
             }
             if (!bounded) {
                 b.append(", …");
