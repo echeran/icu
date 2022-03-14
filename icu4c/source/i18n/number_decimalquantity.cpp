@@ -987,6 +987,10 @@ UnicodeString DecimalQuantity::toPlainString() const {
     if (isNegative()) {
         sb.append(u'-');
     }
+    if (precision == 0) {
+        sb.append(u'0');
+        return sb;
+    }
     int32_t upper = scale + precision + exponent - 1;
     int32_t lower = scale + exponent;
     if (upper < lReqPos - 1) {
