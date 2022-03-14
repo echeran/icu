@@ -50,7 +50,7 @@ void PluralRulesTest::runIndexedTest( int32_t index, UBool exec, const char* &na
     TESTCASE_AUTO(testAPI);
     // TESTCASE_AUTO(testGetUniqueKeywordValue);
     TESTCASE_AUTO(testGetSamples);
-    TESTCASE_AUTO(testGetFixedDecimalSamples);
+    TESTCASE_AUTO(testGetDecimalQuantitySamples);
     TESTCASE_AUTO(testSamplesWithExponent);
     TESTCASE_AUTO(testSamplesWithCompactNotation);
     TESTCASE_AUTO(testWithin);
@@ -455,7 +455,7 @@ void PluralRulesTest::testGetSamples() {
     }
 }
 
-void PluralRulesTest::testGetFixedDecimalSamples() {
+void PluralRulesTest::testGetDecimalQuantitySamples() {
     // TODO: fix samples, re-enable this test.
 
     // no get functional equivalent API in ICU4C, so just

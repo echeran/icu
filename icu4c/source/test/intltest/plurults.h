@@ -31,7 +31,7 @@ private:
     void testAPI();
     void testGetUniqueKeywordValue();
     void testGetSamples();
-    void testGetFixedDecimalSamples();
+    void testGetDecimalQuantitySamples();
     void testSamplesWithExponent();
     void testSamplesWithCompactNotation();
     void testWithin();
