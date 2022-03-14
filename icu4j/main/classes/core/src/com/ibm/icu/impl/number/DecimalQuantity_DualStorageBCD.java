@@ -5,7 +5,6 @@ package com.ibm.icu.impl.number;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * A DecimalQuantity with internal storage as a 64-bit BCD, with fallback to a byte array for numbers
@@ -507,26 +506,5 @@ public final class DecimalQuantity_DualStorageBCD extends DecimalQuantity_Abstra
         sb.append("E");
         sb.append(scale);
         return sb.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(
-            bcdBytes,
-            bcdLong,
-            usingBytes,
-            scale,
-            precision,
-            flags,
-            NEGATIVE_FLAG,
-            INFINITY_FLAG,
-            NAN_FLAG,
-            origDouble,
-            origDelta,
-            isApproximate,
-            lReqPos,
-            rReqPos,
-            exponent
-        );
     }
 }

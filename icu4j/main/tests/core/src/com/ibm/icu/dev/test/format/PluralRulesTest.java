@@ -927,7 +927,25 @@ public class PluralRulesTest extends TestFmwk {
                 }
 
                 Collection<DecimalQuantity> results = p.getAllKeywordValues(keyword);
-                assertEquals(keyword + " in " + ruleDescription, values, results == null ? null : new LinkedHashSet(results));
+
+                // Convert DecimalQuantity using a 1:1 conversion to String for comparison purposes
+                Set<String> valuesForComparison = new HashSet<>();
+                if (values != null) {
+                    for (DecimalQuantity dq : values) {
+                        valuesForComparison.add(dq.toExponentString());
+                    }
+                }
+                Set<String> resultsForComparison = new HashSet<>();
+                if (results != null) {
+                    for (DecimalQuantity dq : results) {
+                        resultsForComparison.add(dq.toExponentString());
+                    }
+                }
+
+                assertEquals(keyword + " in " + ruleDescription,
+                        values == null ? null : valuesForComparison,
+                        results == null ? null : resultsForComparison
+                );
 
                 if (results != null) {
                     try {
