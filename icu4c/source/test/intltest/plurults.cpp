@@ -405,7 +405,7 @@ void PluralRulesTest::testGetSamples() {
     int32_t numLocales;
     const Locale* locales = Locale::getAvailableLocales(numLocales);
 
-    double values[1000];
+    DecimalQuantity values[1000];
     for (int32_t i = 0; U_SUCCESS(status) && i < numLocales; ++i) {
         //if (uprv_strcmp(locales[i].getLanguage(), "fr") == 0 &&
         //        logKnownIssue("21322", "PluralRules::getSamples cannot distinguish 1e5 from 100000")) {
@@ -440,7 +440,7 @@ void PluralRulesTest::testGetSamples() {
                 count = UPRV_LENGTHOF(values);
             }
             for (int32_t j = 0; j < count; ++j) {
-                if (values[j] == UPLRULES_NO_UNIQUE_VALUE) {
+                if (values[j] == UPLRULES_NO_UNIQUE_VALUE_DECIMAL(status)) {
                     errln("got 'no unique value' among values");
                 } else {
                     UnicodeString resultKeyword = rules->select(values[j]);
