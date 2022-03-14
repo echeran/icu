@@ -59,6 +59,8 @@ class FormattedNumber;
 class FormattedNumberRange;
 namespace impl {
 class UFormattedNumberRangeData;
+class DecimalQuantity;
+class DecNum;
 }
 }
 
@@ -476,7 +478,7 @@ public:
 
 #ifndef U_HIDE_INTERNAL_API
     /**
-     * Internal-only function that returns FixedDecimals instead of doubles.
+     * Internal-only function that returns <code>DecimalQuantity</code>s instead of doubles.
      *
      * Returns sample values for which select() would return the keyword.  If
      * the keyword is unknown, returns no values, but this is not an error.
@@ -496,7 +498,7 @@ public:
      * @internal
      */
     int32_t getSamples(const UnicodeString &keyword,
-                       FixedDecimal *dest, int32_t destCapacity,
+                       ::icu::number::impl::DecimalQuantity *dest, int32_t destCapacity,
                        UErrorCode& status);
 #endif  /* U_HIDE_INTERNAL_API */
 

@@ -466,7 +466,7 @@ void PluralRulesTest::testGetFixedDecimalSamples() {
     int32_t numLocales;
     const Locale* locales = Locale::getAvailableLocales(numLocales);
 
-    FixedDecimal values[1000];
+    DecimalQuantity values[1000];
     for (int32_t i = 0; U_SUCCESS(status) && i < numLocales; ++i) {
         //if (uprv_strcmp(locales[i].getLanguage(), "fr") == 0 &&
         //        logKnownIssue("21322", "PluralRules::getSamples cannot distinguish 1e5 from 100000")) {
@@ -501,15 +501,21 @@ void PluralRulesTest::testGetFixedDecimalSamples() {
                 count = UPRV_LENGTHOF(values);
             }
             for (int32_t j = 0; j < count; ++j) {
-                if (values[j] == UPLRULES_NO_UNIQUE_VALUE_DECIMAL) {
+                if (values[j] == UPLRULES_NO_UNIQUE_VALUE_DECIMAL(status)) {
                     errln("got 'no unique value' among values");
                 } else {
+                    if (U_FAILURE(status)){
+                        errln(UnicodeString(u"getSamples() failed for sample ") +
+                            values[j].toExponentString() +
+                            UnicodeString(u", keyword ") + *keyword);
+                        continue;
+                    }
                     UnicodeString resultKeyword = rules->select(values[j]);
                     // if (strcmp(locales[i].getName(), "uk") == 0) {    // Debug only.
                     //     std::cout << "  uk " << US(resultKeyword).cstr() << " " << values[j] << std::endl;
                     // }
                     if (*keyword != resultKeyword) {
-                        if (values[j].exponent == 0 || !logKnownIssue("21714", "PluralRules::select treats 1c6 as 1")) {
+                        if (values[j].getExponent() == 0 || !logKnownIssue("21714", "PluralRules::select treats 1c6 as 1")) {
                             UnicodeString valueString(values[j].toString());
                             char valueBuf[16];
                             valueString.extract(0, valueString.length(), valueBuf, sizeof(valueBuf));
@@ -538,9 +544,9 @@ void PluralRulesTest::testSamplesWithExponent() {
         errln("Couldn't create plural rules from a string using exponent notation, with error = %s", u_errorName(status));
         return;
     }
-    checkNewSamples(description, test, u"one", u"@integer 0, 1, 1e5", FixedDecimal(0));
-    checkNewSamples(description, test, u"many", u"@integer 1000000, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, …", FixedDecimal(1000000));
-    checkNewSamples(description, test, u"other", u"@integer 2~17, 100, 1000, 10000, 100000, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, …", FixedDecimal(2));
+    checkNewSamples(description, test, u"one", u"@integer 0, 1, 1e5", DecimalQuantity::fromExponentString(u"0", status));
+    checkNewSamples(description, test, u"many", u"@integer 1000000, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, …", DecimalQuantity::fromExponentString(u"1000000", status));
+    checkNewSamples(description, test, u"other", u"@integer 2~17, 100, 1000, 10000, 100000, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, …", DecimalQuantity::fromExponentString(u"2", status));
 
     // decimal samples
     status = U_ZERO_ERROR;
@@ -555,9 +561,9 @@ void PluralRulesTest::testSamplesWithExponent() {
         errln("Couldn't create plural rules from a string using exponent notation, with error = %s", u_errorName(status));
         return;
     }
-    checkNewSamples(description2, test2, u"one", u"@decimal 0.0~1.5, 1.1e5", FixedDecimal(0, 1));
-    checkNewSamples(description2, test2, u"many", u"@decimal 2.1e6, 3.1e6, 4.1e6, 5.1e6, 6.1e6, 7.1e6, …", FixedDecimal::createWithExponent(2.1, 1, 6));
-    checkNewSamples(description2, test2, u"other", u"@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1e5, 3.1e5, 4.1e5, 5.1e5, 6.1e5, 7.1e5, …", FixedDecimal(2.0, 1));
+    checkNewSamples(description2, test2, u"one", u"@decimal 0.0~1.5, 1.1e5", DecimalQuantity::fromExponentString(u"0.0", status));
+    checkNewSamples(description2, test2, u"many", u"@decimal 2.1e6, 3.1e6, 4.1e6, 5.1e6, 6.1e6, 7.1e6, …", DecimalQuantity::fromExponentString(u"2.1c6", status));
+    checkNewSamples(description2, test2, u"other", u"@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1e5, 3.1e5, 4.1e5, 5.1e5, 6.1e5, 7.1e5, …", DecimalQuantity::fromExponentString(u"2.0", status));
 }
 
 
@@ -576,9 +582,9 @@ void PluralRulesTest::testSamplesWithCompactNotation() {
         errln("Couldn't create plural rules from a string using exponent notation, with error = %s", u_errorName(status));
         return;
     }
-    checkNewSamples(description, test, u"one", u"@integer 0, 1, 1c5", FixedDecimal(0));
-    checkNewSamples(description, test, u"many", u"@integer 1000000, 2c6, 3c6, 4c6, 5c6, 6c6, 7c6, …", FixedDecimal(1000000));
-    checkNewSamples(description, test, u"other", u"@integer 2~17, 100, 1000, 10000, 100000, 2c5, 3c5, 4c5, 5c5, 6c5, 7c5, …", FixedDecimal(2));
+    checkNewSamples(description, test, u"one", u"@integer 0, 1, 1c5", DecimalQuantity::fromExponentString(u"0", status));
+    checkNewSamples(description, test, u"many", u"@integer 1000000, 2c6, 3c6, 4c6, 5c6, 6c6, 7c6, …", DecimalQuantity::fromExponentString(u"1000000", status));
+    checkNewSamples(description, test, u"other", u"@integer 2~17, 100, 1000, 10000, 100000, 2c5, 3c5, 4c5, 5c5, 6c5, 7c5, …", DecimalQuantity::fromExponentString(u"2", status));
 
     // decimal samples
     status = U_ZERO_ERROR;
@@ -593,9 +599,9 @@ void PluralRulesTest::testSamplesWithCompactNotation() {
         errln("Couldn't create plural rules from a string using exponent notation, with error = %s", u_errorName(status));
         return;
     }
-    checkNewSamples(description2, test2, u"one", u"@decimal 0.0~1.5, 1.1c5", FixedDecimal(0, 1));
-    checkNewSamples(description2, test2, u"many", u"@decimal 2.1c6, 3.1c6, 4.1c6, 5.1c6, 6.1c6, 7.1c6, …", FixedDecimal::createWithExponent(2.1, 1, 6));
-    checkNewSamples(description2, test2, u"other", u"@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1c5, 3.1c5, 4.1c5, 5.1c5, 6.1c5, 7.1c5, …", FixedDecimal(2.0, 1));
+    checkNewSamples(description2, test2, u"one", u"@decimal 0.0~1.5, 1.1c5", DecimalQuantity::fromExponentString(u"0.0", status));
+    checkNewSamples(description2, test2, u"many", u"@decimal 2.1c6, 3.1c6, 4.1c6, 5.1c6, 6.1c6, 7.1c6, …", DecimalQuantity::fromExponentString(u"2.1c6", status));
+    checkNewSamples(description2, test2, u"other", u"@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1c5, 3.1c5, 4.1c5, 5.1c5, 6.1c5, 7.1c5, …", DecimalQuantity::fromExponentString(u"2.0", status));
 }
 
 void PluralRulesTest::checkNewSamples(
@@ -603,17 +609,17 @@ void PluralRulesTest::checkNewSamples(
         const LocalPointer<PluralRules> &test,
         UnicodeString keyword,
         UnicodeString samplesString,
-        FixedDecimal firstInRange) {
+        DecimalQuantity firstInRange) {
 
     UErrorCode status = U_ZERO_ERROR;
-    FixedDecimal samples[1000];
+    DecimalQuantity samples[1000];
     
     test->getSamples(keyword, samples, UPRV_LENGTHOF(samples), status);
     if (U_FAILURE(status)) {
         errln("Couldn't retrieve plural samples, with error = %s", u_errorName(status));
         return;
     }
-    FixedDecimal actualFirstSample = samples[0];
+    DecimalQuantity actualFirstSample = samples[0];
 
     if (!(firstInRange == actualFirstSample)) {
         CStr descCstr(description);

@@ -14,6 +14,7 @@
 #if !UCONFIG_NO_FORMATTING
 
 #include "intltest.h"
+#include "number_decimalquantity.h"
 #include "unicode/localpointer.h"
 #include "unicode/plurrule.h"
 
@@ -55,7 +56,7 @@ private:
                          const LocalPointer<PluralRules> &test,
                          UnicodeString keyword,
                          UnicodeString samplesString,
-                         FixedDecimal firstInRange);
+                         ::icu::number::impl::DecimalQuantity firstInRange);
     UnicodeString getPluralKeyword(const LocalPointer<PluralRules> &rules,
                                    Locale locale, double number, const char16_t* skeleton);
     void checkSelect(const LocalPointer<PluralRules> &rules, UErrorCode &status, 

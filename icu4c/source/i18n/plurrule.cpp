@@ -26,6 +26,7 @@
 #include "hash.h"
 #include "locutil.h"
 #include "mutex.h"
+#include "number_decnum.h"
 #include "patternprops.h"
 #include "plurrule_impl.h"
 #include "putilimp.h"
@@ -369,32 +370,14 @@ PluralRules::getAllKeywordValues(const UnicodeString & /* keyword */, double * /
     return 0;
 }
 
-
-static double scaleForInt(double d) {
-    double scale = 1.0;
-    while (d != floor(d)) {
-        d = d * 10.0;
-        scale = scale * 10.0;
-    }
-    return scale;
-}
-
-static const double powers10[7] = {1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0}; // powers of 10 for 0..6
-static double applyExponent(double source, int32_t exponent) {
-    if (exponent >= 0 && exponent <= 6) {
-        return source * powers10[exponent];
-    }
-    return source * pow(10.0, exponent);
-}
-
 /**
- * Helper method for the overrides of getSamples() for double and FixedDecimal
+ * Helper method for the overrides of getSamples() for double and DecimalQuantity
  * return value types.  Provide only one of an allocated array of doubles or
- * FixedDecimals, and a nullptr for the other.
+ * <code>DecimalQuantity</code>s, and a nullptr for the other.
  */
 static int32_t
 getSamplesFromString(const UnicodeString &samples, double *destDbl,
-                        FixedDecimal* destFd, int32_t destCapacity,
+                        DecimalQuantity* destFd, int32_t destCapacity,
                         UErrorCode& status) {
 
     if ((destDbl == nullptr && destFd == nullptr)
@@ -420,58 +403,48 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
         // std::cout << "PluralRules::getSamples(), samplesRange = \"" << sampleRange.toUTF8String(ss) << "\"\n";
         int32_t tildeIndex = sampleRange.indexOf(TILDE);
         if (tildeIndex < 0) {
-            FixedDecimal fixed(sampleRange, status);
+            DecimalQuantity fixed = DecimalQuantity::fromExponentString(sampleRange, status);
             if (isDouble) {
-                double sampleValue = fixed.source;
-                if (fixed.visibleDecimalDigitCount == 0 || sampleValue != floor(sampleValue)) {
-                    destDbl[sampleCount++] = applyExponent(sampleValue, fixed.exponent);
-                }
+                destDbl[sampleCount++] = fixed.toDouble();
             } else {
                 destFd[sampleCount++] = fixed;
             }
         } else {
-            FixedDecimal fixedLo(sampleRange.tempSubStringBetween(0, tildeIndex), status);
-            FixedDecimal fixedHi(sampleRange.tempSubStringBetween(tildeIndex+1), status);
-            double rangeLo = fixedLo.source;
-            double rangeHi = fixedHi.source;
+            DecimalQuantity rangeLo =
+                DecimalQuantity::fromExponentString(sampleRange.tempSubStringBetween(0, tildeIndex), status);
+            DecimalQuantity rangeHi = DecimalQuantity::fromExponentString(sampleRange.tempSubStringBetween(tildeIndex+1), status);
             if (U_FAILURE(status)) {
                 break;
             }
-            if (rangeHi < rangeLo) {
+            if (rangeHi.toDouble() < rangeLo.toDouble()) {
                 status = U_INVALID_FORMAT_ERROR;
                 break;
             }
 
-            // For ranges of samples with fraction decimal digits, scale the number up so that we
-            //   are adding one in the units place. Avoids roundoffs from repetitive adds of tenths.
+            DecimalQuantity incrementDq;
+            incrementDq.setToInt(1);
+            int32_t numFracDigit = rangeLo.fractionCount();
+            incrementDq.adjustMagnitude(numFracDigit);
+            int64_t incrementVal = incrementDq.toLong();  // 10 ^ numFracDigit
 
-            double scale = scaleForInt(rangeLo);
-            double t = scaleForInt(rangeHi);
-            if (t > scale) {
-                scale = t;
-            }
-            rangeLo *= scale;
-            rangeHi *= scale;
-            for (double n=rangeLo; n<=rangeHi; n+=1) {
-                double sampleValue = n/scale;
+            double end = rangeHi.toDouble();
+            for (DecimalQuantity dq(rangeLo); dq.toDouble() <= end; ) {
                 if (isDouble) {
-                    // Hack Alert: don't return any decimal samples with integer values that
-                    //    originated from a format with trailing decimals.
-                    //    This API is returning doubles, which can't distinguish having displayed
-                    //    zeros to the right of the decimal.
-                    //    This results in test failures with values mapping back to a different keyword.
-                    if (!(sampleValue == floor(sampleValue) && fixedLo.visibleDecimalDigitCount > 0)) {
-                        destDbl[sampleCount++] = sampleValue;
-                    }
+                    destDbl[sampleCount++] = dq.toDouble();
                 } else {
-                    int32_t v = (int32_t) fixedLo.getPluralOperand(PluralOperand::PLURAL_OPERAND_V);
-                    int32_t e = (int32_t) fixedLo.getPluralOperand(PluralOperand::PLURAL_OPERAND_E);
-                    FixedDecimal newSample = FixedDecimal::createWithExponent(sampleValue, v, e);
-                    destFd[sampleCount++] = newSample;
+                    destFd[sampleCount++] = dq;
                 }
                 if (sampleCount >= destCapacity) {
                     break;
                 }
+
+                // Increment dq for next iteration
+                dq.adjustMagnitude(numFracDigit);
+                int64_t dqVal = dq.toLong();
+                dqVal += incrementVal;
+                dq.setToLong(dqVal);
+                dq.adjustMagnitude(-numFracDigit);
+                dq.setMinFraction(numFracDigit);
             }
         }
         sampleStartIdx = sampleEndIdx + 1;
@@ -505,7 +478,7 @@ PluralRules::getSamples(const UnicodeString &keyword, double *dest,
 }
 
 int32_t
-PluralRules::getSamples(const UnicodeString &keyword, FixedDecimal *dest,
+PluralRules::getSamples(const UnicodeString &keyword, DecimalQuantity *dest,
                         int32_t destCapacity, UErrorCode& status) {
     if (U_FAILURE(status)) {
         return 0;
