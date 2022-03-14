@@ -448,8 +448,10 @@ void PluralRulesTest::testGetSamples() {
                     //     std::cout << "  uk " << US(resultKeyword).cstr() << " " << values[j] << std::endl;
                     // }
                     if (*keyword != resultKeyword) {
-                        errln("file %s, line %d, Locale %s, sample for keyword \"%s\":  %g, select(%g) returns keyword \"%s\"",
-                              __FILE__, __LINE__, locales[i].getName(), US(*keyword).cstr(), values[j], values[j], US(resultKeyword).cstr());
+                        errln("file %s, line %d, Locale %s, sample for keyword \"%s\":  %s, select(%s) returns keyword \"%s\"",
+                              __FILE__, __LINE__, locales[i].getName(), US(*keyword).cstr(),
+                              US(values[j].toExponentString()).cstr(), US(values[j].toExponentString()).cstr(),
+                              US(resultKeyword).cstr());
                     }
                 }
             }
