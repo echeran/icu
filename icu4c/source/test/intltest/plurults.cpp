@@ -405,8 +405,12 @@ void PluralRulesTest::testGetSamples() {
     int32_t numLocales;
     const Locale* locales = Locale::getAvailableLocales(numLocales);
 
-    DecimalQuantity values[1000];
+    double values[1000];
     for (int32_t i = 0; U_SUCCESS(status) && i < numLocales; ++i) {
+        //if (uprv_strcmp(locales[i].getLanguage(), "fr") == 0 &&
+        //        logKnownIssue("21322", "PluralRules::getSamples cannot distinguish 1e5 from 100000")) {
+        //    continue;
+        //}
         LocalPointer<PluralRules> rules(PluralRules::forLocale(locales[i], status));
         if (U_FAILURE(status)) {
             break;
@@ -436,7 +440,7 @@ void PluralRulesTest::testGetSamples() {
                 count = UPRV_LENGTHOF(values);
             }
             for (int32_t j = 0; j < count; ++j) {
-                if (values[j] == UPLRULES_NO_UNIQUE_VALUE_DECIMAL(status)) {
+                if (values[j] == UPLRULES_NO_UNIQUE_VALUE) {
                     errln("got 'no unique value' among values");
                 } else {
                     UnicodeString resultKeyword = rules->select(values[j]);
@@ -444,10 +448,8 @@ void PluralRulesTest::testGetSamples() {
                     //     std::cout << "  uk " << US(resultKeyword).cstr() << " " << values[j] << std::endl;
                     // }
                     if (*keyword != resultKeyword) {
-                        errln("file %s, line %d, Locale %s, sample for keyword \"%s\":  %s, select(%s) returns keyword \"%s\"",
-                              __FILE__, __LINE__, locales[i].getName(), US(*keyword).cstr(),
-                              US(values[j].toExponentString()).cstr(), US(values[j].toExponentString()).cstr(),
-                              US(resultKeyword).cstr());
+                        errln("file %s, line %d, Locale %s, sample for keyword \"%s\":  %g, select(%g) returns keyword \"%s\"",
+                              __FILE__, __LINE__, locales[i].getName(), US(*keyword).cstr(), values[j], values[j], US(resultKeyword).cstr());
                     }
                 }
             }
@@ -509,11 +511,10 @@ void PluralRulesTest::testGetDecimalQuantitySamples() {
                     //     std::cout << "  uk " << US(resultKeyword).cstr() << " " << values[j] << std::endl;
                     // }
                     if (*keyword != resultKeyword) {
-                        UnicodeString valueString(values[j].toString());
-                        char valueBuf[16];
-                        valueString.extract(0, valueString.length(), valueBuf, sizeof(valueBuf));
                         errln("file %s, line %d, Locale %s, sample for keyword \"%s\":  %s, select(%s) returns keyword \"%s\"",
-                                    __FILE__, __LINE__, locales[i].getName(), US(*keyword).cstr(), valueBuf, valueBuf, US(resultKeyword).cstr());
+                            __FILE__, __LINE__, locales[i].getName(), US(*keyword).cstr(),
+                            US(values[j].toExponentString()).cstr(), US(values[j].toExponentString()).cstr(),
+                            US(resultKeyword).cstr());
                     }
                 }
             }

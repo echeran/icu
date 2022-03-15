@@ -403,11 +403,16 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
         // std::cout << "PluralRules::getSamples(), samplesRange = \"" << sampleRange.toUTF8String(ss) << "\"\n";
         int32_t tildeIndex = sampleRange.indexOf(TILDE);
         if (tildeIndex < 0) {
-            DecimalQuantity fixed = DecimalQuantity::fromExponentString(sampleRange, status);
+            DecimalQuantity dq = DecimalQuantity::fromExponentString(sampleRange, status);
             if (isDouble) {
-                destDbl[sampleCount++] = fixed.toDouble();
+                // See warning note below about lack of precision for floating point samples for numbers with
+                // trailing zeroes in the decimal fraction representation.
+                double dblValue = dq.toDouble();
+                if (!(dblValue == floor(dblValue) && dq.fractionCount() > 0)) {
+                    destDbl[sampleCount++] = dblValue;
+                }
             } else {
-                destFd[sampleCount++] = fixed;
+                destFd[sampleCount++] = dq;
             }
         } else {
             DecimalQuantity rangeLo =
@@ -427,10 +432,19 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
             incrementDq.adjustMagnitude(numFracDigit);
             int64_t incrementVal = incrementDq.toLong();  // 10 ^ numFracDigit
 
+            DecimalQuantity dq(rangeLo);
+            double dblValue = dq.toDouble();
             double end = rangeHi.toDouble();
-            for (DecimalQuantity dq(rangeLo); dq.toDouble() <= end; ) {
+            while (dblValue <= end) {
                 if (isDouble) {
-                    destDbl[sampleCount++] = dq.toDouble();
+                    // Hack Alert: don't return any decimal samples with integer values that
+                    //    originated from a format with trailing decimals.
+                    //    This API is returning doubles, which can't distinguish having displayed
+                    //    zeros to the right of the decimal.
+                    //    This results in test failures with values mapping back to a different keyword.
+                    if (!(dblValue == floor(dblValue) && dq.fractionCount() > 0)) {
+                        destDbl[sampleCount++] = dblValue;
+                    }
                 } else {
                     destFd[sampleCount++] = dq;
                 }
@@ -445,6 +459,7 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
                 dq.setToLong(dqVal);
                 dq.adjustMagnitude(-numFracDigit);
                 dq.setMinFraction(numFracDigit);
+                dblValue = dq.toDouble();
             }
         }
         sampleStartIdx = sampleEndIdx + 1;
