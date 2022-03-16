@@ -2325,12 +2325,16 @@ public class PluralRules implements Serializable {
      * @stable ICU 4.8
      */
     public Collection<Double> getAllKeywordValues(String keyword) {
-        Collection<Double> result = new LinkedHashSet<>();
         Collection<DecimalQuantity> samples = getAllKeywordDecimalQuantityValues(keyword);
-        for (DecimalQuantity dq : samples) {
-            result.add(dq.toDouble());
+        if (samples == null) {
+            return null;
+        } else {
+            Collection<Double> result = new LinkedHashSet<>();
+            for (DecimalQuantity dq : samples) {
+                result.add(dq.toDouble());
+            }
+            return result;
         }
-        return result;
     }
 
     /**
