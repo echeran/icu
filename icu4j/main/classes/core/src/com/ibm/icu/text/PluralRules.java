@@ -328,7 +328,16 @@ public class PluralRules implements Serializable {
      * unique value to return.
      * @stable ICU 4.8
      */
-    public static final DecimalQuantity NO_UNIQUE_VALUE =
+    public static final double NO_UNIQUE_VALUE = -0.00123456777;
+
+    /**
+     * Value returned by {@link #getUniqueKeywordDecimalQuantityValue} when there is no
+     * unique value to return.
+     * @internal CLDR
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    public static final DecimalQuantity NO_UNIQUE_VALUE_DECIMAL_QUANTITY =
         new DecimalQuantity_DualStorageBCD(-0.00123456777);
 
     /**
@@ -1229,7 +1238,32 @@ public class PluralRules implements Serializable {
          * @deprecated This API is ICU internal only.
          */
         @Deprecated
-        public Set<DecimalQuantity> addSamples(Set<DecimalQuantity> result) {
+        public Collection<Double> addSamples(Collection<Double> result) {
+            addSamples(result, null);
+            return result;
+        }
+
+        /**
+         * @internal CLDR
+         * @deprecated This API is ICU internal only.
+         */
+        @Deprecated
+        public Collection<DecimalQuantity> addDecimalQuantitySamples(Collection<DecimalQuantity> result) {
+            addSamples(null, result);
+            return result;
+        }
+
+        /**
+         * @internal CLDR
+         * @deprecated This API is ICU internal only.
+         */
+        @Deprecated
+        public void addSamples(Collection<Double> doubleResult, Collection<DecimalQuantity> dqResult) {
+            if ((doubleResult == null && dqResult == null)
+                    || (doubleResult != null && dqResult != null)) {
+                return;
+            }
+            boolean isDouble = doubleResult != null;
             for (DecimalQuantitySamplesRange range : samples) {
                 DecimalQuantity start = range.start;
                 DecimalQuantity end = range.end;
@@ -1237,7 +1271,19 @@ public class PluralRules implements Serializable {
                 BigDecimal incrementBd = BigDecimal.ONE.movePointLeft(numFracDigit);
 
                 for (DecimalQuantity dq = start.createCopy(); dq.toDouble() <= end.toDouble(); ) {
-                    result.add(dq);
+                    if (isDouble) {
+                        double dblValue = dq.toDouble();
+                        // Hack Alert: don't return any decimal samples with integer values that
+                        //    originated from a format with trailing decimals.
+                        //    This API is returning doubles, which can't distinguish having displayed
+                        //    zeros to the right of the decimal.
+                        //    This results in test failures with values mapping back to a different keyword.
+                        if (!(dblValue == Math.floor(dblValue)) && dq.getPluralOperand(Operand.v) > 0) {
+                            doubleResult.add(dblValue);
+                        }
+                    } else {
+                        dqResult.add(dq);
+                    }
 
                     // Increment dq for next iteration
                     java.math.BigDecimal dqBd = dq.toBigDecimal();
@@ -1246,7 +1292,6 @@ public class PluralRules implements Serializable {
                     dq.setMinFraction(numFracDigit);
                 }
             }
-            return result;
         }
 
         /**
@@ -2244,12 +2289,30 @@ public class PluralRules implements Serializable {
      * @return The unique value for the keyword, or NO_UNIQUE_VALUE.
      * @stable ICU 4.8
      */
-    public DecimalQuantity getUniqueKeywordValue(String keyword) {
-        Collection<DecimalQuantity> values = getAllKeywordValues(keyword);
+    public double getUniqueKeywordValue(String keyword) {
+        DecimalQuantity uniqValDq = getUniqueKeywordDecimalQuantityValue(keyword);
+        if (uniqValDq.equals(NO_UNIQUE_VALUE_DECIMAL_QUANTITY)) {
+            return NO_UNIQUE_VALUE;
+        } else {
+            return uniqValDq.toDouble();
+        }
+    }
+
+    /**
+     * Returns the unique value that this keyword matches, or {@link #NO_UNIQUE_VALUE}
+     * if the keyword matches multiple values or is not defined for this PluralRules.
+     *
+     * @param keyword the keyword to check for a unique value
+     * @internal Visible For Testing
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    public DecimalQuantity getUniqueKeywordDecimalQuantityValue(String keyword) {
+        Collection<DecimalQuantity> values = getAllKeywordDecimalQuantityValues(keyword);
         if (values != null && values.size() == 1) {
             return values.iterator().next();
         }
-        return NO_UNIQUE_VALUE;
+        return NO_UNIQUE_VALUE_DECIMAL_QUANTITY;
     }
 
     /**
@@ -2261,7 +2324,28 @@ public class PluralRules implements Serializable {
      * is immutable. It will be empty if the keyword is not defined.
      * @stable ICU 4.8
      */
-    public Collection<DecimalQuantity> getAllKeywordValues(String keyword) {
+    public Collection<Double> getAllKeywordValues(String keyword) {
+        Collection<Double> result = new LinkedHashSet<>();
+        Collection<DecimalQuantity> samples = getAllKeywordDecimalQuantityValues(keyword);
+        for (DecimalQuantity dq : samples) {
+            result.add(dq.toDouble());
+        }
+        return result;
+    }
+
+    /**
+     * Returns all the values that trigger this keyword, or null if the number of such
+     * values is unlimited.
+     *
+     * @param keyword the keyword
+     * @return the values that trigger this keyword, or null.  The returned collection
+     * is immutable. It will be empty if the keyword is not defined.
+     *
+     * @internal Visible For Testing
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    public Collection<DecimalQuantity> getAllKeywordDecimalQuantityValues(String keyword) {
         return getAllKeywordValues(keyword, SampleType.INTEGER);
     }
 
@@ -2282,8 +2366,7 @@ public class PluralRules implements Serializable {
         if (!isLimited(keyword, type)) {
             return null;
         }
-        Collection<DecimalQuantity> samples = getSamples(keyword, type);
-        return samples == null ? null : Collections.unmodifiableCollection(samples);
+        return getDecimalQuantitySamples(keyword, type);
     }
 
     /**
@@ -2296,8 +2379,24 @@ public class PluralRules implements Serializable {
      * @return a list of values matching the keyword.
      * @stable ICU 4.8
      */
-    public Collection<DecimalQuantity> getSamples(String keyword) {
+    public Collection<Double> getSamples(String keyword) {
         return getSamples(keyword, SampleType.INTEGER);
+    }
+
+    /**
+     * Returns a list of integer values for which select() would return that keyword,
+     * or null if the keyword is not defined. The returned collection is unmodifiable.
+     * The returned list is not complete, and there might be additional values that
+     * would return the keyword.
+     *
+     * @param keyword the keyword to test
+     * @return a list of values matching the keyword.
+     * @internal CLDR
+     * @deprecated ICU internal only
+     */
+    @Deprecated
+  public Collection<DecimalQuantity> getDecimalQuantitySamples(String keyword) {
+        return getDecimalQuantitySamples(keyword, SampleType.INTEGER);
     }
 
     /**
@@ -2315,7 +2414,35 @@ public class PluralRules implements Serializable {
      * @deprecated ICU internal only
      */
     @Deprecated
-    public Collection<DecimalQuantity> getSamples(String keyword, SampleType sampleType) {
+    public Collection<Double> getSamples(String keyword, SampleType sampleType) {
+        Collection<DecimalQuantity> samples = getDecimalQuantitySamples(keyword, sampleType);
+        if (samples == null) {
+            return null;
+        } else {
+            Collection<Double> result = new LinkedHashSet<>();
+            for (DecimalQuantity dq: samples) {
+                result.add(dq.toDouble());
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Returns a list of values for which select() would return that keyword,
+     * or null if the keyword is not defined.
+     * The returned collection is unmodifiable.
+     * The returned list is not complete, and there might be additional values that
+     * would return the keyword. The keyword might be defined, and yet have an empty set of samples,
+     * IF there are samples for the other sampleType.
+     *
+     * @param keyword the keyword to test
+     * @param sampleType the type of samples requested, INTEGER or DECIMAL
+     * @return a list of values matching the keyword.
+     * @internal CLDR
+     * @deprecated ICU internal only
+     */
+    @Deprecated
+    public Collection<DecimalQuantity> getDecimalQuantitySamples(String keyword, SampleType sampleType) {
         if (!keywords.contains(keyword)) {
             return null;
         }
@@ -2324,7 +2451,7 @@ public class PluralRules implements Serializable {
         if (rules.hasExplicitBoundingInfo) {
             DecimalQuantitySamples samples = rules.getDecimalSamples(keyword, sampleType);
             return samples == null ? Collections.unmodifiableSet(result)
-                    : Collections.unmodifiableSet(samples.addSamples(result));
+                    : Collections.unmodifiableCollection(samples.addDecimalQuantitySamples(result));
         }
 
         // hack in case the rule is created without explicit samples
@@ -2350,6 +2477,7 @@ public class PluralRules implements Serializable {
             addSample(keyword, new DecimalQuantity_DualStorageBCD(1000000d), maxCount, result); // hack for Welsh
             break;
         }
+
         return result.size() == 0 ? null : Collections.unmodifiableSet(result);
     }
 
@@ -2530,7 +2658,7 @@ public class PluralRules implements Serializable {
             return KeywordStatus.UNBOUNDED;
         }
 
-        Collection<DecimalQuantity> values = getSamples(keyword, sampleType);
+        Collection<DecimalQuantity> values = getDecimalQuantitySamples(keyword, sampleType);
 
         int originalSize = values.size();
 

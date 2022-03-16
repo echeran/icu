@@ -270,7 +270,7 @@ public class PluralRulesTest extends TestFmwk {
 
     public void checkOldSamples(String description, PluralRules rules, String keyword, SampleType sampleType,
             DecimalQuantity... expected) {
-        Collection<DecimalQuantity> oldSamples = rules.getSamples(keyword, sampleType);
+        Collection<DecimalQuantity> oldSamples = rules.getDecimalQuantitySamples(keyword, sampleType);
 
         // Collect actual (oldSamples) and expected (expectedSamplesList) into the
         // same concrete collection for comparison purposes.
@@ -773,7 +773,14 @@ public class PluralRulesTest extends TestFmwk {
 
     private void assertRuleKeyValue(String rule, String key, DecimalQuantity value) {
         PluralRules pr = PluralRules.createRules(rule);
-        assertEquals(rule, value, pr.getUniqueKeywordValue(key));
+
+        // as a DecimalQuantity
+        assertEquals(rule, value, pr.getUniqueKeywordDecimalQuantityValue(key));
+
+        // as a double
+        double expDouble = value.equals(PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY) ?
+                PluralRules.NO_UNIQUE_VALUE : value.toDouble();
+        assertEquals(rule, expDouble, pr.getUniqueKeywordValue(key));
     }
 
     /*
@@ -783,20 +790,20 @@ public class PluralRulesTest extends TestFmwk {
     public void TestGetUniqueKeywordValue() {
         LocalizedNumberFormatter fmtr = NumberFormatter.withLocale(ULocale.ROOT);
 
-        assertRuleKeyValue("a: n is 1", "not_defined", PluralRules.NO_UNIQUE_VALUE); // key not defined
+        assertRuleKeyValue("a: n is 1", "not_defined", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY); // key not defined
         assertRuleValue("n within 2..2", new DecimalQuantity_DualStorageBCD(2));
         assertRuleValue("n is 1", new DecimalQuantity_DualStorageBCD(1));
         assertRuleValue("n in 2..2", new DecimalQuantity_DualStorageBCD(2));
-        assertRuleValue("n in 3..4", PluralRules.NO_UNIQUE_VALUE);
-        assertRuleValue("n within 3..4", PluralRules.NO_UNIQUE_VALUE);
+        assertRuleValue("n in 3..4", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY);
+        assertRuleValue("n within 3..4", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY);
         assertRuleValue("n is 2 or n is 2", new DecimalQuantity_DualStorageBCD(2));
         assertRuleValue("n is 2 and n is 2", new DecimalQuantity_DualStorageBCD(2));
-        assertRuleValue("n is 2 or n is 3", PluralRules.NO_UNIQUE_VALUE);
-        assertRuleValue("n is 2 and n is 3", PluralRules.NO_UNIQUE_VALUE);
-        assertRuleValue("n is 2 or n in 2..3", PluralRules.NO_UNIQUE_VALUE);
+        assertRuleValue("n is 2 or n is 3", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY);
+        assertRuleValue("n is 2 and n is 3", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY);
+        assertRuleValue("n is 2 or n in 2..3", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY);
         assertRuleValue("n is 2 and n in 2..3", new DecimalQuantity_DualStorageBCD(2));
-        assertRuleKeyValue("a: n is 1", "other", PluralRules.NO_UNIQUE_VALUE); // key matches default rule
-        assertRuleValue("n in 2,3", PluralRules.NO_UNIQUE_VALUE);
+        assertRuleKeyValue("a: n is 1", "other", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY); // key matches default rule
+        assertRuleValue("n in 2,3", PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY);
         assertRuleValue("n in 2,3..6 and n not in 2..3,5..6", new DecimalQuantity_DualStorageBCD(4));
     }
 
@@ -815,7 +822,7 @@ public class PluralRulesTest extends TestFmwk {
             logln("\nlocale: " + (locale == ULocale.ROOT ? "root" : locale.toString()) + ", rules: " + rules);
             Set<String> keywords = rules.getKeywords();
             for (String keyword : keywords) {
-                Collection<DecimalQuantity> list = rules.getSamples(keyword);
+                Collection<Double> list = rules.getSamples(keyword);
                 logln("keyword: " + keyword + ", samples: " + list);
                 // with fractions, the samples can be empty and thus the list null. In that case, however, there will be
                 // FixedDecimal values.
@@ -835,7 +842,7 @@ public class PluralRulesTest extends TestFmwk {
                     if (rules.toString().contains(": j")) {
                         // hack until we remove j
                     } else {
-                        for (DecimalQuantity value : list) {
+                        for (double value : list) {
                             assertEquals(getAssertMessage("Match keyword", locale, rules, keyword) + "; value '"
                                     + value + "'", keyword, rules.select(value));
                         }
@@ -845,6 +852,54 @@ public class PluralRulesTest extends TestFmwk {
 
             assertNull(locale + ", list is null", rules.getSamples("@#$%^&*"));
             assertNull(locale + ", list is null", rules.getSamples("@#$%^&*", SampleType.DECIMAL));
+        }
+    }
+
+    /**
+     * The version in PluralFormatUnitTest is not really a test, and it's in the wrong place anyway, so I'm putting a
+     * variant of it here.
+     */
+    @Test
+    public void TestGetDecimalQuantitySamples() {
+        Set<ULocale> uniqueRuleSet = new HashSet<>();
+        for (ULocale locale : factory.getAvailableULocales()) {
+            uniqueRuleSet.add(PluralRules.getFunctionalEquivalent(locale, null));
+        }
+        for (ULocale locale : uniqueRuleSet) {
+            PluralRules rules = factory.forLocale(locale);
+            logln("\nlocale: " + (locale == ULocale.ROOT ? "root" : locale.toString()) + ", rules: " + rules);
+            Set<String> keywords = rules.getKeywords();
+            for (String keyword : keywords) {
+                Collection<DecimalQuantity> list = rules.getDecimalQuantitySamples(keyword);
+                logln("keyword: " + keyword + ", samples: " + list);
+                // with fractions, the samples can be empty and thus the list null. In that case, however, there will be
+                // FixedDecimal values.
+                // So patch the test for that.
+                if (list.size() == 0) {
+                    // when the samples (meaning integer samples) are null, then then integerSamples must be, and the
+                    // decimalSamples must not be
+                    DecimalQuantitySamples integerSamples = rules.getDecimalSamples(keyword, SampleType.INTEGER);
+                    DecimalQuantitySamples decimalSamples = rules.getDecimalSamples(keyword, SampleType.DECIMAL);
+                    assertTrue(getAssertMessage("List is not null", locale, rules, keyword), integerSamples == null
+                            && decimalSamples != null && decimalSamples.samples.size() != 0);
+                } else {
+                    if (!assertTrue(getAssertMessage("Test getSamples.isEmpty", locale, rules, keyword),
+                            !list.isEmpty())) {
+                        rules.getDecimalQuantitySamples(keyword);
+                    }
+                    if (rules.toString().contains(": j")) {
+                        // hack until we remove j
+                    } else {
+                        for (DecimalQuantity value : list) {
+                            assertEquals(getAssertMessage("Match keyword", locale, rules, keyword) + "; value '"
+                                    + value + "'", keyword, rules.select(value));
+                        }
+                    }
+                }
+            }
+
+            assertNull(locale + ", list is null", rules.getDecimalQuantitySamples("@#$%^&*"));
+            assertNull(locale + ", list is null", rules.getDecimalQuantitySamples("@#$%^&*", SampleType.DECIMAL));
         }
     }
 
@@ -926,7 +981,7 @@ public class PluralRulesTest extends TestFmwk {
                     }
                 }
 
-                Collection<DecimalQuantity> results = p.getAllKeywordValues(keyword);
+                Collection<DecimalQuantity> results = p.getAllKeywordDecimalQuantityValues(keyword);
 
                 // Convert DecimalQuantity using a 1:1 conversion to String for comparison purposes
                 Set<String> valuesForComparison = new HashSet<>();
@@ -949,7 +1004,7 @@ public class PluralRulesTest extends TestFmwk {
 
                 if (results != null) {
                     try {
-                        results.add(PluralRules.NO_UNIQUE_VALUE);
+                        results.add(PluralRules.NO_UNIQUE_VALUE_DECIMAL_QUANTITY);
                         fail("returned set is modifiable");
                     } catch (UnsupportedOperationException e) {
                         // pass
@@ -1017,7 +1072,7 @@ public class PluralRulesTest extends TestFmwk {
                     for (String keyword : rules.getKeywords()) {
                         boolean isLimited = rules.isLimited(keyword, sampleType);
                         boolean computeLimited = rules.computeLimited(keyword, sampleType);
-                        Collection<DecimalQuantity> samples = rules.getSamples(keyword, sampleType);
+                        Collection<DecimalQuantity> samples = rules.getDecimalQuantitySamples(keyword, sampleType);
                         assertNotNull(getAssertMessage("Samples must not be null", locale, rules, keyword), samples);
                         rules.getDecimalSamples(keyword, sampleType);
                         // assertNotNull(getAssertMessage("Decimal samples must be null if unlimited", locale, rules,
