@@ -377,11 +377,11 @@ PluralRules::getAllKeywordValues(const UnicodeString & /* keyword */, double * /
  */
 static int32_t
 getSamplesFromString(const UnicodeString &samples, double *destDbl,
-                        DecimalQuantity* destFd, int32_t destCapacity,
+                        DecimalQuantity* destDq, int32_t destCapacity,
                         UErrorCode& status) {
 
-    if ((destDbl == nullptr && destFd == nullptr)
-            || (destDbl != nullptr && destFd != nullptr)) {
+    if ((destDbl == nullptr && destDq == nullptr)
+            || (destDbl != nullptr && destDq != nullptr)) {
         status = U_INTERNAL_PROGRAM_ERROR;
         return 0;
     }
@@ -412,7 +412,7 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
                     destDbl[sampleCount++] = dblValue;
                 }
             } else {
-                destFd[sampleCount++] = dq;
+                destDq[sampleCount++] = dq;
             }
         } else {
             DecimalQuantity rangeLo =
@@ -446,7 +446,7 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
                         destDbl[sampleCount++] = dblValue;
                     }
                 } else {
-                    destFd[sampleCount++] = dq;
+                    destDq[sampleCount++] = dq;
                 }
                 if (sampleCount >= destCapacity) {
                     break;
