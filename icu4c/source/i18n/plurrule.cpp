@@ -431,6 +431,7 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
             int32_t numFracDigit = rangeLo.fractionCount();
             incrementDq.adjustMagnitude(numFracDigit);
             int64_t incrementVal = incrementDq.toLong();  // 10 ^ numFracDigit
+            int32_t exponent = rangeLo.getExponent();
 
             DecimalQuantity dq(rangeLo);
             double dblValue = dq.toDouble();
@@ -457,8 +458,9 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
                 int64_t dqVal = dq.toLong();
                 dqVal += incrementVal;
                 dq.setToLong(dqVal);
-                dq.adjustMagnitude(-numFracDigit);
                 dq.setMinFraction(numFracDigit);
+                dq.adjustMagnitude(-numFracDigit - exponent);
+                dq.adjustExponent(exponent);
                 dblValue = dq.toDouble();
             }
         }
