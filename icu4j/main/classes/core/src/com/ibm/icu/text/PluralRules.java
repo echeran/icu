@@ -2481,7 +2481,7 @@ public class PluralRules implements Serializable {
                     break;
                 }
             }
-            addSample(keyword, new DecimalQuantity_DualStorageBCD(1000000d), maxCount, result); // hack for Welsh
+            addSample(keyword, DecimalQuantity_DualStorageBCD.fromExponentString("1000000.0"), maxCount, result); // hack for Welsh
             break;
         }
 
