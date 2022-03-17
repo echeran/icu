@@ -1225,10 +1225,12 @@ public class PluralRules implements Serializable {
         }
 
         private static void checkDecimal(SampleType sampleType2, DecimalQuantity sample) {
-            if ((sampleType2 == SampleType.INTEGER && sample.getPluralOperand(Operand.v) != 0) ||
-                    (sampleType2 == SampleType.DECIMAL && sample.getPluralOperand(Operand.v) == 0
-                            && sample.getPluralOperand(Operand.e) == 0
-                            && sample.getPluralOperand(Operand.n) != 0)) {  // is this double == 0 comparison fine? I think it is, just want to make sure.
+            // TODO: Remove the need for the fallback check for exponent notation integers classified
+            // as "@decimal" type samples, if/when changes are made to
+            // resolve https://unicode-org.atlassian.net/browse/CLDR-15452
+            if ((sampleType2 == SampleType.INTEGER && sample.getPluralOperand(Operand.v) != 0)
+                    || (sampleType2 == SampleType.DECIMAL && sample.getPluralOperand(Operand.v) == 0
+                        && sample.getPluralOperand(Operand.e) == 0)) {
                 throw new IllegalArgumentException("Ill-formed number range: " + sample);
             }
         }
