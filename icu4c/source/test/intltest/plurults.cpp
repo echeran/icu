@@ -396,9 +396,16 @@ void PluralRulesTest::testGetUniqueKeywordValue() {
     assertRuleKeyValue("a: n is 1", "other", UPLRULES_NO_UNIQUE_VALUE); // key matches default rule
 }
 
+/**
+ * Using the double API for getting plural samples, assert all samples match the keyword
+ * they are listed under, for all locales.
+ * 
+ * Specifically, iterate over all locales, get plural rules for the locale, iterate over every rule,
+ * then iterate over every sample in the rule, parse sample to a number (double), use that number
+ * as an input to .select() for the rules object, and assert the actual return plural keyword matches
+ * what we expect based on the plural rule string.
+ */
 void PluralRulesTest::testGetSamples() {
-    // TODO: fix samples, re-enable this test.
-
     // no get functional equivalent API in ICU4C, so just
     // test every locale...
     UErrorCode status = U_ZERO_ERROR;
@@ -457,9 +464,16 @@ void PluralRulesTest::testGetSamples() {
     }
 }
 
+/**
+ * Using the DecimalQuantity API for getting plural samples, assert all samples match the keyword
+ * they are listed under, for all locales.
+ * 
+ * Specifically, iterate over all locales, get plural rules for the locale, iterate over every rule,
+ * then iterate over every sample in the rule, parse sample to a number (DecimalQuantity), use that number
+ * as an input to .select() for the rules object, and assert the actual return plural keyword matches
+ * what we expect based on the plural rule string.
+ */
 void PluralRulesTest::testGetDecimalQuantitySamples() {
-    // TODO: fix samples, re-enable this test.
-
     // no get functional equivalent API in ICU4C, so just
     // test every locale...
     UErrorCode status = U_ZERO_ERROR;
@@ -522,6 +536,10 @@ void PluralRulesTest::testGetDecimalQuantitySamples() {
     }
 }
 
+/**
+ * This test is for the support of X.YeZ scientific notation of numbers in
+ * the plural sample string.
+ */
 void PluralRulesTest::testSamplesWithExponent() {
     // integer samples
     UErrorCode status = U_ZERO_ERROR;
@@ -559,7 +577,10 @@ void PluralRulesTest::testSamplesWithExponent() {
     checkNewSamples(description2, test2, u"other", u"@decimal 2.0~3.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 2.1e5, 3.1e5, 4.1e5, 5.1e5, 6.1e5, 7.1e5, …", DecimalQuantity::fromExponentString(u"2.0", status));
 }
 
-
+/**
+ * This test is for the support of X.YcZ compact notation of numbers in
+ * the plural sample string.
+ */
 void PluralRulesTest::testSamplesWithCompactNotation() {
     // integer samples
     UErrorCode status = U_ZERO_ERROR;
@@ -775,6 +796,11 @@ PluralRulesTest::testGetAllKeywordValues() {
 
 // For the time being, the  compact notation exponent operand `c` is an alias
 // for the scientific exponent operand `e` and compact notation.
+/**
+ * Test the proper plural rule keyword selection given an input number that is
+ * already formatted into scientific notation. This exercises the `e` plural operand
+ * for the formatted number.
+ */
 void
 PluralRulesTest::testScientificPluralKeyword() {
     IcuTestErrorCode errorCode(*this, "testScientificPluralKeyword");
@@ -837,6 +863,11 @@ PluralRulesTest::testScientificPluralKeyword() {
     }
 }
 
+/**
+ * Test the proper plural rule keyword selection given an input number that is
+ * already formatted into compact notation. This exercises the `c` plural operand
+ * for the formatted number.
+ */
 void
 PluralRulesTest::testCompactDecimalPluralKeyword() {
     IcuTestErrorCode errorCode(*this, "testCompactDecimalPluralKeyword");

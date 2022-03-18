@@ -237,7 +237,7 @@ public class PluralRulesTest extends TestFmwk {
     }
 
     /**
-     * This test is for the support of X.YcZ compactnotation of numbers in
+     * This test is for the support of X.YcZ compact notation of numbers in
      * the plural sample string.
      */
     @Test
@@ -810,6 +810,14 @@ public class PluralRulesTest extends TestFmwk {
     /**
      * The version in PluralFormatUnitTest is not really a test, and it's in the wrong place anyway, so I'm putting a
      * variant of it here.
+     *
+     * Using the double API for getting plural samples, assert all samples match the keyword
+     * they are listed under, for all locales.
+     *
+     * Specifically, iterate over all locales, get plural rules for the locale, iterate over every rule,
+     * then iterate over every sample in the rule, parse sample to a number (double), use that number
+     * as an input to .select() for the rules object, and assert the actual return plural keyword matches
+     * what we expect based on the plural rule string.
      */
     @Test
     public void TestGetSamples() {
@@ -856,8 +864,15 @@ public class PluralRulesTest extends TestFmwk {
     }
 
     /**
-     * The version in PluralFormatUnitTest is not really a test, and it's in the wrong place anyway, so I'm putting a
-     * variant of it here.
+     * This duplicates TestGetSamples(), but parses samples as DecimalQuantity instead of double.
+     *
+     * Using the DecimalQuantity API for getting plural samples, assert all samples match the keyword
+     * they are listed under, for all locales.
+     *
+     * Specifically, iterate over all locales, get plural rules for the locale, iterate over every rule,
+     * then iterate over every sample in the rule, parse sample to a number (DecimalQuantity), use that number
+     * as an input to .select() for the rules object, and assert the actual return plural keyword matches
+     * what we expect based on the plural rule string.
      */
     @Test
     public void TestGetDecimalQuantitySamples() {
@@ -1135,6 +1150,11 @@ public class PluralRulesTest extends TestFmwk {
 
     // For the time being, the compact notation exponent operand `c` is an alias
     // for the scientific exponent operand `e` and compact notation.
+    /**
+     * Test the proper plural rule keyword selection given an input number that is
+     * already formatted into scientific notation. This exercises the `e` plural operand
+     * for the formatted number.
+     */
     @Test
     public void testScientificPluralKeyword() {
         PluralRules rules = PluralRules.createRules("one: i = 0,1 @integer 0, 1 @decimal 0.0~1.5;  many: e = 0 and i % 1000000 = 0 and v = 0 or " +
@@ -1184,6 +1204,11 @@ public class PluralRulesTest extends TestFmwk {
         }
     }
 
+    /**
+     * Test the proper plural rule keyword selection given an input number that is
+     * already formatted into compact notation. This exercises the `c` plural operand
+     * for the formatted number.
+     */
     @Test
     public void testCompactDecimalPluralKeyword() {
         PluralRules rules = PluralRules.createRules("one: i = 0,1 @integer 0, 1 @decimal 0.0~1.5;  many: c = 0 and i % 1000000 = 0 and v = 0 or " +
