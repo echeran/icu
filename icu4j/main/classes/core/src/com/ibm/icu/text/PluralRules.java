@@ -1269,8 +1269,9 @@ public class PluralRules implements Serializable {
             for (DecimalQuantitySamplesRange range : samples) {
                 DecimalQuantity start = range.start;
                 DecimalQuantity end = range.end;
-                int numFracDigit = (int) start.getPluralOperand(Operand.v);
-                BigDecimal incrementBd = BigDecimal.ONE.movePointLeft(numFracDigit);
+                int lowerDispMag = start.getLowerDisplayMagnitude();
+                int incrementScale = lowerDispMag + start.getExponent();
+                BigDecimal incrementBd = BigDecimal.ONE.movePointRight(incrementScale);
                 int exponent = start.getExponent();
 
                 for (DecimalQuantity dq = start.createCopy(); dq.toDouble() <= end.toDouble(); ) {
@@ -1292,7 +1293,7 @@ public class PluralRules implements Serializable {
                     java.math.BigDecimal dqBd = dq.toBigDecimal();
                     java.math.BigDecimal newDqBd = dqBd.add(incrementBd);
                     dq = new DecimalQuantity_DualStorageBCD(newDqBd);
-                    dq.setMinFraction(numFracDigit);
+                    dq.setMinFraction(-lowerDispMag);
                     dq.adjustMagnitude(-exponent);
                     dq.adjustExponent(exponent);
                 }

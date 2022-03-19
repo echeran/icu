@@ -864,7 +864,7 @@ public class PluralRulesTest extends TestFmwk {
     }
 
     /**
-     * This duplicates TestGetSamples(), but parses samples as DecimalQuantity instead of double.
+     * This replicates the setup of TestGetSamples(), but parses samples as DecimalQuantity instead of double.
      *
      * Using the DecimalQuantity API for getting plural samples, assert all samples match the keyword
      * they are listed under, for all locales.
@@ -915,6 +915,76 @@ public class PluralRulesTest extends TestFmwk {
 
             assertNull(locale + ", list is null", rules.getDecimalQuantitySamples("@#$%^&*"));
             assertNull(locale + ", list is null", rules.getDecimalQuantitySamples("@#$%^&*", SampleType.DECIMAL));
+        }
+    }
+
+    /**
+     * Test addSamples (Java) / getSamplesFromString (C++) to ensure the expansion of plural rule sample range
+     * expands to a sequence of sample numbers that is incremented as the right scale.
+     *
+     *  Do this for numbers with fractional digits but no exponent.
+     */
+    @Test
+    public void testGetOrAddSamplesFromString() {
+        PluralRules rules = PluralRules.createRules("testkeyword: e != 0 @decimal 2.0~4.0, …");
+
+        Set<String> keywords = rules.getKeywords();
+        assertTrue("At least parse the test keyword in the test rule string", 0 < keywords.size());
+
+        String expKeyword = "testkeyword";
+        Collection<DecimalQuantity> list = rules.getDecimalQuantitySamples(expKeyword, SampleType.DECIMAL);
+
+        String[] expDqStrs = {
+                "2.0", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9",
+                "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9",
+                "4.0"
+        };
+        assertEquals("Number of parsed samples from test string incorrect", expDqStrs.length, list.size());
+        ArrayList<DecimalQuantity> actSamples = new ArrayList<>(list);
+        for (int i = 0; i < list.size(); i++) {
+            String expDqStr = expDqStrs[i];
+            DecimalQuantity sample = actSamples.get(i);
+            String sampleStr = sample.toExponentString();
+
+            assertEquals("Expansion of sample range to sequence of sample values should increment at the right scale",
+                    expDqStr, sampleStr);
+
+        }
+    }
+
+    /**
+     * Test addSamples (Java) / getSamplesFromString (C++) to ensure the expansion of plural rule sample range
+     * expands to a sequence of sample numbers that is incremented as the right scale.
+     *
+     *  Do this for numbers written in a notation that has an exponent, for which the number is an
+     *  integer (also as defined in the UTS 35 spec for the plural operands) but whose representation
+     *  has fractional digits in the significand written before the exponent.
+     */
+    @Test
+    public void testGetOrAddSamplesFromStringCompactNotation() {
+        PluralRules rules = PluralRules.createRules("testkeyword: e != 0 @decimal 2.0c6~4.0c6, …");
+
+        Set<String> keywords = rules.getKeywords();
+        assertTrue("At least parse the test keyword in the test rule string", 0 < keywords.size());
+
+        String expKeyword = "testkeyword";
+        Collection<DecimalQuantity> list = rules.getDecimalQuantitySamples(expKeyword, SampleType.DECIMAL);
+
+        String[] expDqStrs = {
+                "2.0c6", "2.1c6", "2.2c6", "2.3c6", "2.4c6", "2.5c6", "2.6c6", "2.7c6", "2.8c6", "2.9c6",
+                "3.0c6", "3.1c6", "3.2c6", "3.3c6", "3.4c6", "3.5c6", "3.6c6", "3.7c6", "3.8c6", "3.9c6",
+                "4.0c6"
+        };
+        assertEquals("Number of parsed samples from test string incorrect", expDqStrs.length, list.size());
+        ArrayList<DecimalQuantity> actSamples = new ArrayList<>(list);
+        for (int i = 0; i < list.size(); i++) {
+            String expDqStr = expDqStrs[i];
+            DecimalQuantity sample = actSamples.get(i);
+            String sampleStr = sample.toExponentString();
+
+            assertEquals("Expansion of sample range to sequence of sample values should increment at the right scale",
+                    expDqStr, sampleStr);
+
         }
     }
 
