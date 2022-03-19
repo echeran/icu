@@ -51,6 +51,8 @@ void PluralRulesTest::runIndexedTest( int32_t index, UBool exec, const char* &na
     // TESTCASE_AUTO(testGetUniqueKeywordValue);
     TESTCASE_AUTO(testGetSamples);
     TESTCASE_AUTO(testGetDecimalQuantitySamples);
+    TESTCASE_AUTO(testGetOrAddSamplesFromString);
+    TESTCASE_AUTO(testGetOrAddSamplesFromStringCompactNotation);
     TESTCASE_AUTO(testSamplesWithExponent);
     TESTCASE_AUTO(testSamplesWithCompactNotation);
     TESTCASE_AUTO(testWithin);
@@ -533,6 +535,98 @@ void PluralRulesTest::testGetDecimalQuantitySamples() {
                 }
             }
         }
+    }
+}
+
+/**
+ * Test addSamples (Java) / getSamplesFromString (C++) to ensure the expansion of plural rule sample range
+ * expands to a sequence of sample numbers that is incremented as the right scale.
+ *
+ *  Do this for numbers with fractional digits but no exponent.
+ */
+void PluralRulesTest::testGetOrAddSamplesFromString() {
+    UErrorCode status = U_ZERO_ERROR;
+    UnicodeString description(u"testkeyword: e != 0 @decimal 2.0c6~4.0c6, …");
+    LocalPointer<PluralRules> rules(PluralRules::createRules(description, status));
+    if (U_FAILURE(status)) {
+        errln("Couldn't create plural rules from a string, with error = %s", u_errorName(status));
+        return;
+    }
+
+    LocalPointer<StringEnumeration> keywords(rules->getKeywords(status));
+    if (U_FAILURE(status)) {
+        errln("Couldn't get keywords from a parsed rules object, with error = %s", u_errorName(status));
+        return;
+    }
+
+    DecimalQuantity values[1000];
+    const UnicodeString keyword(u"testkeyword");
+    int32_t count = rules->getSamples(keyword, values, UPRV_LENGTHOF(values), status);
+    if (U_FAILURE(status)) {
+        errln(UnicodeString(u"getSamples() failed for plural rule keyword ") + keyword);
+        return;
+    }
+
+    UnicodeString expDqStrs[] = {
+        u"2.0c6", u"2.1c6", u"2.2c6", u"2.3c6", u"2.4c6", u"2.5c6", u"2.6c6", u"2.7c6", u"2.8c6", u"2.9c6",
+        u"3.0c6", u"3.1c6", u"3.2c6", u"3.3c6", u"3.4c6", u"3.5c6", u"3.6c6", u"3.7c6", u"3.8c6", u"3.9c6",
+        u"4.0c6"
+    };
+    assertEquals(u"Number of parsed samples from test string incorrect", 21, count);
+    for (int i = 0; i < count; i++) {
+        UnicodeString expDqStr = expDqStrs[i];
+        DecimalQuantity sample = values[i];
+        UnicodeString sampleStr = sample.toExponentString();
+
+        assertEquals(u"Expansion of sample range to sequence of sample values should increment at the right scale",
+            expDqStr, sampleStr);
+    }
+}
+
+/**
+ * Test addSamples (Java) / getSamplesFromString (C++) to ensure the expansion of plural rule sample range
+ * expands to a sequence of sample numbers that is incremented as the right scale.
+ *
+ *  Do this for numbers written in a notation that has an exponent, for which the number is an
+ *  integer (also as defined in the UTS 35 spec for the plural operands) but whose representation
+ *  has fractional digits in the significand written before the exponent.
+ */
+void PluralRulesTest::testGetOrAddSamplesFromStringCompactNotation() {
+    UErrorCode status = U_ZERO_ERROR;
+    UnicodeString description(u"testkeyword: e != 0 @decimal 2.0~4.0, …");
+    LocalPointer<PluralRules> rules(PluralRules::createRules(description, status));
+    if (U_FAILURE(status)) {
+        errln("Couldn't create plural rules from a string, with error = %s", u_errorName(status));
+        return;
+    }
+
+    LocalPointer<StringEnumeration> keywords(rules->getKeywords(status));
+    if (U_FAILURE(status)) {
+        errln("Couldn't get keywords from a parsed rules object, with error = %s", u_errorName(status));
+        return;
+    }
+
+    DecimalQuantity values[1000];
+    const UnicodeString keyword(u"testkeyword");
+    int32_t count = rules->getSamples(keyword, values, UPRV_LENGTHOF(values), status);
+    if (U_FAILURE(status)) {
+        errln(UnicodeString(u"getSamples() failed for plural rule keyword ") + keyword);
+        return;
+    }
+
+    UnicodeString expDqStrs[] = {
+        u"2.0", u"2.1", u"2.2", u"2.3", u"2.4", u"2.5", u"2.6", u"2.7", u"2.8", u"2.9",
+        u"3.0", u"3.1", u"3.2", u"3.3", u"3.4", u"3.5", u"3.6", u"3.7", u"3.8", u"3.9",
+        u"4.0"
+    };
+    assertEquals(u"Number of parsed samples from test string incorrect", 21, count);
+    for (int i = 0; i < count; i++) {
+        UnicodeString expDqStr = expDqStrs[i];
+        DecimalQuantity sample = values[i];
+        UnicodeString sampleStr = sample.toExponentString();
+
+        assertEquals(u"Expansion of sample range to sequence of sample values should increment at the right scale",
+            expDqStr, sampleStr);
     }
 }
 

@@ -32,6 +32,8 @@ private:
     void testGetUniqueKeywordValue();
     void testGetSamples();
     void testGetDecimalQuantitySamples();
+    void testGetOrAddSamplesFromString();
+    void testGetOrAddSamplesFromStringCompactNotation();
     void testSamplesWithExponent();
     void testSamplesWithCompactNotation();
     void testWithin();

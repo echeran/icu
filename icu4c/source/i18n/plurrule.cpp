@@ -46,7 +46,9 @@
 U_NAMESPACE_BEGIN
 
 using namespace icu::pluralimpl;
+using icu::number::impl::DecNum;
 using icu::number::impl::DecimalQuantity;
+using icu::number::impl::RoundingMode;
 
 static const UChar PLURAL_KEYWORD_OTHER[]={LOW_O,LOW_T,LOW_H,LOW_E,LOW_R,0};
 static const UChar PLURAL_DEFAULT_RULE[]={LOW_O,LOW_T,LOW_H,LOW_E,LOW_R,COLON,SPACE,LOW_N,0};
@@ -428,14 +430,17 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
 
             DecimalQuantity incrementDq;
             incrementDq.setToInt(1);
-            int32_t numFracDigit = rangeLo.fractionCount();
-            incrementDq.adjustMagnitude(numFracDigit);
-            int64_t incrementVal = incrementDq.toLong();  // 10 ^ numFracDigit
+            int32_t lowerDispMag = rangeLo.getLowerDisplayMagnitude();
             int32_t exponent = rangeLo.getExponent();
+            int32_t incrementScale = lowerDispMag + exponent;
+            incrementDq.adjustMagnitude(incrementScale);
+            double incrementVal = incrementDq.toDouble();  // 10 ^ incrementScale
+            
 
             DecimalQuantity dq(rangeLo);
             double dblValue = dq.toDouble();
             double end = rangeHi.toDouble();
+
             while (dblValue <= end) {
                 if (isDouble) {
                     // Hack Alert: don't return any decimal samples with integer values that
@@ -454,14 +459,21 @@ getSamplesFromString(const UnicodeString &samples, double *destDbl,
                 }
 
                 // Increment dq for next iteration
-                dq.adjustMagnitude(numFracDigit);
-                int64_t dqVal = dq.toLong();
-                dqVal += incrementVal;
-                dq.setToLong(dqVal);
-                dq.setMinFraction(numFracDigit);
-                dq.adjustMagnitude(-numFracDigit - exponent);
-                dq.adjustExponent(exponent);
-                dblValue = dq.toDouble();
+
+                // Because DecNum and DecimalQuantity do not support
+                // add operations, we need to convert to/from double,
+                // despite precision lossiness for decimal fractions like 0.1.
+                dblValue += incrementVal;
+                DecNum newDqDecNum;
+                newDqDecNum.setTo(dblValue, status);
+                DecimalQuantity newDq;             
+                newDq.setToDecNum(newDqDecNum, status);
+                newDq.setMinFraction(-lowerDispMag);
+                newDq.roundToMagnitude(lowerDispMag, RoundingMode::UNUM_ROUND_HALFEVEN, status);
+                newDq.adjustMagnitude(-exponent);
+                newDq.adjustExponent(exponent);
+                dblValue = newDq.toDouble();
+                dq = newDq;
             }
         }
         sampleStartIdx = sampleEndIdx + 1;
