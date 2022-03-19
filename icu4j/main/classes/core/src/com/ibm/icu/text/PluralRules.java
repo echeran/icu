@@ -1225,7 +1225,7 @@ public class PluralRules implements Serializable {
         }
 
         private static void checkDecimal(SampleType sampleType2, DecimalQuantity sample) {
-            // TODO: Remove the need for the fallback check for exponent notation integers classified
+            // TODO(CLDR-15452): Remove the need for the fallback check for exponent notation integers classified
             // as "@decimal" type samples, if/when changes are made to
             // resolve https://unicode-org.atlassian.net/browse/CLDR-15452
             if ((sampleType2 == SampleType.INTEGER && sample.getPluralOperand(Operand.v) != 0)
