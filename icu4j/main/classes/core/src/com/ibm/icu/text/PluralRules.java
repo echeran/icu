@@ -1270,9 +1270,9 @@ public class PluralRules implements Serializable {
                 DecimalQuantity start = range.start;
                 DecimalQuantity end = range.end;
                 int lowerDispMag = start.getLowerDisplayMagnitude();
-                int incrementScale = lowerDispMag + start.getExponent();
-                BigDecimal incrementBd = BigDecimal.ONE.movePointRight(incrementScale);
                 int exponent = start.getExponent();
+                int incrementScale = lowerDispMag + exponent;
+                BigDecimal incrementBd = BigDecimal.ONE.movePointRight(incrementScale);
 
                 for (DecimalQuantity dq = start.createCopy(); dq.toDouble() <= end.toDouble(); ) {
                     if (isDouble) {
