@@ -32,6 +32,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -289,13 +291,18 @@ public class PluralRulesTest extends TestFmwk {
         DecimalQuantitySamples samples = test.getDecimalSamples(keyword, sampleType);
         if (samples != null) {
 
-            // for now, skip round-trip formatting test when samples string uses
-            // 'e' instead of 'c' for compact notation
+            // For now, skip round-trip formatting test when samples string uses
+            // 'e' instead of 'c' for compact notation.
 
-            if (!samplesString.matches(".*\\d+e[-]?\\d+.*")) {
-                assertEquals("samples; " + title, samplesString, samples.toString());
+            // We are skipping tests for 'e' by replacing 'e' with 'c' in exponent
+            // notation.
+            Pattern p = Pattern.compile("(\\d+)(e)([-]?\\d+)");
+            Matcher m = p.matcher(samplesString);
+            if (m.find()) {
+                samplesString = m.replaceAll("$1c$3");
             }
 
+            assertEquals("samples; " + title, samplesString, samples.toString());
             assertEquals("bounded; " + title, isBounded, samples.bounded);
             assertEquals("first; " + title, firstInRange, samples.samples.iterator().next().start);
         }
