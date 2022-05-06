@@ -121,8 +121,47 @@ root {
         catch (MissingResourceException ex) {
             warnln("could not load test data: " + ex.getMessage());
         }
+    }
 
+    @Test
+    public void TestElangoRBTest5() {
+/* Plain text version of com/ibm/icu/dev/data/elangorb/test5/root.res
 
+root {
+  myarraytable1:intvector {
+    1,
+    2,
+    3
+  }
+  soloint:int { 42 }
+}
+
+*/
+
+        try {
+            UResourceBundle bundle = UResourceBundle.getBundleInstance("com/ibm/icu/dev/data/elangorb/test5", ULocale.ROOT, testLoader);
+            if(bundle==null){
+                errln("could not create the resource bundle");
+            }
+
+            UResourceBundle myarraytable1 = bundle.get("myarraytable1");
+            int[] myarraytable1AsIntVector = myarraytable1.getIntVector();
+            assertEquals("myarraytable1[0]", 1, myarraytable1AsIntVector[0]);
+            assertEquals("myarraytable1[1]", 2, myarraytable1AsIntVector[1]);
+            assertEquals("myarraytable1[2]", 3, myarraytable1AsIntVector[2]);
+
+            assertEquals("root bundle key name", null, bundle.getKey());
+
+            assertEquals("myarraytable1's key in its containing bundle ", "myarraytable1", myarraytable1.getKey());
+            assertEquals("myarraytable1 type", UResourceBundle.INT_VECTOR, myarraytable1.getType());
+
+            UResourceBundle soloint = bundle.get("soloint");
+            int solointAsInt = soloint.getInt();
+            assertEquals("soloint", 42, solointAsInt);
+        }
+        catch (MissingResourceException ex) {
+            warnln("could not load test data: " + ex.getMessage());
+        }
     }
 
     @Test
