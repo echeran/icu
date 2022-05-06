@@ -45,6 +45,87 @@ public final class ICUResourceBundleTest extends TestFmwk {
     private static final ClassLoader testLoader = ICUResourceBundleTest.class.getClassLoader();
 
     @Test
+    public void TestElangoRBTest4() {
+/* Plain text version of com/ibm/icu/dev/data/elangorb/test4/root.res
+
+root {
+  myarraytable1:intvector {
+    1,
+    2,
+    3
+  }
+}
+
+*/
+
+        try {
+            UResourceBundle bundle = UResourceBundle.getBundleInstance("com/ibm/icu/dev/data/elangorb/test4", ULocale.ROOT, testLoader);
+            if(bundle==null){
+                errln("could not create the resource bundle");
+            }
+
+            // Q: If we call .get() instead of .getIntVector(), can we access each vector element via .get()?
+            // A: Nope.
+            //com.ibm.icu.util.UResourceTypeMismatchException:
+            //at com.ibm.icu.util.UResourceBundle.getUInt(UResourceBundle.java:497)
+            //at com.ibm.icu.dev.test.util.ICUResourceBundleTest.TestElangoRBTest4(ICUResourceBundleTest.java:72)
+            //at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+            //at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+            //at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+            //at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+            //at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+            //at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+            //at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+            //at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+            //at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+            //at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+            //at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+            //at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+            //at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+            //at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+            //at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+            //at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+            //at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+            //at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+            //at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+            //at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+            //at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:89)
+            //at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:41)
+            //at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:541)
+            //at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:763)
+            //at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:463)
+            //at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:209)
+            //
+//            UResourceBundle myarraytable1 = bundle.get("myarraytable1");
+//            if(myarraytable1==null){
+//                errln("could not find table 'myarraytable1'");
+//            }
+//            int firstInt = myarraytable1.getUInt();
+//            assertEquals("get myarraytable1[0] the hard way", 1, firstInt);
+
+            // We should be able to call .getIntVector on a clear intvector type
+            UResourceBundle myarraytable1 = bundle.get("myarraytable1");
+            int[] myarraytable1AsIntVector = myarraytable1.getIntVector();
+            assertEquals("myarraytable1[0]", 1, myarraytable1AsIntVector[0]);
+            assertEquals("myarraytable1[1]", 2, myarraytable1AsIntVector[1]);
+            assertEquals("myarraytable1[2]", 3, myarraytable1AsIntVector[2]);
+
+            assertEquals("root bundle key name", null, bundle.getKey());
+
+            assertEquals("myarraytable1's key in its containing bundle ", "myarraytable1", myarraytable1.getKey());
+            assertEquals("myarraytable1 type", UResourceBundle.INT_VECTOR, myarraytable1.getType());
+
+            assertEquals("root RB locale string is empty", "", bundle.getLocale().getDisplayName());
+            assertEquals("myarraytable1 RB locale string is empty", "", myarraytable1.getLocale().getDisplayName());
+        }
+        catch (MissingResourceException ex) {
+            warnln("could not load test data: " + ex.getMessage());
+        }
+
+
+    }
+
+    @Test
     public void TestGetResources(){
         try{
             // It does not work well in eclipse plug-in test because of class loader configuration??
