@@ -165,6 +165,69 @@ root {
     }
 
     @Test
+    public void TestElangoRBTest6() {
+/* Plain text version of com/ibm/icu/dev/data/elangorb/test5/root.res
+
+root {
+  ints {
+    myints:intvector {
+      -2,
+      -1,
+      0,
+      1,
+      2
+    }
+  }
+  strings {
+    emoticons {
+      ":-)"
+      ":-|"
+      ":-O"
+    }
+    ta {
+      நேற்று
+      இன்று
+      நாளை
+    }
+  }
+}
+
+*/
+
+        try {
+            UResourceBundle root = UResourceBundle.getBundleInstance("com/ibm/icu/dev/data/elangorb/test6", ULocale.ROOT, testLoader);
+            if(root==null){
+                errln("could not create the resource bundle");
+            }
+
+            UResourceBundle ints = root.get("ints");
+            UResourceBundle myints = ints.get("myints");
+            int[] myintsAsIntVector = myints.getIntVector();
+            assertEquals("myints[0]", -2, myintsAsIntVector[0]);
+            assertEquals("myints[1]", -1, myintsAsIntVector[1]);
+            assertEquals("myints[2]", 0, myintsAsIntVector[2]);
+            assertEquals("myints[3]", 1, myintsAsIntVector[3]);
+            assertEquals("myints[4]", 2, myintsAsIntVector[4]);
+
+            assertEquals("myints's key in its containing bundle ", "myints", myints.getKey());
+            assertEquals("myints type", UResourceBundle.INT_VECTOR, myints.getType());
+
+            UResourceBundle strings = root.get("strings");
+            UResourceBundle emoticons = strings.get("emoticons");
+            assertEquals("emoticons type", UResourceBundle.STRING, emoticons.getType());
+            assertEquals("emoticons", ":-):-|:-O", emoticons.getString());
+            UResourceBundle ta = strings.get("ta");
+            assertEquals("ta type", UResourceBundle.STRING, ta.getType());
+            // Unquoted strings on a line are space-separated joined
+            assertEquals("ta", "நேற்று இன்று நாளை", ta.getString());
+
+        }
+        catch (MissingResourceException ex) {
+            warnln("could not load test data: " + ex.getMessage());
+        }
+    }
+
+    @Test
     public void TestGetResources(){
         try{
             // It does not work well in eclipse plug-in test because of class loader configuration??
