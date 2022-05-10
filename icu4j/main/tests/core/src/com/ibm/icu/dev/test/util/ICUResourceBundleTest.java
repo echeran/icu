@@ -166,7 +166,7 @@ root {
 
     @Test
     public void TestElangoRBTest6() {
-/* Plain text version of com/ibm/icu/dev/data/elangorb/test5/root.res
+/* Plain text version of com/ibm/icu/dev/data/elangorb/test6/root.res
 
 root {
   ints {
@@ -221,6 +221,67 @@ root {
             // Unquoted strings on a line are space-separated joined
             assertEquals("ta", "நேற்று இன்று நாளை", ta.getString());
 
+        }
+        catch (MissingResourceException ex) {
+            warnln("could not load test data: " + ex.getMessage());
+        }
+    }
+
+
+    @Test
+    public void TestElangoRBTest7() {
+/* Plain text version of com/ibm/icu/dev/data/elangorb/test7/root.res
+
+root {
+  a {
+    b {
+      c {
+        d {
+          x:string { "IJsselmeer ÍJ́sselmeer" }
+        }
+      }
+    }
+  }
+}
+
+Plain text version of com/ibm/icu/dev/data/elangorb/test7/en.res
+
+en {
+  a {
+    b {
+      c {
+        e {
+          f {
+            y:string { "IJsselmeer ÍJ́sselmeer" }
+          }
+        }
+      }
+    }
+  }
+}
+
+*/
+
+        try {
+
+            // Pull out data directly from en.res the hard way (also without automatic fallback)
+            UResourceBundle root = UResourceBundle.getBundleInstance("com/ibm/icu/dev/data/elangorb/test7", ULocale.ENGLISH, testLoader);
+            if(root==null){
+                errln("could not create the resource bundle");
+            }
+            UResourceBundle a = root.get("a");
+            UResourceBundle b = a.get("b");
+            UResourceBundle c = b.get("c");
+            UResourceBundle e = c.get("e");
+            UResourceBundle f = e.get("f");
+            UResourceBundle y = f.get("y");
+            String yStr = y.getString();
+            assertEquals("en resource value", "IJsselmeer ÍJ́sselmeer", yStr);
+
+            // Pull out data starting from en.res and allowing (needing) automatic fallback to the root
+            ICUResourceBundle enBundle = (ICUResourceBundle) UResourceBundle.getBundleInstance("com/ibm/icu/dev/data/elangorb/test7", "en");
+            String xStr = enBundle.findStringWithFallback("a/b/c/d/x");
+            assertEquals("fallback to root for a/b/c/d/x", "IJsselmeer ÍJ́sselmeer", xStr);
         }
         catch (MissingResourceException ex) {
             warnln("could not load test data: " + ex.getMessage());
