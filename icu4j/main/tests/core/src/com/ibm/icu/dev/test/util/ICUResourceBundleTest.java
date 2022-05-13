@@ -15,8 +15,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -30,6 +32,7 @@ import org.junit.runners.JUnit4;
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.impl.ICUData;
 import com.ibm.icu.impl.ICUResourceBundle;
+import com.ibm.icu.impl.UResource;
 import com.ibm.icu.impl.Utility;
 import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.text.UTF16;
@@ -287,6 +290,77 @@ en {
             warnln("could not load test data: " + ex.getMessage());
         }
     }
+
+    @Test
+    public void TestElangoRBTest7B() {
+/*
+ * This is Test 7B
+ * Reusing same .res files from Test7
+ */
+
+        class MapSink extends UResource.Sink {
+            // Storage for all visited Resources
+            Map<Integer, UResource.Key> rescKeys = new HashMap<>();
+            Map<Integer, UResource.Value> rescVals = new HashMap<>();
+            @Override
+            public void put(UResource.Key key, UResource.Value value, boolean noFallback) {
+                System.out.println("put " + key.toString());
+                UResource.Table table = value.getTable();
+                for (int i = 0; table.getKeyAndValue(i, key, value); ++i) {
+                    System.out.println("    item " + key.toString());
+                }
+                int hash = key.hashCode();
+                if (!rescKeys.containsKey(hash)) {
+                    rescKeys.put(hash, key);
+                    rescVals.put(hash, value);
+                }
+            }
+
+            public int size() {
+                return rescVals.size();
+            }
+
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder();
+                sb.append('[');
+                for (int hash : rescKeys.keySet()) {
+                    UResource.Key key = rescKeys.get(hash);
+                    UResource.Value value = rescVals.get(hash);
+                    sb.append(key);
+                    sb.append(" -> ");
+                    sb.append(value);
+                    sb.append(',');
+                }
+                sb.append(']');
+                return sb.toString();
+            }
+        }
+
+
+        try {
+            // Pull out data starting from en.res and allowing (needing) automatic fallback to the root
+            ICUResourceBundle enBundle = (ICUResourceBundle) UResourceBundle.getBundleInstance("com/ibm/icu/dev/data/elangorb/test7", "en");
+            // All Resources of interest (namely, "leaf" resources) have keys with this prefix
+            String commonPrefixPath = "a/b/c";
+
+            // getAllChildren will only descend from key one level to get children keys
+            MapSink descendOnceSink = new MapSink();
+            System.out.println("get all children of a/b/c");
+            enBundle.getAllChildrenWithFallback(commonPrefixPath, descendOnceSink);
+
+            // getAllItems will descend from key fully to get all "descendent" keys
+            MapSink descendFullySink = new MapSink();
+            System.out.println("get a/b/c");
+            enBundle.getAllItemsWithFallback(commonPrefixPath, descendFullySink);
+
+            assertEquals("compare if |getAllChildren()| == |getAllItems()|", descendOnceSink.size(), descendFullySink.size());
+        }
+        catch (MissingResourceException ex) {
+            warnln("could not load test data: " + ex.getMessage());
+        }
+    }
+
 
     @Test
     public void TestGetResources(){
