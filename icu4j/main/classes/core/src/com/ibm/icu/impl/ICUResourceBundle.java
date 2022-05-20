@@ -33,6 +33,10 @@ import com.ibm.icu.util.UResourceBundle;
 import com.ibm.icu.util.UResourceBundleIterator;
 import com.ibm.icu.util.UResourceTypeMismatchException;
 
+
+// Note: methods beginning with "find-" differ from their "get-" equivalents
+// in that the "find-" methods return null if the requested Resource does not
+// exist, while the "get-" methods will throw an Exception
 public  class ICUResourceBundle extends UResourceBundle {
     /**
      * CLDR string value "∅∅∅" prevents fallback to the parent bundle.
