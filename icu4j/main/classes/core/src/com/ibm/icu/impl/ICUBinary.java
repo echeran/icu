@@ -117,6 +117,9 @@ public final class ICUBinary {
             }
         }
 
+        // Return the index of a resource file by its name in the .dat file
+        // table (ordering) of all contained resource files.
+        // key is the name of the resource file
         private static int binarySearch(ByteBuffer bytes, CharSequence key) {
             int base = bytes.position();
             int count = bytes.getInt(base);

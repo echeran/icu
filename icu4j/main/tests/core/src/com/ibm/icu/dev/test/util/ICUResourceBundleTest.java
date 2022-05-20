@@ -361,6 +361,9 @@ en {
         }
     }
 
+    // Note: "ElangoTest8" is really a test about .dat file reading, which is really
+    // functionality for ICUBinary to handle, whereas ICUResourceBundle is just for
+    // individual .res files.  That test will instead be found in ICUBinaryTest
 
     @Test
     public void TestGetResources(){
