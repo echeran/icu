@@ -127,6 +127,9 @@ public final class ICUBinaryTest extends TestFmwk
  * LD_LIBRARY_PATH=../lib ./icupkg -tl -a ~/tmp/genrb/test7/root.res ~/tmp/icupkg/test8/test8dtl.dat
  * LD_LIBRARY_PATH=../lib ./icupkg -tl -a ~/tmp/genrb/test7/en.res ~/tmp/icupkg/test8/test8dtl.dat
  *
+ * It also downloads the TZ files for some version of ICU, then it edits, via a hex editor,
+ * the zoneinfo64.res file to change the string America/Los_Angeles to America/LostBangles
+ *
  *
  * Q: Why are the ICU data files in ICU4J big-endian?  In the ICU4J Eclipse project
  * icu-shared, in the jar at the FS path data/icudata.jar (full path:
@@ -198,10 +201,38 @@ public final class ICUBinaryTest extends TestFmwk
         catch (MissingResourceException ex) {
             warnln("could not load test data: " + ex.getMessage());
         } catch (IOException e) {
-            // TODO(elango): Auto-generated catch block
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void TestElangoDatFileTest9() {
+/*
+ * This only adds the TZ files for some verison of ICU and edits timezoneTypes.res
+ * to change one instance in the file of the string "Australia/Brisbane" to
+ * "Aluminium/Briskets".
+ * And in metaZones.res, changing "America/Port_of_Spain" to "America/Port_of_Drain".
+ *
+ * Then, it temporarily sets ICUConfig.properties to point to the directory
+ * /usr/local/google/home/elango/oss/icu/icu4j/main/tests/core/src/com/ibm/icu/dev/data/elangorb/test9/
+ * and then tries to load data for that time zone id, which should pick it up from a successful reading
+ * of the modified files (so long as they are internally consistent).
+ *
+ * Examples of raw plain text versions of TZ update data is in the icu-data repository at
+ * https://github.com/unicode-org/icu-data/blob/main/tzdata/supplemental/*, etc.
+ */
+
+
+        try {
+            TimeZone tz1 = TimeZone.getTimeZone("Australia/Brisbane");
+            TimeZone tz2 = TimeZone.getTimeZone("America/Port_of_Spain");
+        }
+        catch (MissingResourceException ex) {
+            warnln("could not load test data: " + ex.getMessage());
+        }
+    }
+
+
 
 
 }
