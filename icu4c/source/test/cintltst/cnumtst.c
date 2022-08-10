@@ -76,6 +76,7 @@ static void TestIgnorePadding(void);
 static void TestSciNotationMaxFracCap(void);
 static void TestMinIntMinFracZero(void);
 static void Test21479_ExactCurrency(void);
+static void Test22088_Ethiopic(void);
 
 #define TESTCASE(x) addTest(root, &x, "tsformat/cnumtst/" #x)
 
@@ -118,6 +119,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestSciNotationMaxFracCap);
     TESTCASE(TestMinIntMinFracZero);
     TESTCASE(Test21479_ExactCurrency);
+    TESTCASE(Test22088_Ethiopic);
 }
 
 /* test Parse int 64 */
@@ -764,6 +766,7 @@ free(result);
     /*Testing unum_getAttribute and  unum_setAttribute() */
     log_verbose("\nTesting get and set Attributes\n");
     attr=UNUM_GROUPING_SIZE;
+    assertTrue("unum_hasAttribute returned false for UNUM_GROUPING_SIZE", unum_hasAttribute(def, attr));
     newvalue=unum_getAttribute(def, attr);
     newvalue=2;
     unum_setAttribute(def, attr, newvalue);
@@ -773,6 +776,7 @@ free(result);
         log_verbose("Pass: setting and getting attributes for UNUM_GROUPING_SIZE works fine\n");
 
     attr=UNUM_MULTIPLIER;
+    assertTrue("unum_hasAttribute returned false for UNUM_MULTIPLIER", unum_hasAttribute(def, attr));
     newvalue=unum_getAttribute(def, attr);
     newvalue=8;
     unum_setAttribute(def, attr, newvalue);
@@ -782,6 +786,7 @@ free(result);
         log_verbose("Pass:setting and getting attributes for UNUM_MULTIPLIER works fine\n");
 
     attr=UNUM_SECONDARY_GROUPING_SIZE;
+    assertTrue("unum_hasAttribute returned false for UNUM_SECONDARY_GROUPING_SIZE", unum_hasAttribute(def, attr));
     newvalue=unum_getAttribute(def, attr);
     newvalue=2;
     unum_setAttribute(def, attr, newvalue);
@@ -795,6 +800,7 @@ free(result);
     log_verbose("\nTesting get and set attributes extensively\n");
     for(attr=UNUM_PARSE_INT_ONLY; attr<= UNUM_PADDING_POSITION; attr=(UNumberFormatAttribute)((int32_t)attr + 1) )
     {
+        assertTrue("unum_hasAttribute returned false", unum_hasAttribute(fr, attr));
         newvalue=unum_getAttribute(fr, attr);
         unum_setAttribute(def, attr, newvalue);
         if(unum_getAttribute(def,attr)!=unum_getAttribute(fr, attr))
@@ -807,6 +813,10 @@ free(result);
     log_verbose("\nTesting spellout format\n");
     if (spellout_def)
     {
+        // check that unum_hasAttribute() works right with a spellout formatter
+        assertTrue("unum_hasAttribute() returned true for UNUM_MULTIPLIER on a spellout formatter", !unum_hasAttribute(spellout_def, UNUM_MULTIPLIER));
+        assertTrue("unum_hasAttribute() returned false for UNUM_LENIENT_PARSE on a spellout formatter", unum_hasAttribute(spellout_def, UNUM_LENIENT_PARSE));
+
         static const int32_t values[] = { 0, -5, 105, 1005, 105050 };
         for (i = 0; i < UPRV_LENGTHOF(values); ++i) {
             UChar buffer[128];
@@ -3595,6 +3605,32 @@ static void Test21479_ExactCurrency(void) {
 
     cleanup:
     unum_close(nf);
+}
+
+static void Test22088_Ethiopic(void) {
+    UErrorCode err = U_ZERO_ERROR;
+    UNumberFormat* nf1 = unum_open(UNUM_DEFAULT, NULL, 0, "am_ET@numbers=ethi", NULL, &err);
+    UNumberFormat* nf2 = unum_open(UNUM_NUMBERING_SYSTEM, NULL, 0, "am_ET@numbers=ethi", NULL, &err);
+    UNumberFormat* nf3 = unum_open(UNUM_NUMBERING_SYSTEM, NULL, 0, "en_US", NULL, &err);
+    
+    if (assertSuccess("Creation of number formatters failed", &err)) {
+        UChar result[200];
+        
+        unum_formatDouble(nf1, 123, result, 200, NULL, &err);
+        assertSuccess("Formatting of number failed", &err);
+        assertUEquals("Wrong result with UNUM_DEFAULT", u"፻፳፫", result);
+        
+        unum_formatDouble(nf2, 123, result, 200, NULL, &err);
+        assertSuccess("Formatting of number failed", &err);
+        assertUEquals("Wrong result with UNUM_NUMBERING_SYSTEM", u"፻፳፫", result);
+        
+        unum_formatDouble(nf3, 123, result, 200, NULL, &err);
+        assertSuccess("Formatting of number failed", &err);
+        assertUEquals("Wrong result with UNUM_NUMBERING_SYSTEM and English", u"123", result);
+    }
+    unum_close(nf1);
+    unum_close(nf2);
+    unum_close(nf3);
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

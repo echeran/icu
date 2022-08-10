@@ -117,7 +117,7 @@ static const UChar * const gLastResortNumberPatterns[UNUM_FORMAT_STYLE_COUNT] = 
     NULL,  // UNUM_SPELLOUT
     NULL,  // UNUM_ORDINAL
     NULL,  // UNUM_DURATION
-    NULL,  // UNUM_NUMBERING_SYSTEM
+    gLastResortDecimalPat,  // UNUM_NUMBERING_SYSTEM
     NULL,  // UNUM_PATTERN_RULEBASED
     gLastResortIsoCurrencyPat,  // UNUM_CURRENCY_ISO
     gLastResortPluralCurrencyPat,  // UNUM_CURRENCY_PLURAL
@@ -156,11 +156,11 @@ static const icu::number::impl::CldrPatternStyle gFormatCldrStyles[UNUM_FORMAT_S
 
 // Static hashtable cache of NumberingSystem objects used by NumberFormat
 static UHashtable * NumberingSystem_cache = NULL;
-static icu::UInitOnce gNSCacheInitOnce = U_INITONCE_INITIALIZER;
+static icu::UInitOnce gNSCacheInitOnce {};
 
 #if !UCONFIG_NO_SERVICE
 static icu::ICULocaleService* gService = NULL;
-static icu::UInitOnce gServiceInitOnce = U_INITONCE_INITIALIZER;
+static icu::UInitOnce gServiceInitOnce {};
 #endif
 
 /**
@@ -1309,6 +1309,14 @@ NumberFormat::makeInstance(const Locale& desiredLocale,
     if (style < 0 || style >= UNUM_FORMAT_STYLE_COUNT) {
         status = U_ILLEGAL_ARGUMENT_ERROR;
         return NULL;
+    }
+    
+    // For the purposes of general number formatting, UNUM_NUMBERING_SYSTEM should behave the same
+    // was as UNUM_DECIMAL.  In both cases, you get either a DecimalFormat or a RuleBasedNumberFormat
+    // depending on the locale's numbering system (either the default one for the locale or a specific
+    // one specified by using the "@numbers=" or "-u-nu-" parameter in the locale ID.
+    if (style == UNUM_NUMBERING_SYSTEM) {
+        style = UNUM_DECIMAL;
     }
 
     // Some styles are not supported. This is a result of merging

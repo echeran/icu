@@ -128,7 +128,7 @@ static const char* const rawData2[LOCALE_INFO_SIZE][LOCALE_SIZE] = {
     /* display name (Catalan) */
     {   "angl\\u00E8s (Estats Units)", "franc\\u00E8s (Fran\\u00E7a)", "catal\\u00E0 (Espanya)", 
     "grec (Gr\\u00E8cia)", "noruec (Noruega, NY)", "xin\\u00E8s (simplificat, Xina)", 
-    "alemany (Alemanya, ordenaci\\u00F3=ordre de la guia telef\\u00F2nica)", "espanyol (ordenaci\\u00F3=ordre tradicional)", "japon\\u00E8s (Jap\\u00F3, calendari=calendari japon\\u00e8s)" },
+    "alemany (Alemanya, ordre=ordre de la guia telef\\u00F2nica)", "espanyol (ordre=ordre tradicional)", "japon\\u00E8s (Jap\\u00F3, calendari=calendari japon\\u00e8s)" },
 
     /* display language (Greek) */
     {
@@ -752,7 +752,7 @@ static void TestDisplayNames()
             "el_GR" };
         static const char *expect[] = { "Spanish (Calendar=Japanese Calendar, Sort Order=Traditional Sort Order)", /* note sorted order of keywords */
             "espagnol (calendrier=calendrier japonais, ordre de tri=ordre traditionnel)",
-            "espanyol (calendari=calendari japon\\u00e8s, ordenaci\\u00f3=ordre tradicional)",
+            "espanyol (calendari=calendari japon\\u00e8s, ordre=ordre tradicional)",
             "\\u0399\\u03c3\\u03c0\\u03b1\\u03bd\\u03b9\\u03ba\\u03ac (\\u0397\\u03bc\\u03b5\\u03c1\\u03bf\\u03bb\\u03cc\\u03b3\\u03b9\\u03bf=\\u0399\\u03b1\\u03c0\\u03c9\\u03bd\\u03b9\\u03ba\\u03cc \\u03b7\\u03bc\\u03b5\\u03c1\\u03bf\\u03bb\\u03cc\\u03b3\\u03b9\\u03bf, \\u03a3\\u03b5\\u03b9\\u03c1\\u03ac \\u03c4\\u03b1\\u03be\\u03b9\\u03bd\\u03cc\\u03bc\\u03b7\\u03c3\\u03b7\\u03c2=\\u03a0\\u03b1\\u03c1\\u03b1\\u03b4\\u03bf\\u03c3\\u03b9\\u03b1\\u03ba\\u03ae \\u03c3\\u03b5\\u03b9\\u03c1\\u03ac \\u03c4\\u03b1\\u03be\\u03b9\\u03bd\\u03cc\\u03bc\\u03b7\\u03c3\\u03b7\\u03c2)" };
         UChar *expectBuffer;
 
@@ -1552,18 +1552,18 @@ static void TestSimpleDisplayNames()
 static void TestUninstalledISO3Names()
 {
   /* This test checks to make sure getISO3Language and getISO3Country work right
-     even for locales that are not installed. */
+     even for locales that are not installed (and some installed ones). */
     static const char iso2Languages [][4] = {     "am", "ba", "fy", "mr", "rn",
-                                        "ss", "tw", "zu" };
+                                        "ss", "tw", "zu", "sr" };
     static const char iso3Languages [][5] = {     "amh", "bak", "fry", "mar", "run",
-                                        "ssw", "twi", "zul" };
+                                        "ssw", "twi", "zul", "srp" };
     static const char iso2Countries [][6] = {     "am_AF", "ba_BW", "fy_KZ", "mr_MO", "rn_MN",
-                                        "ss_SB", "tw_TC", "zu_ZW" };
+                                        "ss_SB", "tw_TC", "zu_ZW", "sr_XK" };
     static const char iso3Countries [][4] = {     "AFG", "BWA", "KAZ", "MAC", "MNG",
-                                        "SLB", "TCA", "ZWE" };
+                                        "SLB", "TCA", "ZWE", "XKK" };
     int32_t i;
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 9; i++) {
       UErrorCode err = U_ZERO_ERROR;
       const char *test;
       test = uloc_getISO3Language(iso2Languages[i]);
@@ -1571,7 +1571,7 @@ static void TestUninstalledISO3Names()
          log_err("Got wrong ISO3 code for %s : Expected \"%s\", got \"%s\". %s\n",
                      iso2Languages[i], iso3Languages[i], test, myErrorName(err));
     }
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 9; i++) {
       UErrorCode err = U_ZERO_ERROR;
       const char *test;
       test = uloc_getISO3Country(iso2Countries[i]);
@@ -2606,7 +2606,7 @@ static void TestDisplayKeywordValues(void){
           {0x006F, 0x0072, 0x0064, 0x0065, 0x006E, 0x0020, 0x0064, 0x0065, 0x0020, 0x006C, 0x0069, 0x0073, 0x0074, 0x00ED, 0x006E, 0x0020, 0x0074, 0x0065, 0x006C, 0x0065, 0x0066, 0x00F3, 0x006E, 0x0069, 0x0063, 0x006F, 0x0000}
         },
         { "es_ES@collation=traditional","de", 
-          {0x0054, 0x0072, 0x0061, 0x0064, 0x0069, 0x0074, 0x0069, 0x006f, 0x006e, 0x0065, 0x006c, 0x006c, 0x0065, 0x0020, 0x0053, 0x006f, 0x0072, 0x0074, 0x0069, 0x0065, 0x0072, 0x0072, 0x0065, 0x0067, 0x0065, 0x006c, 0x006e, 0x0000}
+          {0x0054, 0x0072, 0x0061, 0x0064, 0x0069, 0x0074, 0x0069, 0x006f, 0x006e, 0x0065, 0x006c, 0x006c, 0x0065, 0x0020, 0x0053, 0x006f, 0x0072, 0x0074, 0x0069, 0x0065, 0x0072, 0x0075, 0x006E, 0x0067, 0x0000}
         },
         { "ja_JP@calendar=japanese",    "de", 
            {0x004a, 0x0061, 0x0070, 0x0061, 0x006e, 0x0069, 0x0073, 0x0063, 0x0068, 0x0065, 0x0072, 0x0020, 0x004b, 0x0061, 0x006c, 0x0065, 0x006e, 0x0064, 0x0065, 0x0072, 0x0000}
@@ -3207,6 +3207,18 @@ static void TestAcceptLanguage(void) {
             }
         }
     }
+
+    // API coverage
+    status = U_ZERO_ERROR;
+    static const char *const supported[] = { "en-US", "en-GB", "de-DE", "ja-JP" };
+    const char * desired[] = { "de-LI", "en-IN", "zu", "fr" };
+    available = uenum_openCharStringsEnumeration(supported, UPRV_LENGTHOF(supported), &status);
+    tmp[0]=0;
+    rc = uloc_acceptLanguage(tmp, 199, &outResult, desired, UPRV_LENGTHOF(desired), available, &status);
+    if (U_FAILURE(status) || rc != 5 || uprv_strcmp(tmp, "de_DE") != 0 || outResult == ULOC_ACCEPT_FAILED) {
+        log_err("uloc_acceptLanguage() failed to do a simple match\n");
+    }
+    uenum_close(available);
 }
 
 static const char* LOCALE_ALIAS[][2] = {
@@ -7052,6 +7064,14 @@ static void TestUldnNameVariants() {
                     uloPtr->displayLocale, uloPtr->displayOptions[0], uloPtr->displayOptions[1], uloPtr->displayOptions[2],
                     u_errorName(status) );
             continue;
+        }
+        // API coverage: Expect to get back the dialect handling which is
+        // the first item in the displayOptions test data.
+        UDialectHandling dh = uldn_getDialectHandling(uldn);
+        UDisplayContext dhContext = (UDisplayContext)dh;  // same numeric values
+        if (dhContext != uloPtr->displayOptions[0]) {
+            log_err("uldn_getDialectHandling()=%03X != expected UDisplayContext %03X\n",
+                    dhContext, uloPtr->displayOptions[0]);
         }
         const UldnItem * itemPtr = uloPtr->testItems;
         int32_t itemCount = uloPtr->countItems;

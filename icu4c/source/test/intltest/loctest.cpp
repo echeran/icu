@@ -288,6 +288,9 @@ void LocaleTest::runIndexedTest( int32_t index, UBool exec, const char* &name, c
     TESTCASE_AUTO(TestNullDereferenceWrite21597);
     TESTCASE_AUTO(TestLongLocaleSetKeywordAssign);
     TESTCASE_AUTO(TestLongLocaleSetKeywordMoveAssign);
+#if !UCONFIG_NO_FORMATTING
+    TESTCASE_AUTO(TestSierraLeoneCurrency21997);
+#endif
     TESTCASE_AUTO_END;
 }
 
@@ -924,8 +927,8 @@ LocaleTest::TestGetLangsAndCountries()
       ;
 
     /* TODO: Change this test to be more like the cloctst version? */
-    if (testCount != 594)
-        errln("Expected getISOLanguages() to return 594 languages; it returned %d", testCount);
+    if (testCount != 595)
+        errln("Expected getISOLanguages() to return 595 languages; it returned %d", testCount);
     else {
         for (i = 0; i < 15; i++) {
             int32_t j;
@@ -6614,3 +6617,20 @@ void LocaleTest::TestNullDereferenceWrite21597() {
     l.canonicalize(status);
     status.expectErrorAndReset(U_ILLEGAL_ARGUMENT_ERROR);
 }
+#if !UCONFIG_NO_FORMATTING
+void LocaleTest::TestSierraLeoneCurrency21997() {
+    // CLDR 41: Check that currency of Sierra Leone is SLL (which is legal tender)
+    // and not the newer currency SLE (which is not legal tender), as of CLDR 41.
+    // Test will fail once SLE is declared legal.
+    // CLDR 42: Now check that currency of Sierra Leone is SLE (which is legal tender)
+    UnicodeString sllStr("SLE", ""), resultStr;
+    UChar tmp[4];
+    UErrorCode status = U_ZERO_ERROR;
+
+    ucurr_forLocale("en_SL", tmp, 4, &status);
+    resultStr.setTo(tmp);
+    if (sllStr != resultStr) {
+        errcheckln(status, "Fail: en_SL didn't return SLE - %s", u_errorName(status));
+    }
+}
+#endif

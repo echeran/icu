@@ -313,14 +313,6 @@ public:
     static StringEnumeration* U_EXPORT2 getAvailableLocales(UErrorCode &status);
 
     /**
-     * Returns whether or not there are overrides.
-     * @param locale       the locale to check.
-     * @return
-     * @internal
-     */
-    static UBool hasOverride(const Locale &locale);
-
-    /**
      * For ICU use only.
      * creates a  SharedPluralRules object
      * @internal
@@ -575,9 +567,7 @@ private:
     RuleChain  *mRules;
     StandardPluralRanges *mStandardPluralRanges;
 
-    PluralRules();   // default constructor not implemented
-    void            parseDescription(const UnicodeString& ruleData, UErrorCode &status);
-    int32_t         getNumberValue(const UnicodeString& token) const;
+    PluralRules() = delete;   // default constructor not implemented
     UnicodeString   getRuleFromResource(const Locale& locale, UPluralType type, UErrorCode& status);
     RuleChain      *rulesForKeyword(const UnicodeString &keyword) const;
     PluralRules    *clone(UErrorCode& status) const;

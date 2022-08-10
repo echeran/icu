@@ -161,8 +161,8 @@ static const int8_t kTimeFieldsCount = 10;
 // of a resource.
 static const UChar gDefaultPattern[] =
 {
-    0x79, 0x79, 0x79, 0x79, 0x4D, 0x4D, 0x64, 0x64, 0x20, 0x68, 0x68, 0x3A, 0x6D, 0x6D, 0x20, 0x61, 0
-};  /* "yyyyMMdd hh:mm a" */
+    0x79, 0x4D, 0x4D, 0x64, 0x64, 0x20, 0x68, 0x68, 0x3A, 0x6D, 0x6D, 0x20, 0x61, 0
+};  /* "yMMdd hh:mm a" */
 
 // This prefix is designed to NEVER MATCH real text, in order to
 // suppress the parsing of negative numbers.  Adjust as needed (if
@@ -842,14 +842,37 @@ void SimpleDateFormat::construct(EStyle timeStyle,
 
         UnicodeString tempus2(TRUE, resStr, resStrLen);
 
-        int32_t glueIndex = kDateTime;
-        int32_t patternsSize = ures_getSize(dateTimePatterns.getAlias());
-        if (patternsSize >= (kDateTimeOffset + kShort + 1)) {
-            // Get proper date time format
-            glueIndex = (int32_t)(kDateTimeOffset + (dateStyle - kDateOffset));
+        // Currently, for compatibility with pre-CLDR-42 data, we default to the "atTime"
+        // combining patterns. Depending on guidance in CLDR 42 spec and on DisplayOptions,
+        // we may change this.
+        LocalUResourceBundlePointer dateAtTimePatterns;
+        if (!cTypeIsGregorian) {
+            CharString resourcePath("calendar/", status);
+            resourcePath.append(cType, status).append("/DateTimePatterns%atTime", status);
+            dateAtTimePatterns.adoptInstead(
+                ures_getByKeyWithFallback(bundle.getAlias(), resourcePath.data(),
+                                          nullptr, &status));
         }
+        if (cTypeIsGregorian || status == U_MISSING_RESOURCE_ERROR) {
+            status = U_ZERO_ERROR;
+            dateAtTimePatterns.adoptInstead(
+                ures_getByKeyWithFallback(bundle.getAlias(),
+                                          "calendar/gregorian/DateTimePatterns%atTime",
+                                          nullptr, &status));
+        }
+        if (U_SUCCESS(status) && ures_getSize(dateAtTimePatterns.getAlias()) >= 4) {
+            resStr = ures_getStringByIndex(dateAtTimePatterns.getAlias(), dateStyle - kDateOffset, &resStrLen, &status);
+        } else {
+            status = U_ZERO_ERROR;
+            int32_t glueIndex = kDateTime;
+            int32_t patternsSize = ures_getSize(dateTimePatterns.getAlias());
+            if (patternsSize >= (kDateTimeOffset + kShort + 1)) {
+                // Get proper date time format
+                glueIndex = (int32_t)(kDateTimeOffset + (dateStyle - kDateOffset));
+            }
 
-        resStr = ures_getStringByIndex(dateTimePatterns.getAlias(), glueIndex, &resStrLen, &status);
+            resStr = ures_getStringByIndex(dateTimePatterns.getAlias(), glueIndex, &resStrLen, &status);
+        }
         SimpleFormatter(UnicodeString(TRUE, resStr, resStrLen), 2, 2, status).
                 format(tempus1, tempus2, fPattern, status);
     }
@@ -2896,6 +2919,49 @@ UBool SimpleDateFormat::matchLiterals(const UnicodeString &pattern,
 }
 
 //----------------------------------------------------------------------
+// check both wide and abbrev months.
+// Does not currently handle monthPattern.
+// UCalendarDateFields field = UCAL_MONTH
+
+int32_t SimpleDateFormat::matchAlphaMonthStrings(const UnicodeString& text,
+                              int32_t start,
+                              const UnicodeString* wideData,
+                              const UnicodeString* shortData,
+                              int32_t dataCount,
+                              Calendar& cal) const
+{
+    int32_t i;
+    int32_t bestMatchLength = 0, bestMatch = -1;
+
+    for (i = 0; i < dataCount; ++i) {
+        int32_t matchLen = 0;
+        if ((matchLen = matchStringWithOptionalDot(text, start, wideData[i])) > bestMatchLength) {
+            bestMatch = i;
+            bestMatchLength = matchLen;
+        }
+    }
+    for (i = 0; i < dataCount; ++i) {
+        int32_t matchLen = 0;
+        if ((matchLen = matchStringWithOptionalDot(text, start, shortData[i])) > bestMatchLength) {
+            bestMatch = i;
+            bestMatchLength = matchLen;
+        }
+    }
+
+    if (bestMatch >= 0) { 
+        // Adjustment for Hebrew Calendar month Adar II
+        if (!strcmp(cal.getType(),"hebrew") && bestMatch==13) {
+            cal.set(UCAL_MONTH,6);
+        } else {
+            cal.set(UCAL_MONTH, bestMatch);
+        }
+        return start + bestMatchLength;
+    }
+
+    return -start;
+}
+
+//----------------------------------------------------------------------
 
 int32_t SimpleDateFormat::matchString(const UnicodeString& text,
                               int32_t start,
@@ -2914,6 +2980,8 @@ int32_t SimpleDateFormat::matchString(const UnicodeString& text,
     // the same prefix (e.g., Cerven and Cervenec (June and July) in Czech).
     // We keep track of the longest match, and return that.  Note that this
     // unfortunately requires us to test all array elements.
+    // But this does not really work for cases such as Chuvash in which
+    // May is "ҫу" and August is "ҫурла"/"ҫур.", hence matchAlphaMonthStrings.
     int32_t bestMatchLength = 0, bestMatch = -1;
     UnicodeString bestMatchName;
     int32_t isLeapMonth = 0;
@@ -3304,6 +3372,14 @@ int32_t SimpleDateFormat::subParse(const UnicodeString& text, int32_t& start, UC
             }
             int32_t newStart = 0;
             if (patternCharIndex==UDAT_MONTH_FIELD) {
+                if(getBooleanAttribute(UDAT_PARSE_MULTIPLE_PATTERNS_FOR_MATCH, status) && count>=3 && count <=4 &&
+                        fSymbols->fLeapMonthPatterns==nullptr && fSymbols->fMonthsCount==fSymbols->fShortMonthsCount) {
+                    // single function to check both wide and short, an experiment
+                    newStart = matchAlphaMonthStrings(text, start, fSymbols->fMonths, fSymbols->fShortMonths, fSymbols->fMonthsCount, cal); // try MMMM,MMM
+                    if (newStart > 0) {
+                        return newStart;
+                    }
+                }
                 if(getBooleanAttribute(UDAT_PARSE_MULTIPLE_PATTERNS_FOR_MATCH, status) || count == 4) {
                     newStart = matchString(text, start, UCAL_MONTH, fSymbols->fMonths, fSymbols->fMonthsCount, wideMonthPat, cal); // try MMMM
                     if (newStart > 0) {
@@ -3314,6 +3390,14 @@ int32_t SimpleDateFormat::subParse(const UnicodeString& text, int32_t& start, UC
                     newStart = matchString(text, start, UCAL_MONTH, fSymbols->fShortMonths, fSymbols->fShortMonthsCount, shortMonthPat, cal); // try MMM
                 }
             } else {
+                if(getBooleanAttribute(UDAT_PARSE_MULTIPLE_PATTERNS_FOR_MATCH, status) && count>=3 && count <=4 &&
+                        fSymbols->fLeapMonthPatterns==nullptr && fSymbols->fStandaloneMonthsCount==fSymbols->fStandaloneShortMonthsCount) {
+                    // single function to check both wide and short, an experiment
+                    newStart = matchAlphaMonthStrings(text, start, fSymbols->fStandaloneMonths, fSymbols->fStandaloneShortMonths, fSymbols->fStandaloneMonthsCount, cal); // try MMMM,MMM
+                    if (newStart > 0) {
+                        return newStart;
+                    }
+                }
                 if(getBooleanAttribute(UDAT_PARSE_MULTIPLE_PATTERNS_FOR_MATCH, status) || count == 4) {
                     newStart = matchString(text, start, UCAL_MONTH, fSymbols->fStandaloneMonths, fSymbols->fStandaloneMonthsCount, wideMonthPat, cal); // try LLLL
                     if (newStart > 0) {

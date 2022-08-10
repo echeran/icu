@@ -86,13 +86,25 @@ struct ConditionalCE32 : public UMemory {
      * When fetching CEs from the builder, the contexts are built into their runtime form
      * so that the normal collation implementation can process them.
      * The result is cached in the list head. It is reset when the contexts are modified.
+     * All of these builtCE32 are invalidated by clearContexts(),
+     * via incrementing the contextsEra.
      */
     uint32_t builtCE32;
+    /**
+     * The "era" of building intermediate contexts when the above builtCE32 was set.
+     * When the array of cached, temporary contexts overflows, then clearContexts()
+     * removes them all and invalidates the builtCE32 that used to point to built tries.
+     */
+    int32_t era = -1;
     /**
      * Index of the next ConditionalCE32.
      * Negative for the end of the list.
      */
     int32_t next;
+    // Note: We could create a separate class for all of the contextual mappings for
+    // a code point, with the builtCE32, the era, and a list of the actual mappings.
+    // The class that represents one mapping would then not need to
+    // store those fields in each element.
 };
 
 U_CDECL_BEGIN
@@ -267,7 +279,7 @@ DataBuilderCollationIterator::getCE32FromBuilderData(uint32_t ce32, UErrorCode &
             // TODO: ICU-21531 figure out why this happens.
             return 0;
         }
-        if(cond->builtCE32 == Collation::NO_CE32) {
+        if(cond->builtCE32 == Collation::NO_CE32 || cond->era != builder.contextsEra) {
             // Build the context-sensitive mappings into their runtime form and cache the result.
             cond->builtCE32 = builder.buildContext(cond, errorCode);
             if(errorCode == U_BUFFER_OVERFLOW_ERROR) {
@@ -275,6 +287,7 @@ DataBuilderCollationIterator::getCE32FromBuilderData(uint32_t ce32, UErrorCode &
                 builder.clearContexts();
                 cond->builtCE32 = builder.buildContext(cond, errorCode);
             }
+            cond->era = builder.contextsEra;
             builderData.contexts = builder.contexts.getBuffer();
         }
         return cond->builtCE32;
@@ -283,16 +296,19 @@ DataBuilderCollationIterator::getCE32FromBuilderData(uint32_t ce32, UErrorCode &
 
 // ------------------------------------------------------------------------- ***
 
-CollationDataBuilder::CollationDataBuilder(UErrorCode &errorCode)
+CollationDataBuilder::CollationDataBuilder(UBool icu4xMode, UErrorCode &errorCode)
         : nfcImpl(*Normalizer2Factory::getNFCImpl(errorCode)),
           base(NULL), baseSettings(NULL),
           trie(NULL),
           ce32s(errorCode), ce64s(errorCode), conditionalCE32s(errorCode),
           modified(FALSE),
+          icu4xMode(icu4xMode),
           fastLatinEnabled(FALSE), fastLatinBuilder(NULL),
           collIter(NULL) {
     // Reserve the first CE32 for U+0000.
-    ce32s.addElement(0, errorCode);
+    if (!icu4xMode) {
+        ce32s.addElement(0, errorCode);
+    }
     conditionalCE32s.setDeleter(uprv_deleteConditionalCE32);
 }
 
@@ -316,27 +332,31 @@ CollationDataBuilder::initForTailoring(const CollationData *b, UErrorCode &error
     base = b;
 
     // For a tailoring, the default is to fall back to the base.
-    trie = utrie2_open(Collation::FALLBACK_CE32, Collation::FFFD_CE32, &errorCode);
+    // For ICU4X, use the same value for fallback as for the default
+    // to avoid having to have different blocks for the two.
+    trie = utrie2_open(Collation::FALLBACK_CE32, icu4xMode ? Collation::FALLBACK_CE32 : Collation::FFFD_CE32, &errorCode);
 
-    // Set the Latin-1 letters block so that it is allocated first in the data array,
-    // to try to improve locality of reference when sorting Latin-1 text.
-    // Do not use utrie2_setRange32() since that will not actually allocate blocks
-    // that are filled with the default value.
-    // ASCII (0..7F) is already preallocated anyway.
-    for(UChar32 c = 0xc0; c <= 0xff; ++c) {
-        utrie2_set32(trie, c, Collation::FALLBACK_CE32, &errorCode);
+    if (!icu4xMode) {
+        // Set the Latin-1 letters block so that it is allocated first in the data array,
+        // to try to improve locality of reference when sorting Latin-1 text.
+        // Do not use utrie2_setRange32() since that will not actually allocate blocks
+        // that are filled with the default value.
+        // ASCII (0..7F) is already preallocated anyway.
+        for(UChar32 c = 0xc0; c <= 0xff; ++c) {
+            utrie2_set32(trie, c, Collation::FALLBACK_CE32, &errorCode);
+        }
+
+        // Hangul syllables are not tailorable (except via tailoring Jamos).
+        // Always set the Hangul tag to help performance.
+        // Do this here, rather than in buildMappings(),
+        // so that we see the HANGUL_TAG in various assertions.
+        uint32_t hangulCE32 = Collation::makeCE32FromTagAndIndex(Collation::HANGUL_TAG, 0);
+        utrie2_setRange32(trie, Hangul::HANGUL_BASE, Hangul::HANGUL_END, hangulCE32, TRUE, &errorCode);
+
+        // Copy the set contents but don't copy/clone the set as a whole because
+        // that would copy the isFrozen state too.
+        unsafeBackwardSet.addAll(*b->unsafeBackwardSet);
     }
-
-    // Hangul syllables are not tailorable (except via tailoring Jamos).
-    // Always set the Hangul tag to help performance.
-    // Do this here, rather than in buildMappings(),
-    // so that we see the HANGUL_TAG in various assertions.
-    uint32_t hangulCE32 = Collation::makeCE32FromTagAndIndex(Collation::HANGUL_TAG, 0);
-    utrie2_setRange32(trie, Hangul::HANGUL_BASE, Hangul::HANGUL_END, hangulCE32, TRUE, &errorCode);
-
-    // Copy the set contents but don't copy/clone the set as a whole because
-    // that would copy the isFrozen state too.
-    unsafeBackwardSet.addAll(*b->unsafeBackwardSet);
 
     if(U_FAILURE(errorCode)) { return; }
 }
@@ -554,6 +574,98 @@ CollationDataBuilder::addCE32(const UnicodeString &prefix, const UnicodeString &
     int32_t cLength = U16_LENGTH(c);
     uint32_t oldCE32 = utrie2_get32(trie, c);
     UBool hasContext = !prefix.isEmpty() || s.length() > cLength;
+
+    if (icu4xMode) {
+        if (base && c >= 0x1100 && c < 0x1200) {
+            // Omit jamo tailorings.
+            // TODO(https://github.com/unicode-org/icu4x/issues/1941).
+        }
+        const Normalizer2* nfdNormalizer = Normalizer2::getNFDInstance(errorCode);
+        UnicodeString sInNfd;
+        nfdNormalizer->normalize(s, sInNfd, errorCode);
+        if (s != sInNfd) {
+            // s is not in NFD, so it cannot match in ICU4X, since ICU4X only
+            // does NFD lookups.
+            // Now check that we're only rejecting known cases.
+            if (s.length() == 2) {
+                char16_t second = s.charAt(1);
+                if (second == 0x0F73 || second == 0x0F75 || second == 0x0F81) {
+                    // Second is a special decomposing Tibetan vowel sign.
+                    // These also get added in the decomposed form, so ignoring
+                    // this instance is OK.
+                    return;
+                }
+                if (c == 0xFDD1 && second == 0xAC00) {
+                    // This strange contraction exists in the root and
+                    // doesn't have a decomposed counterpart there.
+                    // This won't match in ICU4X anyway and is very strange:
+                    // Unassigned Arabic presentation form contracting with
+                    // the very first Hangul syllable. Let's ignore this
+                    // explicitly.
+                    return;
+                }
+            }
+            // Unknown case worth investigating if ever found.
+            errorCode = U_UNSUPPORTED_ERROR;
+            return;
+        }
+
+        if (!prefix.isEmpty()) {
+            UnicodeString prefixInNfd;
+            nfdNormalizer->normalize(prefix, prefixInNfd, errorCode);
+            if (prefix != prefixInNfd) {
+                errorCode = U_UNSUPPORTED_ERROR;
+                return;
+            }
+
+            int32_t count = prefix.countChar32();
+            if (count > 2) {
+                // Prefix too long for ICU4X.
+                errorCode = U_UNSUPPORTED_ERROR;
+                return;
+            }
+            UChar32 utf32[4];
+            int32_t len = prefix.toUTF32(utf32, 4, errorCode);
+            if (len != count) {
+                errorCode = U_INVALID_STATE_ERROR;
+                return;
+            }
+            UChar32 c = utf32[0];
+            if (u_getCombiningClass(c)) {
+                // Prefix must start with as starter for ICU4X.
+                errorCode = U_UNSUPPORTED_ERROR;
+                return;
+            }
+            // XXX: Korean searchjl has jamo in prefix, so commenting out this
+            // check for now. ICU4X currently ignores non-root jamo tables anyway.
+            // searchjl was added in
+            // https://unicode-org.atlassian.net/browse/CLDR-3560
+            // Contractions were changed to prefixes in
+            // https://unicode-org.atlassian.net/browse/CLDR-6546
+            //
+            // if ((c >= 0x1100 && c < 0x1200) || (c >= 0xAC00 && c < 0xD7A4)) {
+            //     errorCode = U_UNSUPPORTED_ERROR;
+            //     return;
+            // }
+            if ((len > 1) && !(utf32[1] == 0x3099 || utf32[1] == 0x309A)) {
+                // Second character in prefix, if present, must be a kana voicing mark for ICU4X.
+                errorCode = U_UNSUPPORTED_ERROR;
+                return;
+            }
+        }
+
+        if (s.length() > cLength) {
+            // Check that there's no modern Hangul in contractions.
+            for (int32_t i = 0; i < s.length(); ++i) {
+                UChar c = s.charAt(i);
+                if ((c >= 0x1100 && c < 0x1100 + 19) || (c >= 0x1161 && c < 0x1161 + 21) || (c >= 0x11A7 && c < 0x11A7 + 28) || (c >= 0xAC00 && c < 0xD7A4)) {
+                    errorCode = U_UNSUPPORTED_ERROR;
+                    return;
+                }
+            }
+        }
+    }
+
     if(oldCE32 == Collation::FALLBACK_CE32) {
         // First tailoring for c.
         // If c has contextual base mappings or if we add a contextual mapping,
@@ -675,8 +787,11 @@ CollationDataBuilder::encodeCEs(const int64_t ces[], int32_t cesLength,
         return encodeOneCEAsCE32(0);
     } else if(cesLength == 1) {
         return encodeOneCE(ces[0], errorCode);
-    } else if(cesLength == 2) {
+    } else if(cesLength == 2 && !icu4xMode) {
         // Try to encode two CEs as one CE32.
+        // Turn this off for ICU4X, because without the canonical closure
+        // these are so rare that it doesn't make sense to spend a branch
+        // on checking this tag when using the data.
         int64_t ce0 = ces[0];
         int64_t ce1 = ces[1];
         uint32_t p0 = (uint32_t)(ce0 >> 32);
@@ -1284,9 +1399,11 @@ CollationDataBuilder::buildMappings(CollationData &data, UErrorCode &errorCode) 
     setDigitTags(errorCode);
     setLeadSurrogates(errorCode);
 
-    // For U+0000, move its normal ce32 into CE32s[0] and set U0000_TAG.
-    ce32s.setElementAt((int32_t)utrie2_get32(trie, 0), 0);
-    utrie2_set32(trie, 0, Collation::makeCE32FromTagAndIndex(Collation::U0000_TAG, 0), &errorCode);
+    if (!icu4xMode) {
+        // For U+0000, move its normal ce32 into CE32s[0] and set U0000_TAG.
+        ce32s.setElementAt((int32_t)utrie2_get32(trie, 0), 0);
+        utrie2_set32(trie, 0, Collation::makeCE32FromTagAndIndex(Collation::U0000_TAG, 0), &errorCode);
+    }
 
     utrie2_freeze(trie, UTRIE2_32_VALUE_BITS, &errorCode);
     if(U_FAILURE(errorCode)) { return; }
@@ -1322,13 +1439,10 @@ CollationDataBuilder::buildMappings(CollationData &data, UErrorCode &errorCode) 
 void
 CollationDataBuilder::clearContexts() {
     contexts.remove();
-    UnicodeSetIterator iter(contextChars);
-    while(iter.next()) {
-        U_ASSERT(!iter.isString());
-        uint32_t ce32 = utrie2_get32(trie, iter.getCodepoint());
-        U_ASSERT(isBuilderContextCE32(ce32));
-        getConditionalCE32ForCE32(ce32)->builtCE32 = Collation::NO_CE32;
-    }
+    // Incrementing the contexts build "era" invalidates all of the builtCE32
+    // from before this clearContexts() call.
+    // Simpler than finding and resetting all of those fields.
+    ++contextsEra;
 }
 
 void
@@ -1336,7 +1450,7 @@ CollationDataBuilder::buildContexts(UErrorCode &errorCode) {
     if(U_FAILURE(errorCode)) { return; }
     // Ignore abandoned lists and the cached builtCE32,
     // and build all contexts from scratch.
-    contexts.remove();
+    clearContexts();
     UnicodeSetIterator iter(contextChars);
     while(U_SUCCESS(errorCode) && iter.next()) {
         U_ASSERT(!iter.isString());
@@ -1362,18 +1476,34 @@ CollationDataBuilder::buildContext(ConditionalCE32 *head, UErrorCode &errorCode)
     U_ASSERT(head->next >= 0);
     UCharsTrieBuilder prefixBuilder(errorCode);
     UCharsTrieBuilder contractionBuilder(errorCode);
+    // This outer loop goes from each prefix to the next.
+    // For each prefix it finds the one or more same-prefix entries (firstCond..lastCond).
+    // If there are multiple suffixes for the same prefix,
+    // then an inner loop builds a contraction trie for them.
     for(ConditionalCE32 *cond = head;; cond = getConditionalCE32(cond->next)) {
+        if(U_FAILURE(errorCode)) { return 0; }  // early out for memory allocation errors
         // After the list head, the prefix or suffix can be empty, but not both.
         U_ASSERT(cond == head || cond->hasContext());
         int32_t prefixLength = cond->prefixLength();
         UnicodeString prefix(cond->context, 0, prefixLength + 1);
         // Collect all contraction suffixes for one prefix.
         ConditionalCE32 *firstCond = cond;
-        ConditionalCE32 *lastCond = cond;
-        while(cond->next >= 0 &&
-                (cond = getConditionalCE32(cond->next))->context.startsWith(prefix)) {
+        ConditionalCE32 *lastCond;
+        do {
             lastCond = cond;
-        }
+            // Clear the defaultCE32 fields as we go.
+            // They are left over from building a previous version of this list of contexts.
+            //
+            // One of the code paths below may copy a preceding defaultCE32
+            // into its emptySuffixCE32.
+            // If a new suffix has been inserted before what used to be
+            // the firstCond for its prefix, then that previous firstCond could still
+            // contain an outdated defaultCE32 from an earlier buildContext() and
+            // result in an incorrect emptySuffixCE32.
+            // So we reset all defaultCE32 before reading and setting new values.
+            cond->defaultCE32 = Collation::NO_CE32;
+        } while(cond->next >= 0 &&
+                (cond = getConditionalCE32(cond->next))->context.startsWith(prefix));
         uint32_t ce32;
         int32_t suffixStart = prefixLength + 1;  // == prefix.length()
         if(lastCond->context.length() == suffixStart) {
@@ -1427,6 +1557,20 @@ CollationDataBuilder::buildContext(ConditionalCE32 *head, UErrorCode &errorCode)
                 if(fcd16 > 0xff) {
                     // The last suffix character has lccc!=0, allowing for discontiguous contractions.
                     flags |= Collation::CONTRACT_TRAILING_CCC;
+                }
+                if (icu4xMode && (flags & Collation::CONTRACT_HAS_STARTER) == 0) {
+                    for (int32_t i = 0; i < suffix.length();) {
+                        UChar32 c = suffix.char32At(i);
+                            if (!u_getCombiningClass(c)) {
+                                flags |= Collation::CONTRACT_HAS_STARTER;
+                                break;
+                            }
+                        if (c > 0xFFFF) {
+                            i += 2;
+                        } else {
+                            ++i;
+                        }
+                    }
                 }
                 contractionBuilder.add(suffix, (int32_t)cond->ce32, errorCode);
                 if(cond == lastCond) { break; }

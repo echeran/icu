@@ -391,6 +391,7 @@ keyTypeData:table(nofallback){
             shp{""}
             sit{""}
             skk{""}
+            sle{""}
             sll{""}
             sos{""}
             srd{""}
@@ -656,6 +657,7 @@ keyTypeData:table(nofallback){
             jpanfin{""}
             jpanyear{""}
             kali{""}
+            kawi{""}
             khmr{""}
             knda{""}
             lana{""}
@@ -677,6 +679,7 @@ keyTypeData:table(nofallback){
             mymr{""}
             mymrshan{""}
             mymrtlng{""}
+            nagm{""}
             native{""}
             newa{""}
             nkoo{""}

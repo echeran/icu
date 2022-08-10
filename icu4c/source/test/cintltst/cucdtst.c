@@ -75,8 +75,8 @@ parseUCDFile(const char *filename,
              char *fields[][2], int32_t fieldCount,
              UParseLineFn *lineFn, void *context,
              UErrorCode *pErrorCode) {
-    char path[256];
-    char backupPath[256];
+    char path[512];
+    char backupPath[512];
 
     if(U_FAILURE(*pErrorCode)) {
         return;
@@ -1240,6 +1240,8 @@ enumDefaultsRange(const void *context, UChar32 start, UChar32 limit, UCharCatego
         { 0x10800, U_LEFT_TO_RIGHT },
         { 0x10D00, U_RIGHT_TO_LEFT },  // Unicode 11 changes U+10D00..U+10D3F from R to AL.
         { 0x10D40, U_RIGHT_TO_LEFT_ARABIC },
+        { 0x10EC0, U_RIGHT_TO_LEFT },  // Unicode 15 changes U+10EC0..U+10EFF from R to AL.
+        { 0x10F00, U_RIGHT_TO_LEFT_ARABIC },
         { 0x10F30, U_RIGHT_TO_LEFT },  // Unicode 11 changes U+10F30..U+10F6F from R to AL.
         { 0x10F70, U_RIGHT_TO_LEFT_ARABIC },
         { 0x11000, U_RIGHT_TO_LEFT },

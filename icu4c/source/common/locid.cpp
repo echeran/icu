@@ -64,7 +64,7 @@ U_CDECL_END
 U_NAMESPACE_BEGIN
 
 static Locale   *gLocaleCache = NULL;
-static UInitOnce gLocaleCacheInitOnce = U_INITONCE_INITIALIZER;
+static UInitOnce gLocaleCacheInitOnce {};
 
 // gDefaultLocaleMutex protects all access to gDefaultLocalesHashT and gDefaultLocale.
 static UMutex gDefaultLocaleMutex;
@@ -491,7 +491,7 @@ Locale::operator==( const   Locale& other) const
 
 namespace {
 
-UInitOnce gKnownCanonicalizedInitOnce = U_INITONCE_INITIALIZER;
+UInitOnce gKnownCanonicalizedInitOnce {};
 UHashtable *gKnownCanonicalized = nullptr;
 
 static const char* const KNOWN_CANONICALIZED[] = {
@@ -682,7 +682,7 @@ private:
 
 
 const AliasData* AliasData::gSingleton = nullptr;
-UInitOnce AliasData::gInitOnce = U_INITONCE_INITIALIZER;
+UInitOnce AliasData::gInitOnce {};
 
 UBool U_CALLCONV
 AliasData::cleanup()
@@ -716,20 +716,19 @@ AliasDataBuilder::readAlias(
         status = U_MEMORY_ALLOCATION_ERROR;
         return;
     }
-    int i = 0;
-    while (ures_hasNext(alias)) {
+    for (int i = 0; U_SUCCESS(status) && ures_hasNext(alias); i++) {
         LocalUResourceBundlePointer res(
             ures_getNextResource(alias, nullptr, &status));
         const char* aliasFrom = ures_getKey(res.getAlias());
         UnicodeString aliasTo =
             ures_getUnicodeStringByKey(res.getAlias(), "replacement", &status);
+        if (U_FAILURE(status)) return;
 
         checkType(aliasFrom);
         checkReplacement(aliasTo);
 
         rawTypes[i] = aliasFrom;
         rawIndexes[i] = strings->add(aliasTo, status);
-        i++;
     }
 }
 
