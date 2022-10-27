@@ -1,8 +1,21 @@
-# ICU4J Demos
+---
+layout: default
+title: Demos
+nav_order: 10200
+description: Demos
+---
 
-## Server Side Demos
+# Demos
 
-### Web Demos
+## ICU4C Demos
+
+[List of ICU Demonstrations](https://icu4c-demos.unicode.org/icu-bin/icudemos)
+
+## ICU4J Demos
+
+### Server Side Demos
+
+#### Web Demos
 
 These demos are running on the ICU server, and are implemented as Java Servlets
 and JSP pages.
@@ -10,9 +23,9 @@ and JSP pages.
 *   [Browse the Demos](http://demo.icu-project.org/icu4jweb/)
 *   [View Demo Source](https://github.com/unicode-org/icu-demos/tree/master/icu4jweb/)
 
-## Client Side demos
+### Client Side demos
 
-### To build the client side samples:
+#### To build the client side samples:
 
 1.  Download the ICU4J source code ( see [Source Code Access](../repository/gitdev/source) )
 2.  Run `ant jar` to build ICU4J jar
@@ -46,9 +59,9 @@ application will not have permission to read local files.
 
 ---
 
-## ICU Introduction Applets
+### ICU Introduction Applets
 
-### About the Applets
+#### About the Applets
 
 This is a paper introducing ICU calendars, which has live applets throughout the
 text to demonstrate various features.
