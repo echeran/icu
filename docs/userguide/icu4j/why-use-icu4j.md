@@ -1,3 +1,10 @@
+---
+layout: default
+title: Why Use ICU4J?
+nav_order: 100
+parent: ICU4J
+---
+
 # Why Use ICU4J?
 
 ## Summary
