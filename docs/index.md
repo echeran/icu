@@ -21,7 +21,7 @@ includes details that go beyond the C, C++, and Java API docs (and avoids some d
 
 This is the new home of the User Guide (since 2020 August).
 
-# ICU Site
+## ICU Site
 
 The official ICU Site is located at <https://icu.unicode.org>.
 It is the official landing page for the ICU project.
