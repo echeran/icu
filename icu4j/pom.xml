@@ -13,7 +13,7 @@
 
   <groupId>com.ibm.icu</groupId>
   <artifactId>icu4j</artifactId>
-  <version>@POMVERSION@</version>
+  <version>73.1-SNAPSHOT</version>
 
   <packaging>jar</packaging>
 
@@ -149,8 +149,12 @@
   </distributionManagement>
 
   <properties>
-    <!-- ICU4J currently builds with Java 8 -->
-    <maven.compiler.release>8</maven.compiler.release>
+    <!-- ICU4J currently builds with Java 8 sources -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <!-- Keep the target class file versions consistent with the source file version -->
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- The encoding / encoding form of the source files -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <build>
@@ -165,23 +169,132 @@
         <artifactId>build-helper-maven-plugin</artifactId>
         <version>3.2.0</version>
         <executions>
+
           <!-- add directories with main executable code -->
           <execution>
             <id>add-source</id>
-            <phase>generate-sources</phase>
             <goals>
               <goal>add-source</goal>
             </goals>
             <configuration>
               <sources>
-                <!-- icu4j-core -->
-                <source>main/classes/core/src</source>
+                <source>main/classes/collate</source>
+                <source>main/classes/core</source>
+                <source>main/classes/currdata</source>
+                <source>main/classes/langdata</source>
+                <source>main/classes/regiondata</source>
+                <source>main/classes/translit</source>
               </sources>
             </configuration>
           </execution>
+          
+          <!-- add directories with test code -->
+          <execution>
+            <id>add-test-source</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>main/tests/collate/src</source>
+                <source>main/tests/core/src</source>
+                <source>main/tests/framework/src</source>
+                <source>main/tests/packaging/src</source>
+                <source>main/tests/translit/src</source>
+                <source>tools/misc/src</source>
+              </sources>
+            </configuration>
+          </execution>
+
+          <!-- add directories with main executable resources -->
+          <execution>
+            <id>add-resource</id>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource><directory>main/classes/collate</directory></resource>
+                <resource><directory>main/classes/core</directory></resource>
+                <resource><directory>main/classes/currdata</directory></resource>
+                <resource><directory>main/classes/langdata</directory></resource>
+                <resource><directory>main/classes/regiondata</directory></resource>
+                <resource><directory>main/classes/translit</directory></resource>
+              </resources>
+            </configuration>
+          </execution>
+
+          <!-- add directories with test resources -->
+          <execution>
+            <id>add-test-resource</id>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource><directory>main/tests/collate/src</directory></resource>
+                <resource><directory>main/tests/core/src</directory></resource>
+                <resource><directory>main/tests/framework/src</directory></resource>
+                <resource><directory>main/tests/packaging/src</directory></resource>
+                <resource><directory>main/tests/translit/src</directory></resource>
+                <resource><directory>tools/misc/src</directory></resource>
+              </resources>
+            </configuration>
+          </execution>
+
+
         </executions>
       </plugin>
     </plugins>
   </build>
+
+  <dependencies>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- this is for parameterized JUnit tests -->
+    <dependency>
+        <groupId>pl.pragmatists</groupId>
+        <artifactId>JUnitParams</artifactId>
+        <version>1.0.5</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- 
+      Adding data jar files as dependencies works, for now, but will be deprecated.
+      See here if/when an upgrade to the future-proof way of rearranging the file directory
+      structure: https://stackoverflow.com/questions/4955635/how-to-add-local-jar-files-to-a-maven-project
+    -->
+
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icudata</artifactId>
+      <version>73.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/main/shared/data/icudata.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icutzdata</artifactId>
+      <version>73.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/main/shared/data/icutzdata.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>testdata</artifactId>
+      <version>73.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/main/shared/data/testdata.jar</systemPath>
+    </dependency>
+
+</dependencies>
 
 </project>
