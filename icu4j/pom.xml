@@ -178,12 +178,12 @@
             </goals>
             <configuration>
               <sources>
-                <source>main/classes/collate</source>
-                <source>main/classes/core</source>
-                <source>main/classes/currdata</source>
-                <source>main/classes/langdata</source>
-                <source>main/classes/regiondata</source>
-                <source>main/classes/translit</source>
+                <source>main/classes/collate/src</source>
+                <source>main/classes/core/src</source>
+                <source>main/classes/currdata/src</source>
+                <source>main/classes/langdata/src</source>
+                <source>main/classes/regiondata/src</source>
+                <source>main/classes/translit/src</source>
               </sources>
             </configuration>
           </execution>
@@ -214,12 +214,12 @@
             </goals>
             <configuration>
               <resources>
-                <resource><directory>main/classes/collate</directory></resource>
-                <resource><directory>main/classes/core</directory></resource>
-                <resource><directory>main/classes/currdata</directory></resource>
-                <resource><directory>main/classes/langdata</directory></resource>
-                <resource><directory>main/classes/regiondata</directory></resource>
-                <resource><directory>main/classes/translit</directory></resource>
+                <resource><directory>main/classes/collate/src</directory></resource>
+                <resource><directory>main/classes/core/src</directory></resource>
+                <resource><directory>main/classes/currdata/src</directory></resource>
+                <resource><directory>main/classes/langdata/src</directory></resource>
+                <resource><directory>main/classes/regiondata/src</directory></resource>
+                <resource><directory>main/classes/translit/src</directory></resource>
               </resources>
             </configuration>
           </execution>
