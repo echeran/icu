@@ -214,12 +214,42 @@
             </goals>
             <configuration>
               <resources>
-                <resource><directory>main/classes/collate/src</directory></resource>
-                <resource><directory>main/classes/core/src</directory></resource>
-                <resource><directory>main/classes/currdata/src</directory></resource>
-                <resource><directory>main/classes/langdata/src</directory></resource>
-                <resource><directory>main/classes/regiondata/src</directory></resource>
-                <resource><directory>main/classes/translit/src</directory></resource>
+                <resource>
+                  <directory>main/classes/collate/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/classes/core/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/classes/currdata/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/classes/langdata/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/classes/regiondata/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/classes/translit/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
               </resources>
             </configuration>
           </execution>
@@ -232,12 +262,42 @@
             </goals>
             <configuration>
               <resources>
-                <resource><directory>main/tests/collate/src</directory></resource>
-                <resource><directory>main/tests/core/src</directory></resource>
-                <resource><directory>main/tests/framework/src</directory></resource>
-                <resource><directory>main/tests/packaging/src</directory></resource>
-                <resource><directory>main/tests/translit/src</directory></resource>
-                <resource><directory>tools/misc/src</directory></resource>
+                <resource>
+                  <directory>main/tests/collate/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/tests/core/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/tests/framework/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/tests/packaging/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>main/tests/translit/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>tools/misc/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
               </resources>
             </configuration>
           </execution>
