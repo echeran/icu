@@ -199,6 +199,7 @@
             <configuration>
               <sources>
                 <source>../../main/tests/charset/src</source>
+                <source>../../main/tests/framework/src</source>
               </sources>
             </configuration>
           </execution>
@@ -231,6 +232,12 @@
               <resources>
                 <resource>
                   <directory>../../main/tests/charset/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+                <resource>
+                  <directory>../../main/tests/framework/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
