@@ -14,7 +14,7 @@
     <groupId>com.ibm.icu</groupId>
     <artifactId>icu4j-root</artifactId>
     <version>73.1-SNAPSHOT</version>
-    <!-- <relativePath>../pom.xml</relativePath> -->
+    <!-- default relativePath for parent -->
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
@@ -186,12 +186,12 @@
             </goals>
             <configuration>
               <sources>
-                <source>../main/classes/collate/src</source>
-                <source>../main/classes/core/src</source>
-                <source>../main/classes/currdata/src</source>
-                <source>../main/classes/langdata/src</source>
-                <source>../main/classes/regiondata/src</source>
-                <source>../main/classes/translit/src</source>
+                <source>../../main/classes/collate/src</source>
+                <source>../../main/classes/core/src</source>
+                <source>../../main/classes/currdata/src</source>
+                <source>../../main/classes/langdata/src</source>
+                <source>../../main/classes/regiondata/src</source>
+                <source>../../main/classes/translit/src</source>
               </sources>
             </configuration>
           </execution>
@@ -204,12 +204,12 @@
             </goals>
             <configuration>
               <sources>
-                <source>../main/tests/collate/src</source>
-                <source>../main/tests/core/src</source>
-                <source>../main/tests/framework/src</source>
-                <source>../main/tests/packaging/src</source>
-                <source>../main/tests/translit/src</source>
-                <source>../tools/misc/src</source>
+                <source>../../main/tests/collate/src</source>
+                <source>../../main/tests/core/src</source>
+                <source>../../main/tests/framework/src</source>
+                <source>../../main/tests/packaging/src</source>
+                <source>../../main/tests/translit/src</source>
+                <source>../../tools/misc/src</source>
               </sources>
             </configuration>
           </execution>
@@ -223,37 +223,37 @@
             <configuration>
               <resources>
                 <resource>
-                  <directory>../main/classes/collate/src</directory>
+                  <directory>../../main/classes/collate/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/classes/core/src</directory>
+                  <directory>../../main/classes/core/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/classes/currdata/src</directory>
+                  <directory>../../main/classes/currdata/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/classes/langdata/src</directory>
+                  <directory>../../main/classes/langdata/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/classes/regiondata/src</directory>
+                  <directory>../../main/classes/regiondata/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/classes/translit/src</directory>
+                  <directory>../../main/classes/translit/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
@@ -271,37 +271,37 @@
             <configuration>
               <resources>
                 <resource>
-                  <directory>../main/tests/collate/src</directory>
+                  <directory>../../main/tests/collate/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/tests/core/src</directory>
+                  <directory>../../main/tests/core/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/tests/framework/src</directory>
+                  <directory>../../main/tests/framework/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/tests/packaging/src</directory>
+                  <directory>../../main/tests/packaging/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../main/tests/translit/src</directory>
+                  <directory>../../main/tests/translit/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>
                 </resource>
                 <resource>
-                  <directory>../tools/misc/src</directory>
+                  <directory>../../tools/misc/src</directory>
                   <excludes>
                     <exclude>**/*.java</exclude>
                   </excludes>

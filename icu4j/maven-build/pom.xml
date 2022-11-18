@@ -211,7 +211,7 @@
         <version>73.1-SNAPSHOT</version>
         <scope>system</scope>
         <!-- A hack on top of a hack because all child submodules will be one directory down from the root -->
-        <systemPath>${project.basedir}/../main/shared/data/icudata.jar</systemPath>
+        <systemPath>${project.basedir}/../../main/shared/data/icudata.jar</systemPath>
       </dependency>
 
       <dependency>
@@ -220,7 +220,7 @@
         <version>73.1-SNAPSHOT</version>
         <scope>system</scope>
         <!-- A hack on top of a hack because all child submodules will be one directory down from the root -->
-        <systemPath>${project.basedir}/../main/shared/data/icutzdata.jar</systemPath>
+        <systemPath>${project.basedir}/../../main/shared/data/icutzdata.jar</systemPath>
       </dependency>
 
       <dependency>
@@ -229,7 +229,7 @@
         <version>73.1-SNAPSHOT</version>
         <scope>system</scope>
         <!-- A hack on top of a hack because all child submodules will be one directory down from the root -->
-        <systemPath>${project.basedir}/../main/shared/data/testdata.jar</systemPath>
+        <systemPath>${project.basedir}/../../main/shared/data/testdata.jar</systemPath>
       </dependency>
 
     </dependencies>
