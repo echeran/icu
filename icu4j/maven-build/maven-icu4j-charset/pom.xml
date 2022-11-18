@@ -9,18 +9,25 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <parent>
+    <groupId>com.ibm.icu</groupId>
+    <artifactId>icu4j-root</artifactId>
+    <version>73.1-SNAPSHOT</version>
+    <!-- default relativePath for parent -->
+  </parent>
+  
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.ibm.icu</groupId>
-  <artifactId>icu4j-root</artifactId>
+  <artifactId>icu4j-charset</artifactId>
   <version>73.1-SNAPSHOT</version>
 
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
-  <name>ICU4J Root</name>
+  <name> ICU4J Charset Provider</name>
   <description>
-    International Component for Unicode for Java (ICU4J) is a mature, widely used Java library
-    providing Unicode and Globalization support 
+    icu4j-charset is a supplemental library for icu4j, implementing Java Charset SPI.
   </description>
   <url>https://icu.unicode.org/</url>
   <inceptionYear>2001</inceptionYear>
@@ -157,83 +164,108 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <modules>
-    <module>maven-icu4j</module>
-    <module>maven-icu4j-charset</module>
-  </modules>
-
   <build>
-    <pluginManagement>
-      <plugins>
+    <plugins>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
 
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
 
-      </plugins>
-    </pluginManagement>
+          <!-- add directories with main executable code -->
+          <execution>
+            <id>add-source</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>../../main/classes/charset/src</source>
+              </sources>
+            </configuration>
+          </execution>
+          
+          <!-- add directories with test code -->
+          <execution>
+            <id>add-test-source</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>../../main/tests/charset/src</source>
+              </sources>
+            </configuration>
+          </execution>
+
+          <!-- add directories with main executable resources -->
+          <execution>
+            <id>add-resource</id>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>../../main/classes/charset/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+
+          <!-- add directories with test resources -->
+          <execution>
+            <id>add-test-resource</id>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>../../main/tests/charset/src</directory>
+                  <excludes>
+                    <exclude>**/*.java</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+
+
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
-  <dependencyManagement>
-    <dependencies>
+  <dependencies>
 
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.12</version>
-          <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j</artifactId>
+      <version>73.1-SNAPSHOT</version>
+    </dependency>
 
-      <!-- this is for parameterized JUnit tests -->
-      <dependency>
-          <groupId>pl.pragmatists</groupId>
-          <artifactId>JUnitParams</artifactId>
-          <version>1.0.5</version>
-          <scope>test</scope>
-      </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+    </dependency>
 
-      <!-- 
-        Adding data jar files as dependencies works, for now, but will be deprecated.
-        See here if/when an upgrade to the future-proof way of rearranging the file directory
-        structure: https://stackoverflow.com/questions/4955635/how-to-add-local-jar-files-to-a-maven-project
-      -->
+    <!-- this is for parameterized JUnit tests -->
+    <dependency>
+        <groupId>pl.pragmatists</groupId>
+        <artifactId>JUnitParams</artifactId>
+        <scope>test</scope>
+    </dependency>
 
-      <dependency>
-        <groupId>com.ibm.icu</groupId>
-        <artifactId>icudata</artifactId>
-        <version>73.1-SNAPSHOT</version>
-        <scope>system</scope>
-        <!-- A hack on top of a hack because all child submodules will be one directory down from the root -->
-        <systemPath>${project.basedir}/../../main/shared/data/icudata.jar</systemPath>
-      </dependency>
-
-      <dependency>
-        <groupId>com.ibm.icu</groupId>
-        <artifactId>icutzdata</artifactId>
-        <version>73.1-SNAPSHOT</version>
-        <scope>system</scope>
-        <!-- A hack on top of a hack because all child submodules will be one directory down from the root -->
-        <systemPath>${project.basedir}/../../main/shared/data/icutzdata.jar</systemPath>
-      </dependency>
-
-      <dependency>
-        <groupId>com.ibm.icu</groupId>
-        <artifactId>testdata</artifactId>
-        <version>73.1-SNAPSHOT</version>
-        <scope>system</scope>
-        <!-- A hack on top of a hack because all child submodules will be one directory down from the root -->
-        <systemPath>${project.basedir}/../../main/shared/data/testdata.jar</systemPath>
-      </dependency>
-
-    </dependencies>
-  </dependencyManagement>
+</dependencies>
 
 </project>
