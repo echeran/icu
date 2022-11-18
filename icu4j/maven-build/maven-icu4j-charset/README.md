@@ -1,3 +1,8 @@
+<!--
+© 2022 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # maven-icu4j-charset
 
 This directory exists as part of work to build ICU4J with Maven.
