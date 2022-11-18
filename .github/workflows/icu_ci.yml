@@ -58,7 +58,7 @@ jobs:
   # Java8 ICU4J build and unit test using Maven
   # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
   java8-icu4j-build-and-test-maven:
-    name: Build ICU4J with Maven using JDK 8
+    name: Build all ICU4J artifacts with Maven using JDK 8
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and setup
@@ -77,7 +77,7 @@ jobs:
       # integration tests, if any (`integration-test`)
       - name: Run Maven verify phase on ICU4J
         run: |
-          cd icu4j;
+          cd icu4j/maven-build;
           mvn --batch-mode verify
 
   # ICU4J build and unit test under Java11
