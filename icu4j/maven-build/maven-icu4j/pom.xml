@@ -337,6 +337,13 @@
       <version>73.1-SNAPSHOT</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j-test-datafiles</artifactId>
+      <version>73.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

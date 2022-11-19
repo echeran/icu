@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.ibm.icu</groupId>
-  <artifactId>icu4j-datafiles</artifactId>
+  <artifactId>icu4j-test-datafiles</artifactId>
   <version>73.1-SNAPSHOT</version>
 
   <packaging>jar</packaging>
@@ -173,15 +173,14 @@
 
   <dependencies>
 
+    <!--
+       Shouldn't declare this dependency with scope=test because downstream
+       submodule consumers are the ones to declare <scope>test</scope> in
+       the <dependency> configuration.
+    -->
     <dependency>
       <groupId>com.ibm.icu</groupId>
-      <artifactId>icudata</artifactId>
-      <version>73.1-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.ibm.icu</groupId>
-      <artifactId>icutzdata</artifactId>
+      <artifactId>testdata</artifactId>
       <version>73.1-SNAPSHOT</version>
     </dependency>
 

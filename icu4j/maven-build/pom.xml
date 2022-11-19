@@ -197,6 +197,7 @@
     <module>maven-icu4j-datafiles</module>
     <module>maven-icu4j-charset</module>
     <module>maven-icu4j-localespi</module>
+    <module>maven-icu4j-test-datafiles</module>
   </modules>
 
   <build>
