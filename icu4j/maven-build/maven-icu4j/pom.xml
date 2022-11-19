@@ -331,25 +331,10 @@
         <scope>test</scope>
     </dependency>
 
-    <!-- 
-      Adding data jar files as dependencies works, for now, but will be deprecated.
-      See here if/when an upgrade to the future-proof way of rearranging the file directory
-      structure: https://stackoverflow.com/questions/4955635/how-to-add-local-jar-files-to-a-maven-project
-    -->
-
     <dependency>
       <groupId>com.ibm.icu</groupId>
-      <artifactId>icudata</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.ibm.icu</groupId>
-      <artifactId>icutzdata</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.ibm.icu</groupId>
-      <artifactId>testdata</artifactId>
+      <artifactId>icu4j-datafiles</artifactId>
+      <version>73.1-SNAPSHOT</version>
     </dependency>
 
   </dependencies>

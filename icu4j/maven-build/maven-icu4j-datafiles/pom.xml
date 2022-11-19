@@ -9,18 +9,25 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <parent>
+    <groupId>com.ibm.icu</groupId>
+    <artifactId>icu4j-root</artifactId>
+    <version>73.1-SNAPSHOT</version>
+    <!-- default relativePath for parent -->
+  </parent>
+  
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.ibm.icu</groupId>
-  <artifactId>icu4j-root</artifactId>
+  <artifactId>icu4j-datafiles</artifactId>
   <version>73.1-SNAPSHOT</version>
 
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
-  <name>ICU4J Root</name>
+  <name>ICU4J Data Files</name>
   <description>
-    International Component for Unicode for Java (ICU4J) is a mature, widely used Java library
-    providing Unicode and Globalization support 
+    Various *.jar files needed by ICU4J components' main and test code.
   </description>
   <url>https://icu.unicode.org/</url>
   <inceptionYear>2001</inceptionYear>
@@ -148,96 +155,43 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <properties>
-    <!-- ICU4J currently builds with Java 8 sources -->
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <!-- Keep the target class file versions consistent with the source file version -->
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <!-- The encoding / encoding form of the source files -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <!-- 
-    Note: the .jar files in ./local-maven-repo are copies of the files at
-    icu4j/main/shared/data/*.jar
+    We need to put the local repo repository here because it didn't seem possible
+    to put it in the parent POM and correctly inherit the information and find the
+    artifacts accordingly.
   -->
   <!--
-    Note: this overall solution of a local filesystem repository is based on the
-    answer here: https://stackoverflow.com/a/28762617/2077918
-    The directory structure and files were created using the `mvn install-file` command, 
-    with the copied .jar files being replaced by symlinks to avoid duplicating files on
-    developers' local filesystems.
-    Ex: for version 73.1-SNAPSHOT, when running the current directory (<ICU>/icu4j/maven-build):
-    ```
-    mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file  \
-    -Dfile=../main/shared/data/icudata.jar \
-    -DgroupId=com.ibm.icu -DartifactId=icudata \
-    -Dversion=73.1-SNAPSHOT -Dpackaging=jar \
-    -DlocalRepositoryPath=./local-maven-repo \
-    -DgeneratePom=true
-
-    mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file  \
-    -Dfile=../main/shared/data/icutzdata.jar \
-    -DgroupId=com.ibm.icu -DartifactId=icutzdata \
-    -Dversion=73.1-SNAPSHOT -Dpackaging=jar \
-    -DlocalRepositoryPath=./local-maven-repo \
-    -DgeneratePom=true
-
-    mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file  \
-    -Dfile=../main/shared/data/testdata.jar \
-    -DgroupId=com.ibm.icu -DartifactId=testdata \
-    -Dversion=73.1-SNAPSHOT -Dpackaging=jar \
-    -DlocalRepositoryPath=./local-maven-repo \
-    -DgeneratePom=true
-    ```    
+    The ${basedir} will (hopefully) only be resolved from this child directory, and
+    not the root directory or anywhere else.
   -->
+  <repositories>
+    <repository>
+      <id>local-maven-repo</id>
+      <url>file:${basedir}/../local-maven-repo</url>
+    </repository>
+  </repositories>
 
-  <modules>
-    <module>maven-icu4j</module>
-    <module>maven-icu4j-datafiles</module>
-    <module>maven-icu4j-charset</module>
-    <module>maven-icu4j-localespi</module>
-  </modules>
+  <dependencies>
 
-  <build>
-    <pluginManagement>
-      <plugins>
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icudata</artifactId>
+      <version>73.1-SNAPSHOT</version>
+    </dependency>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
-        </plugin>
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icutzdata</artifactId>
+      <version>73.1-SNAPSHOT</version>
+    </dependency>
 
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>testdata</artifactId>
+      <version>73.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
 
-      </plugins>
-    </pluginManagement>
-  </build>
-
-  <dependencyManagement>
-    <dependencies>
-
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.12</version>
-          <scope>test</scope>
-      </dependency>
-
-      <!-- this is for parameterized JUnit tests -->
-      <dependency>
-          <groupId>pl.pragmatists</groupId>
-          <artifactId>JUnitParams</artifactId>
-          <version>1.0.5</version>
-          <scope>test</scope>
-      </dependency>
-
-    </dependencies>
-  </dependencyManagement>
+  </dependencies>
 
 </project>

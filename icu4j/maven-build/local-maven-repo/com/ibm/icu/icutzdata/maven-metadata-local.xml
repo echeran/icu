@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.ibm.icu</groupId>
+  <artifactId>icutzdata</artifactId>
+  <versioning>
+    <versions>
+      <version>73.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20221119025532</lastUpdated>
+  </versioning>
+</metadata>
