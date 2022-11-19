@@ -261,6 +261,13 @@
     </dependency>
 
     <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j-test-datafiles</artifactId>
+      <version>73.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <scope>test</scope>
