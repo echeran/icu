@@ -25,11 +25,8 @@
 
   <packaging>jar</packaging>
 
-  <name>ICU4J Charset</name>
-  <description>
-    International Component for Unicode for Java (ICU4J) is a mature, widely used Java library
-    providing Unicode and Globalization support 
-  </description>
+  <name>ICU4J Locale Service Provider</name>
+  <description>icu4j-localespi is a supplemental library for icu4j, implementing Java Locale SPI.</description>
   <url>https://icu.unicode.org/</url>
   <inceptionYear>2001</inceptionYear>
 

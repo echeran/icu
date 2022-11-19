@@ -26,9 +26,7 @@
   <packaging>jar</packaging>
 
   <name>ICU4J Data Files</name>
-  <description>
-    Various *.jar files needed by ICU4J components' main and test code.
-  </description>
+  <description>Various *.jar files needed by ICU4J components' main code.</description>
   <url>https://icu.unicode.org/</url>
   <inceptionYear>2001</inceptionYear>
 
