@@ -313,6 +313,34 @@
 
         </executions>
       </plugin>
+
+      <!--
+        Use the Shade Plugin to override default behavior of file inclusion by Maven when packaging=jar
+        so that ICU locale data in icudata.jar get included in the artifact .jar file.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <filters>
+                <filter>
+                  <artifact>com.ibm.icu:icu4j-datafiles</artifact>
+                  <includes>
+                    <include>**</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
