@@ -315,10 +315,62 @@
       </plugin>
 
       <!--
-        Use the Shade Plugin to override default behavior of file inclusion by Maven when packaging=jar
-        so that ICU locale data in icudata.jar get included in the artifact .jar file.
+        Extract and copy the *.res files from the *.jar files in the upstream depenendency `com.ibm.icu:icu4j-datafiles`.
+        Enables the creation of *.lst files in the next phase using the helper script.
+        Use the ./target/classes directory as the output directory so that the files (included generated *.lst files)
+        get included in the shaded .jar file.
       -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>com.ibm.icu</includeGroupIds>
+              <!-- exclude test resource files which come through dependencies as `provided` scope -->
+              <excludeScope>provided</excludeScope>
+              <!--
+                Don't know why the Ant build.xml is configured to exclude `**/res_index.res` from the set of
+                included files since those files still appear in the packaged .jar file.
+              -->
+              <excludes>**/*.cnv,**/cnvalias.icu</excludes>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 
+        Replicate the creation of fullLocaleNames.lst files in every subdirectory of the dir of unpacked data
+        that the Ant build.xml file encodes.
+      -->
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.1.0</version>
+          <executions>
+              <execution>
+                  <phase>process-resources</phase>
+                  <goals>
+                      <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                      <executable>./file-listing-helper.sh</executable>
+                  </configuration>
+              </execution>
+          </executions>
+      </plugin>
+
+      <!--
+        Use the Shade Plugin to allow configuration of the Manifest file, etc.
+      -->
+      <!-- <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.4.1</version>
@@ -335,12 +387,17 @@
                   <includes>
                     <include>**</include>
                   </includes>
+                  <excludes>
+                    <exclude>/com/ibm/icu/impl/data/**/*.cnv</exclude>
+                    <exclude>/com/ibm/icu/impl/data/*/cnvalias.icu</exclude>
+                  </excludes>
                 </filter>
               </filters>
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
+
     </plugins>
   </build>
 
