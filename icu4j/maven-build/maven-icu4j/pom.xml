@@ -26,10 +26,7 @@
   <packaging>jar</packaging>
 
   <name>ICU4J</name>
-  <description>
-    International Component for Unicode for Java (ICU4J) is a mature, widely used Java library
-    providing Unicode and Globalization support 
-  </description>
+  <description>International Component for Unicode for Java (ICU4J) is a mature, widely used Java library providing Unicode and Globalization support</description>
   <url>https://icu.unicode.org/</url>
   <inceptionYear>2001</inceptionYear>
 
@@ -163,6 +160,40 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <!-- The encoding / encoding form of the source files -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Specification-Title -->
+    <jar.spec.title>International Components for Unicode for Java</jar.spec.title>
+    <!-- Specification-Version -->
+    <jar.spec.version>72</jar.spec.version>
+    <!-- Specification-Vendor -->
+    <jar.spec.vendor>Unicode, Inc.</jar.spec.vendor>
+
+    <!-- Implementation-Title -->
+    <jar.impl.title>International Components for Unicode for Java</jar.impl.title>
+    <!-- Implementation-Version -->
+    <jar.impl.version>72.1</jar.impl.version>
+    <!-- Implementation-Vendor -->
+    <jar.impl.vendor>Unicode, Inc.</jar.impl.vendor>
+    <!-- Implementation-Vendor-Id -->
+    <jar.impl.vendor.id>org.unicode</jar.impl.vendor.id>
+
+    <!-- Bundle-ManifestVersion -->
+    <jar.manifest.version>2</jar.manifest.version>
+    <!-- Bundle-Name -->
+    <jar.name>${project.name}</jar.name>
+    <!-- Bundle-Description -->
+    <jar.description>${project.name}</jar.description>
+    <!-- Bundle-SymbolicName -->
+    <jar.symbolic.name>${project.groupId}</jar.symbolic.name>
+    <!-- Bundle-Version -->
+    <jar.version>${project.version}</jar.version>
+    <!-- Bundle-Vendor -->
+    <jar.vendor>Unicode, Inc.</jar.vendor>
+    <!-- Bundle-Copyright -->
+    <jar.copyright.info>&#169; 2016 and later: Unicode, Inc. and others. License &#38; terms of use: http://www.unicode.org/copyright.html</jar.copyright.info>
+
+    <!-- Main-Class -->
+    <jar.main.class>com.ibm.icu.util.VersionInfo</jar.main.class>
   </properties>
 
   <build>
@@ -387,35 +418,44 @@
       </plugin>
 
       <!--
-        Use the Shade Plugin to allow configuration of the Manifest file, etc.
+        Enable configuration of the Manifest file, etc. during the process of packaging the .jar file.
+
+        For future reference: https://stackoverflow.com/questions/38548271/difference-between-maven-plugins-assembly-plugins-jar-plugins-shaded-plugi
       -->
-      <!-- <plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.4.1</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <filters>
-                <filter>
-                  <artifact>com.ibm.icu:icu4j-datafiles</artifact>
-                  <includes>
-                    <include>**</include>
-                  </includes>
-                  <excludes>
-                    <exclude>/com/ibm/icu/impl/data/**/*.cnv</exclude>
-                    <exclude>/com/ibm/icu/impl/data/*/cnvalias.icu</exclude>
-                  </excludes>
-                </filter>
-              </filters>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin> -->
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+
+                <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
+                <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
+
+                <Specification-Title>${jar.spec.title}</Specification-Title>
+                <Specification-Version>${jar.spec.version}</Specification-Version>
+                <Specification-Vendor>${jar.spec.vendor}</Specification-Vendor>
+
+                <Implementation-Title>${jar.impl.title}</Implementation-Title>
+                <Implementation-Version>${jar.impl.version}</Implementation-Version>
+                <Implementation-Vendor>${jar.impl.vendor}</Implementation-Vendor>
+                <Implementation-Vendor-Id>${jar.impl.vendor.id}</Implementation-Vendor-Id>
+
+                <Bundle-ManifestVersion>${jar.manifest.version}</Bundle-ManifestVersion>
+                <Bundle-Name>${jar.name}</Bundle-Name>
+                <Bundle-Description>${jar.description}</Bundle-Description>
+                <Bundle-SymbolicName>${jar.symbolic.name}</Bundle-SymbolicName>
+                <Bundle-Version>${jar.version}</Bundle-Version>
+                <Bundle-Vendor>${jar.vendor}</Bundle-Vendor>
+                <Bundle-Copyright>${jar.copyright.info}</Bundle-Copyright>
+
+                <Main-Class>${jar.main.class}</Main-Class>
+
+              </manifestEntries>
+            </archive>
+          </configuration>
+      </plugin>
 
     </plugins>
   </build>
