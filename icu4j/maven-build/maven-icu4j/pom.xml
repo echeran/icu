@@ -347,21 +347,40 @@
       </plugin>
 
       <!-- 
-        Replicate the creation of fullLocaleNames.lst files in every subdirectory of the dir of unpacked data
-        that the Ant build.xml file encodes.
+        Process and transform the resource files before they get packaged up in the .jar file.
       -->
       <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
           <version>3.1.0</version>
           <executions>
+              <!-- 
+                Replicate the creation of fullLocaleNames.lst files in every subdirectory of the dir of unpacked data
+                that the Ant build.xml file encodes.
+              -->
               <execution>
+                  <id>full-locale-names</id>
                   <phase>process-resources</phase>
                   <goals>
                       <goal>exec</goal>
                   </goals>
                   <configuration>
                       <executable>./file-listing-helper.sh</executable>
+                  </configuration>
+              </execution>
+              <!-- Copy the license file. -->
+              <execution>
+                  <id>copy-license-file</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                      <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                      <executable>cp</executable>
+                      <arguments>
+                        <argument>../../../icu4c/LICENSE</argument>
+                        <argument>${project.build.directory}/classes</argument>
+                      </arguments>
                   </configuration>
               </execution>
           </executions>
