@@ -80,6 +80,11 @@ jobs:
         run: |
           cd icu4j/maven-build;
           mvn --batch-mode -am -pl maven-icu4j verify
+      # This step included for reviewers of Mavenize ICU4J PR; can view jar file on CI workflow run summary page
+      - uses: actions/upload-artifact@v3
+        with:
+          name: maven-icu4j
+          path: icu4j/maven-build/maven-icu4j/target/*.jar
 
   java8-icu4j-charset-build-and-test-maven:
     name: Build `icu4j-charset` artifact with Maven using JDK 8
@@ -103,6 +108,11 @@ jobs:
         run: |
           cd icu4j/maven-build;
           mvn --batch-mode -am -pl maven-icu4j-charset verify
+      # This step included for reviewers of Mavenize ICU4J PR; can view jar file on CI workflow run summary page
+      - uses: actions/upload-artifact@v3
+        with:
+          name: maven-icu4j-charset
+          path: icu4j/maven-build/maven-icu4j-charset/target/*.jar
 
   java8-icu4j-localespi-build-and-test-maven:
     name: Build `icu4j-localespi` artifact with Maven using JDK 8
@@ -126,6 +136,11 @@ jobs:
         run: |
           cd icu4j/maven-build;
           mvn --batch-mode -am -pl maven-icu4j-localespi verify
+      # This step included for reviewers of Mavenize ICU4J PR; can view jar file on CI workflow run summary page
+      - uses: actions/upload-artifact@v3
+        with:
+          name: maven-icu4j-localespi
+          path: icu4j/maven-build/maven-icu4j-localespi/target/*.jar
 
   # ICU4J build and unit test under Java11
   java11-icu4j-build-and-test:
