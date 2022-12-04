@@ -154,12 +154,8 @@
   </distributionManagement>
 
   <properties>
-    <!-- ICU4J currently builds with Java 8 sources -->
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <!-- Keep the target class file versions consistent with the source file version -->
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <!-- The encoding / encoding form of the source files -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Bundle-SymbolicName -->
+    <jar.symbolic.name>org.ibm.icu.localespi</jar.symbolic.name>
   </properties>
 
   <build>
@@ -247,6 +243,46 @@
 
 
         </executions>
+      </plugin>
+
+      <!--
+        Enable configuration of the Manifest file, etc. during the process of packaging the .jar file.
+
+        For future reference: https://stackoverflow.com/questions/38548271/difference-between-maven-plugins-assembly-plugins-jar-plugins-shaded-plugi
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+
+                <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
+                <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
+
+                <Specification-Title>${jar.spec.title}</Specification-Title>
+                <Specification-Version>${jar.spec.version}</Specification-Version>
+                <Specification-Vendor>${jar.spec.vendor}</Specification-Vendor>
+
+                <Implementation-Title>${jar.impl.title}</Implementation-Title>
+                <Implementation-Version>${jar.impl.version}</Implementation-Version>
+                <Implementation-Vendor>${jar.impl.vendor}</Implementation-Vendor>
+                <Implementation-Vendor-Id>${jar.impl.vendor.id}</Implementation-Vendor-Id>
+
+                <Bundle-ManifestVersion>${jar.manifest.version}</Bundle-ManifestVersion>
+                <Bundle-Name>${jar.name}</Bundle-Name>
+                <Bundle-Description>${jar.description}</Bundle-Description>
+                <Bundle-SymbolicName>${jar.symbolic.name}</Bundle-SymbolicName>
+                <Bundle-Version>${jar.version}</Bundle-Version>
+                <Bundle-Vendor>${jar.vendor}</Bundle-Vendor>
+                <Bundle-Copyright>${jar.copyright.info}</Bundle-Copyright>
+
+                <Main-Class>${jar.main.class}</Main-Class>
+
+              </manifestEntries>
+            </archive>
+          </configuration>
       </plugin>
     </plugins>
   </build>

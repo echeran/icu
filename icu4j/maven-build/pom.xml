@@ -155,6 +155,47 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <!-- The encoding / encoding form of the source files -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- ICU4J currently builds with Java 8 sources -->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <!-- Keep the target class file versions consistent with the source file version -->
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- The encoding / encoding form of the source files -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Specification-Title -->
+    <jar.spec.title>International Components for Unicode for Java</jar.spec.title>
+    <!-- Specification-Version -->
+    <jar.spec.version>72</jar.spec.version>
+    <!-- Specification-Vendor -->
+    <jar.spec.vendor>Unicode, Inc.</jar.spec.vendor>
+
+    <!-- Implementation-Title -->
+    <jar.impl.title>International Components for Unicode for Java</jar.impl.title>
+    <!-- Implementation-Version -->
+    <jar.impl.version>72.1</jar.impl.version>
+    <!-- Implementation-Vendor -->
+    <jar.impl.vendor>Unicode, Inc.</jar.impl.vendor>
+    <!-- Implementation-Vendor-Id -->
+    <jar.impl.vendor.id>org.unicode</jar.impl.vendor.id>
+
+    <!-- Bundle-ManifestVersion -->
+    <jar.manifest.version>2</jar.manifest.version>
+    <!-- Bundle-Name -->
+    <jar.name>${project.name}</jar.name>
+    <!-- Bundle-Description -->
+    <jar.description>${project.name}</jar.description>
+    <!-- Bundle-SymbolicName -->
+    <jar.symbolic.name>${project.groupId}</jar.symbolic.name>
+    <!-- Bundle-Version -->
+    <jar.version>${project.version}</jar.version>
+    <!-- Bundle-Vendor -->
+    <jar.vendor>Unicode, Inc.</jar.vendor>
+    <!-- Bundle-Copyright -->
+    <jar.copyright.info>&#169; 2016 and later: Unicode, Inc. and others. License &#38; terms of use: http://www.unicode.org/copyright.html</jar.copyright.info>
+
+    <!-- Main-Class -->
+    <jar.main.class>com.ibm.icu.util.VersionInfo</jar.main.class>
   </properties>
 
   <!-- 
