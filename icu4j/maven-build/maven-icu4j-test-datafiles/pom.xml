@@ -67,7 +67,6 @@
     <dependency>
       <groupId>com.ibm.icu</groupId>
       <artifactId>testdata</artifactId>
-      <version>73.1-SNAPSHOT</version>
     </dependency>
 
   </dependencies>

@@ -49,13 +49,11 @@
     <dependency>
       <groupId>com.ibm.icu</groupId>
       <artifactId>icudata</artifactId>
-      <version>73.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>com.ibm.icu</groupId>
       <artifactId>icutzdata</artifactId>
-      <version>73.1-SNAPSHOT</version>
     </dependency>
 
   </dependencies>

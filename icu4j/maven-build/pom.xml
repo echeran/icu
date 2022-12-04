@@ -149,6 +149,13 @@
   </distributionManagement>
 
   <properties>
+    <!-- 
+      Main ICU4J version number.
+      Note: This version string must also be repeated in <version> of this root pom.xml above.
+      Note: Keep the `jar.spec.version` number in sync with this value, too.
+     -->
+    <icu4j.version>73.1-SNAPSHOT</icu4j.version>
+
     <!-- ICU4J currently builds with Java 8 sources -->
     <maven.compiler.source>1.8</maven.compiler.source>
     <!-- Keep the target class file versions consistent with the source file version -->
@@ -166,14 +173,14 @@
     <!-- Specification-Title -->
     <jar.spec.title>International Components for Unicode for Java</jar.spec.title>
     <!-- Specification-Version -->
-    <jar.spec.version>72</jar.spec.version>
+    <jar.spec.version>73</jar.spec.version>
     <!-- Specification-Vendor -->
     <jar.spec.vendor>Unicode, Inc.</jar.spec.vendor>
 
     <!-- Implementation-Title -->
     <jar.impl.title>International Components for Unicode for Java</jar.impl.title>
     <!-- Implementation-Version -->
-    <jar.impl.version>72.1</jar.impl.version>
+    <jar.impl.version>${icu4j.version}</jar.impl.version>
     <!-- Implementation-Vendor -->
     <jar.impl.vendor>Unicode, Inc.</jar.impl.vendor>
     <!-- Implementation-Vendor-Id -->
@@ -277,6 +284,43 @@
           <artifactId>JUnitParams</artifactId>
           <version>1.0.5</version>
           <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>icu4j-datafiles</artifactId>
+        <version>${icu4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>icu4j-test-datafiles</artifactId>
+        <version>${icu4j.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>icu4j</artifactId>
+        <version>${icu4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>icudata</artifactId>
+        <version>${icu4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>icutzdata</artifactId>
+        <version>${icu4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.ibm.icu</groupId>
+        <artifactId>testdata</artifactId>
+        <version>${icu4j.version}</version>
       </dependency>
 
     </dependencies>
