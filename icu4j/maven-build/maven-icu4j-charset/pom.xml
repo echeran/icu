@@ -247,6 +247,32 @@
 
         </executions>
       </plugin>
+
+      <!--
+        Extract and copy the *.cnv files + cnvalias.icu from the *.jar files in the upstream depenendency 
+        `com.ibm.icu:icu4j-datafiles`.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>com.ibm.icu</includeGroupIds>
+              <!-- exclude test resource files which come through dependencies as `provided` scope -->
+              <excludeScope>provided</excludeScope>
+              <includes>**/*.cnv,**/cnvalias.icu</includes>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

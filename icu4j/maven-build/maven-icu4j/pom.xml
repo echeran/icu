@@ -366,10 +366,6 @@
               <includeGroupIds>com.ibm.icu</includeGroupIds>
               <!-- exclude test resource files which come through dependencies as `provided` scope -->
               <excludeScope>provided</excludeScope>
-              <!--
-                Don't know why the Ant build.xml is configured to exclude `**/res_index.res` from the set of
-                included files since those files still appear in the packaged .jar file.
-              -->
               <excludes>**/*.cnv,**/cnvalias.icu</excludes>
               <outputDirectory>${project.build.directory}/classes</outputDirectory>
             </configuration>
