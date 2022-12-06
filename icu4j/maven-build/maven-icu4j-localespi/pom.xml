@@ -120,6 +120,58 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!--
+            Do not run localespi tests as unit tests because they depend on loading the main code via a .jar file
+            via the Java extensions mechanism.
+          -->
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.0.0-M7</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <!-- treat localespi tests as integration tests because they depend on .jar files from package phase -->
+            <include>**/*.java</include>
+            <!-- default integration test wildcard patterns -->
+            <include>**/IT*.java</include>
+            <include>**/*IT.java</include>
+            <include>**/*ITCase.java</include>
+          </includes>
+
+          <!-- Set up the locale service provider using the .jar file of `icu4j-localespi` main code from the `package` phase -->
+          <systemPropertyVariables>
+            <!-- 
+              The `java.ext.dirs` is a special Java system property that activates the Java extension mechanism.
+              The Java extension mechanism was deprecated in Java 8 (users are recommended to use `-classpath` instead),
+              and the extension mechanism was removed in Java 9 altogether.
+              For backwards compatibility testing for users of the Java extension mechansim,
+              this configuration achieves the effect of having the localespi code in a .jar file that gets loaded
+              by running this test in a phase following the `package` phase in which the .jar file is created.
+            -->
+            <java.ext.dirs>${project.build.directory}</java.ext.dirs>
+            <!--
+              https://stackoverflow.com/questions/45223908/why-does-the-java-extension-mechanism-not-check-the-classpath-for-an-optional-pa
+            -->
+            <java.locale.providers>SPI,JRE</java.locale.providers>
+          </systemPropertyVariables>
+
+        </configuration>
+      </plugin>
+
       <!--
         Enable configuration of the Manifest file, etc. during the process of packaging the .jar file.
 
