@@ -186,11 +186,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.0</version>
         <executions>
           <execution>
             <id>unpack-dependencies</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
@@ -293,6 +293,12 @@
     <dependency>
       <groupId>com.ibm.icu</groupId>
       <artifactId>icu4j-datafiles</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j-datafiles</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
