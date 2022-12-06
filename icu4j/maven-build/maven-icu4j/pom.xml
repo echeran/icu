@@ -189,10 +189,10 @@
         <version>3.3.0</version>
         <executions>
           <execution>
-            <id>unpack-dependencies</id>
-            <phase>generate-resources</phase>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
             <goals>
-              <goal>unpack-dependencies</goal>
+              <goal>copy-dependencies</goal>
             </goals>
             <configuration>
               <includeGroupIds>com.ibm.icu</includeGroupIds>
@@ -214,12 +214,12 @@
           <version>3.1.0</version>
           <executions>
               <!-- 
-                Replicate the creation of fullLocaleNames.lst files in every subdirectory of the dir of unpacked data
+                Replicate the creation of fullLocaleNames.lst files in every subdirectory of the dir of copied data
                 that the Ant build.xml file encodes.
               -->
               <execution>
                   <id>full-locale-names</id>
-                  <phase>process-resources</phase>
+                  <phase>prepare-package</phase>
                   <goals>
                       <goal>exec</goal>
                   </goals>
@@ -230,7 +230,7 @@
               <!-- Copy the license file. -->
               <execution>
                   <id>copy-license-file</id>
-                  <phase>process-resources</phase>
+                  <phase>prepare-package</phase>
                   <goals>
                       <goal>exec</goal>
                   </goals>
