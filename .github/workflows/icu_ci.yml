@@ -58,8 +58,10 @@ jobs:
   # Java8 ICU4J build and unit tests using Maven
   # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 
-  java8-icu4j-core-build-and-test-maven:
-    name: Build core `icu4j` artifact with Maven using JDK 8
+  # Run `test` to execute unit tests and ensure it is possible for tests to run even without packaging submodule
+  # dependencies as jar files
+  java8-icu4j-test-maven:
+    name: Run unit tests with Maven using JDK 8
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and setup
@@ -73,21 +75,14 @@ jobs:
           distribution: 'temurin'
           java-version: '8'
           cache: maven
-      # The Maven `verify` phase causes the following to happen first, and in order:
-      # build/compile (`compile`), unit tests (`test`), Jar building (`package`),
-      # integration tests, if any (`integration-test`)
-      - name: Run Maven verify phase on ICU4J
+      - name: Run Maven test
         run: |
           cd icu4j/maven-build;
-          mvn --batch-mode -am -pl maven-icu4j verify
-      # This step included for reviewers of Mavenize ICU4J PR; can view jar file on CI workflow run summary page
-      - uses: actions/upload-artifact@v3
-        with:
-          name: maven-icu4j
-          path: icu4j/maven-build/maven-icu4j/target/*.jar
+          mvn --batch-mode test
 
-  java8-icu4j-charset-build-and-test-maven:
-    name: Build `icu4j-charset` artifact with Maven using JDK 8
+  # Run `verify` to ensure that `package` (creating .jar files) and `integration-test` (special setup for localespi tests) work
+  java8-icu4j-verify-maven:
+    name: Run integration tests with Maven using JDK 8
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and setup
@@ -104,43 +99,10 @@ jobs:
       # The Maven `verify` phase causes the following to happen first, and in order:
       # build/compile (`compile`), unit tests (`test`), Jar building (`package`),
       # integration tests, if any (`integration-test`)
-      - name: Run Maven verify phase on ICU4J
+      - name: Run Maven verify
         run: |
           cd icu4j/maven-build;
-          mvn --batch-mode -am -pl maven-icu4j-charset verify
-      # This step included for reviewers of Mavenize ICU4J PR; can view jar file on CI workflow run summary page
-      - uses: actions/upload-artifact@v3
-        with:
-          name: maven-icu4j-charset
-          path: icu4j/maven-build/maven-icu4j-charset/target/*.jar
-
-  java8-icu4j-localespi-build-and-test-maven:
-    name: Build `icu4j-localespi` artifact with Maven using JDK 8
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout and setup
-        uses: actions/checkout@v2
-        with:
-          lfs: true
-      - name: Checkout lfs objects
-        run: git lfs pull
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '8'
-          cache: maven
-      # The Maven `verify` phase causes the following to happen first, and in order:
-      # build/compile (`compile`), unit tests (`test`), Jar building (`package`),
-      # integration tests, if any (`integration-test`)
-      - name: Run Maven verify phase on ICU4J
-        run: |
-          cd icu4j/maven-build;
-          mvn --batch-mode -am -pl maven-icu4j-localespi verify
-      # This step included for reviewers of Mavenize ICU4J PR; can view jar file on CI workflow run summary page
-      - uses: actions/upload-artifact@v3
-        with:
-          name: maven-icu4j-localespi
-          path: icu4j/maven-build/maven-icu4j-localespi/target/*.jar
+          mvn --batch-mode verify
 
   # ICU4J build and unit test under Java11
   java11-icu4j-build-and-test:
