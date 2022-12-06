@@ -134,6 +134,7 @@
             <configuration>
               <resourceBundles>
                 <resourceBundle>com.ibm.icu:icu4j-datafiles:${icu4j.version}</resourceBundle>
+                <resourceBundle>com.ibm.icu:icu4j-test-datafiles:${icu4j.version}</resourceBundle>
               </resourceBundles>
             </configuration>
           </execution>
