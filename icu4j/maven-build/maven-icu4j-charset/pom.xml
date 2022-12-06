@@ -120,7 +120,7 @@
       </plugin>
 
       <!--
-        Extract and copy the *.cnv files + cnvalias.icu from the *.jar files in the upstream depenendency 
+        Extract and unpack the *.cnv files + cnvalias.icu from the *.jar files in the upstream depenendency 
         `com.ibm.icu:icu4j-datafiles`.
       -->
       <plugin>
@@ -129,16 +129,17 @@
         <version>3.3.0</version>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
+            <id>unpack-dependencies</id>
             <phase>prepare-package</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
               <includeGroupIds>com.ibm.icu</includeGroupIds>
               <!-- exclude test resource files which come through dependencies as `provided` scope -->
               <excludeScope>provided</excludeScope>
               <includes>**/*.cnv,**/cnvalias.icu</includes>
+              <excludes>**/*.jar</excludes>
               <outputDirectory>${project.build.directory}/classes</outputDirectory>
             </configuration>
           </execution>

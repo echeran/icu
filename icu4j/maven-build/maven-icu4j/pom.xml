@@ -178,7 +178,7 @@
       </plugin>
 
       <!--
-        Extract and copy the *.res files from the *.jar files in the upstream depenendency `com.ibm.icu:icu4j-datafiles`.
+        Extract and unpack the *.res files from the *.jar files in the upstream depenendency `com.ibm.icu:icu4j-datafiles`.
         Enables the creation of *.lst files in the next phase using the helper script.
         Use the ./target/classes directory as the output directory so that the files (included generated *.lst files)
         get included in the shaded .jar file.
@@ -189,16 +189,16 @@
         <version>3.3.0</version>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
+            <id>unpack-dependencies</id>
             <phase>prepare-package</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
               <includeGroupIds>com.ibm.icu</includeGroupIds>
               <!-- exclude test resource files which come through dependencies as `provided` scope -->
               <excludeScope>provided</excludeScope>
-              <excludes>**/*.cnv,**/cnvalias.icu</excludes>
+              <excludes>**/*.cnv,**/cnvalias.icu,**/*.jar</excludes>
               <outputDirectory>${project.build.directory}/classes</outputDirectory>
             </configuration>
           </execution>

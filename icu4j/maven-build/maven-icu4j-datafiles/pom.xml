@@ -66,16 +66,14 @@
         <version>3.3.0</version>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
-            <phase>prepare-package</phase>
+            <id>unpack-dependencies</id>
+            <phase>generate-resources</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
               <includeGroupIds>com.ibm.icu</includeGroupIds>
-              <!-- exclude test resource files which come through dependencies as `provided` scope -->
-              <!-- <excludeScope>provided</excludeScope>
-              <excludes>**/*.cnv,**/cnvalias.icu</excludes> -->
+              <excludes>**/*.jar</excludes>
               <outputDirectory>${project.build.directory}/classes</outputDirectory>
             </configuration>
           </execution>
