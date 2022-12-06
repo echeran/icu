@@ -315,12 +315,11 @@ writeAssemblyCode(
             exit(U_ILLEGAL_ARGUMENT_ERROR);
         }
         uprv_strcpy(outFilePath, buffer.chars);
-    }
-
 #if defined (WINDOWS_WITH_GNUC) && U_PLATFORM != U_PF_CYGWIN
-    /* Need to fix the file separator character when using MinGW. */
-    swapFileSepChar(outFilePath, U_FILE_SEP_CHAR, '/');
+        /* Need to fix the file separator character when using MinGW. */
+        swapFileSepChar(outFilePath, U_FILE_SEP_CHAR, '/');
 #endif
+    }
 
     if(optEntryPoint != NULL) {
         uprv_strcpy(entry, optEntryPoint);
@@ -390,6 +389,7 @@ U_CAPI void U_EXPORT2
 writeCCode(
         const char *filename,
         const char *destdir,
+        const char *optEntryPoint,
         const char *optName,
         const char *optFilename,
         char *outFilePath,
@@ -433,12 +433,21 @@ writeCCode(
             exit(U_ILLEGAL_ARGUMENT_ERROR);
         }
         uprv_strcpy(outFilePath, buffer);
+#if defined (WINDOWS_WITH_GNUC) && U_PLATFORM != U_PF_CYGWIN
+        /* Need to fix the file separator character when using MinGW. */
+        swapFileSepChar(outFilePath, U_FILE_SEP_CHAR, '/');
+#endif
     }
 
     out=T_FileStream_open(buffer, "w");
     if(out==NULL) {
         fprintf(stderr, "genccode: unable to open output file %s\n", buffer);
         exit(U_FILE_ACCESS_ERROR);
+    }
+
+    if(optEntryPoint != NULL) {
+        uprv_strcpy(entry, optEntryPoint);
+        uprv_strcat(entry, "_dat");
     }
 
     /* turn dashes or dots in the entry name into underscores */
