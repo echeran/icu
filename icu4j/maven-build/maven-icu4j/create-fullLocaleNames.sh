@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2016 and later: Unicode, Inc. and others.
+# License & terms of use: http://www.unicode.org/copyright.html
 
 # This command lists all the resource files in a single directory that we want to match on.
 # Then we filter the locale resource files, based on the file name, using the same match pattern
