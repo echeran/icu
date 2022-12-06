@@ -201,6 +201,7 @@
                 <Bundle-Vendor>${jar.vendor}</Bundle-Vendor>
                 <Bundle-Copyright>${jar.copyright.info}</Bundle-Copyright>
 
+                <!-- TODO: We should remove this, right??? -->
                 <Main-Class>${jar.main.class}</Main-Class>
 
               </manifestEntries>

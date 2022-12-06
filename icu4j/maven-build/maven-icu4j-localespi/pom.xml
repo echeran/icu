@@ -155,6 +155,7 @@
           <!-- Set up the locale service provider using the .jar file of `icu4j-localespi` main code from the `package` phase -->
           <systemPropertyVariables>
             <!-- 
+              https://stackoverflow.com/a/5039973/2077918
               The `java.ext.dirs` is a special Java system property that activates the Java extension mechanism.
               The Java extension mechanism was deprecated in Java 8 (users are recommended to use `-classpath` instead),
               and the extension mechanism was removed in Java 9 altogether.
@@ -205,6 +206,7 @@
                 <Bundle-Vendor>${jar.vendor}</Bundle-Vendor>
                 <Bundle-Copyright>${jar.copyright.info}</Bundle-Copyright>
 
+                <!-- TODO: We should remove this, right??? -->
                 <Main-Class>${jar.main.class}</Main-Class>
 
               </manifestEntries>
