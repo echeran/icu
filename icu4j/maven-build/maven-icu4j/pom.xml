@@ -177,6 +177,10 @@
         </executions>
       </plugin>
 
+      <!--
+        Extract the resource files from the icu4j-datafiles dependency so that it is available during `test`.
+        Note: The extraction here will not result in these files being included in the packaged jar.
+      -->
       <plugin>
         <artifactId>maven-remote-resources-plugin</artifactId>
         <executions>

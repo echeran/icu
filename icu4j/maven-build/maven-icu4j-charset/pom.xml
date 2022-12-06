@@ -120,6 +120,27 @@
       </plugin>
 
       <!--
+        Extract the resource files from the icu4j-datafiles dependency so that it is available during `test`.
+        Note: The extraction here will not result in these files being included in the packaged jar.
+      -->
+      <plugin>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>process-remote-resources</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>com.ibm.icu:icu4j-datafiles:${icu4j.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
         Extract and unpack the *.cnv files + cnvalias.icu from the *.jar files in the upstream depenendency 
         `com.ibm.icu:icu4j-datafiles`.
       -->
