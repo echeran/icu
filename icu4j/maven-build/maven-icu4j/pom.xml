@@ -262,6 +262,14 @@
           </executions>
       </plugin>
 
+      <!-- for debuggin purposes only: do not check in -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+
       <!--
         Enable configuration of the Manifest file, etc. during the process of packaging the .jar file.
 
