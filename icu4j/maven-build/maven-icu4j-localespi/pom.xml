@@ -204,7 +204,7 @@
               this configuration achieves the effect of having the localespi code in a .jar file that gets loaded
               by running this test in a phase following the `package` phase in which the .jar file is created.
             -->
-            <java.ext.dirs>${project.build.directory}</java.ext.dirs>
+            <java.ext.dirs>${project.build.directory}${path.separator}${project.build.directory}/../maven-icu4j/target</java.ext.dirs>
             <!--
               https://stackoverflow.com/questions/45223908/why-does-the-java-extension-mechanism-not-check-the-classpath-for-an-optional-pa
               https://learn.microsoft.com/en-us/java/openjdk/transition-from-java-8-to-java-11
