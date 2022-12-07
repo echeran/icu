@@ -186,6 +186,13 @@
             <include>**/*ITCase.java</include>
           </includes>
 
+          <additionalClasspathElements>
+            <additionalClasspathElement>${project.build.directory}</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/${project.build.finalName}.jar</additionalClasspathElement>
+          </additionalClasspathElements>
+
+          <!-- <argLine>-Djava.ext.dirs=${project.build.directory} -Djava.locale.providers=SPI,COMPAT</argLine> -->
+
           <!-- Set up the locale service provider using the .jar file of `icu4j-localespi` main code from the `package` phase -->
           <systemPropertyVariables>
             <!-- 
@@ -200,10 +207,10 @@
             <java.ext.dirs>${project.build.directory}</java.ext.dirs>
             <!--
               https://stackoverflow.com/questions/45223908/why-does-the-java-extension-mechanism-not-check-the-classpath-for-an-optional-pa
+              https://learn.microsoft.com/en-us/java/openjdk/transition-from-java-8-to-java-11
             -->
-            <java.locale.providers>SPI,JRE</java.locale.providers>
+            <java.locale.providers>SPI,COMPAT,JRE</java.locale.providers>
           </systemPropertyVariables>
-
         </configuration>
       </plugin>
 
