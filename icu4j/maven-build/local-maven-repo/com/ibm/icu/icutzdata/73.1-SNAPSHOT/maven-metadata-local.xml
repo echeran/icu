@@ -6,23 +6,23 @@ License & terms of use: http://www.unicode.org/copyright.html
 <metadata modelVersion="1.1.0">
   <groupId>com.ibm.icu</groupId>
   <artifactId>icutzdata</artifactId>
-  <version>73.1-SNAPSHOT</version>
   <versioning>
+    <lastUpdated>20221207000426</lastUpdated>
     <snapshot>
       <localCopy>true</localCopy>
     </snapshot>
-    <lastUpdated>20221119025532</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
         <value>73.1-SNAPSHOT</value>
-        <updated>20221119025532</updated>
+        <updated>20221207000426</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
         <value>73.1-SNAPSHOT</value>
-        <updated>20221119025532</updated>
+        <updated>20221207000426</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
+  <version>73.1-SNAPSHOT</version>
 </metadata>
