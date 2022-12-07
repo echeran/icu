@@ -33,12 +33,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.2.0</version>
         <executions>
 
           <!-- add directories with main executable code -->
@@ -207,7 +205,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.4.0</version>
         <executions>
           <execution>
             <id>unpack-dependencies</id>
@@ -232,7 +229,6 @@
       <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.1.0</version>
           <executions>
               <!-- 
                 Replicate the creation of fullLocaleNames.lst files in every subdirectory of the dir of copied data
@@ -274,37 +270,36 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.3.0</version>
-          <configuration>
-            <archive>
-              <manifestEntries>
+        <configuration>
+          <archive>
+            <manifestEntries>
 
-                <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
-                <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
+              <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
+              <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
 
-                <Specification-Title>${jar.spec.title}</Specification-Title>
-                <Specification-Version>${jar.spec.version}</Specification-Version>
-                <Specification-Vendor>${jar.spec.vendor}</Specification-Vendor>
+              <Specification-Title>${jar.spec.title}</Specification-Title>
+              <Specification-Version>${jar.spec.version}</Specification-Version>
+              <Specification-Vendor>${jar.spec.vendor}</Specification-Vendor>
 
-                <Implementation-Title>${jar.impl.title}</Implementation-Title>
-                <Implementation-Version>${jar.impl.version}</Implementation-Version>
-                <Implementation-Vendor>${jar.impl.vendor}</Implementation-Vendor>
-                <Implementation-Vendor-Id>${jar.impl.vendor.id}</Implementation-Vendor-Id>
+              <Implementation-Title>${jar.impl.title}</Implementation-Title>
+              <Implementation-Version>${jar.impl.version}</Implementation-Version>
+              <Implementation-Vendor>${jar.impl.vendor}</Implementation-Vendor>
+              <Implementation-Vendor-Id>${jar.impl.vendor.id}</Implementation-Vendor-Id>
 
-                <Bundle-ManifestVersion>${jar.manifest.version}</Bundle-ManifestVersion>
-                <Bundle-Name>${jar.name}</Bundle-Name>
-                <Bundle-Description>${jar.description}</Bundle-Description>
-                <Bundle-SymbolicName>${jar.symbolic.name}</Bundle-SymbolicName>
-                <Bundle-Version>${jar.version}</Bundle-Version>
-                <Bundle-Vendor>${jar.vendor}</Bundle-Vendor>
-                <Bundle-Copyright>${jar.copyright.info}</Bundle-Copyright>
+              <Bundle-ManifestVersion>${jar.manifest.version}</Bundle-ManifestVersion>
+              <Bundle-Name>${jar.name}</Bundle-Name>
+              <Bundle-Description>${jar.description}</Bundle-Description>
+              <Bundle-SymbolicName>${jar.symbolic.name}</Bundle-SymbolicName>
+              <Bundle-Version>${jar.version}</Bundle-Version>
+              <Bundle-Vendor>${jar.vendor}</Bundle-Vendor>
+              <Bundle-Copyright>${jar.copyright.info}</Bundle-Copyright>
 
-                <!-- TODO: We should remove this, right??? -->
-                <Main-Class>${jar.main.class}</Main-Class>
+              <!-- TODO: We should remove this, right??? -->
+              <Main-Class>${jar.main.class}</Main-Class>
 
-              </manifestEntries>
-            </archive>
-          </configuration>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
 
     </plugins>
