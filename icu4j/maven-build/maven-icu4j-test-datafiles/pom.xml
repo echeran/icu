@@ -58,17 +58,6 @@
   </repositories>
 
   <dependencies>
-
-    <!--
-       Shouldn't declare this dependency with scope=test because downstream
-       submodule consumers are the ones to declare <scope>test</scope> in
-       the <dependency> configuration.
-    -->
-    <dependency>
-      <groupId>com.ibm.icu</groupId>
-      <artifactId>testdata</artifactId>
-    </dependency>
-
   </dependencies>
 
   <build>
