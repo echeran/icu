@@ -21,6 +21,12 @@
 name: Retain Specific Caches
 
 on:
+  push:
+    branches:
+      - main
+      - 'maint/maint*'
+  pull_request:
+    branches: '**'
   schedule:
     # Because the Github Actions cache eviction policy is every 7 days,
     # this cron schedule is set to run every 6 days to ensure retention
