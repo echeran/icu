@@ -203,6 +203,10 @@
 
     <!-- Main-Class -->
     <jar.main.class>com.ibm.icu.util.VersionInfo</jar.main.class>
+
+    <!-- Java 8 localespi integration tests (using Java extensions) JVM args -->
+    <java8.localespi-tests.jvm.args>-Djava.ext.dirs="${java.io.tmpdir}/ext-test-jars"</java8.localespi-tests.jvm.args>
+    <java8.localespi-tests.locale-providers></java8.localespi-tests.locale-providers>
   </properties>
 
   <modules>
