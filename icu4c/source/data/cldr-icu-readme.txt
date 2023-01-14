@@ -317,7 +317,7 @@ make icu4j-data-install
 # 12c. Replace the extracted {main, test} data files in the Maven build
 
 cd $ICU4J_ROOT/maven-build
-sh extract-data-files.sh
+sh ./extract-data-files.sh
 
 # 13. Now rebuild ICU4J with the new data and run tests:
 # Keep a log so you can investigate the errors.
@@ -330,7 +330,7 @@ ant check 2>&1 | tee $NOTES/icu4j-newData-antCheck.txt
 # 13b. Run the tests using the Maven build
 
 cd $ICU4J_ROOT/maven-build
-maven verify 2>&1 | tee $NOTES/icu4j-newData-mavenVerify.txt
+mvn verify 2>&1 | tee $NOTES/icu4j-newData-mavenVerify.txt
 
 # 14. Investigate test case failures; fix test cases and repeat from step 12,
 # or fix CLDR data and repeat from step 4, as appropriate, until there are no
