@@ -148,6 +148,37 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <profiles>
+    <!-- 
+      For testing localespi using the Java extensions feature, which last existed in Java 8.
+      ICU4J currently has a minimum supported version of 8.
+    -->
+    <profile>
+      <id>localespi-tests-java8</id>
+      <activation>
+        <jdk>(,8]</jdk>
+      </activation>
+      <properties>
+        <localespi-tests.jvm.args>-Djava.ext.dirs="${java.io.tmpdir}/ext-test-jars"</localespi-tests.jvm.args>
+        <localespi-tests.locale-providers></localespi-tests.locale-providers>
+      </properties>
+    </profile>
+    <!--
+      For testing localespi using the classpath for Java 9+, since Java extensions were
+      deprecated after Java 8.
+    -->
+    <profile>
+      <id>localespi-tests-java9</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <localespi-tests.jvm.args></localespi-tests.jvm.args>
+        <localespi-tests.locale-providers>CLDR,COMPAT,SPI</localespi-tests.locale-providers>
+      </properties>
+    </profile>
+  </profiles>
+
   <properties>
     <!-- 
       Main ICU4J version number.
@@ -203,10 +234,6 @@
 
     <!-- Main-Class -->
     <jar.main.class>com.ibm.icu.util.VersionInfo</jar.main.class>
-
-    <!-- Java 8 localespi integration tests (using Java extensions) JVM args -->
-    <java8.localespi-tests.jvm.args>-Djava.ext.dirs="${java.io.tmpdir}/ext-test-jars"</java8.localespi-tests.jvm.args>
-    <java8.localespi-tests.locale-providers></java8.localespi-tests.locale-providers>
   </properties>
 
   <!-- 

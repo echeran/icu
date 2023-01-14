@@ -212,9 +212,9 @@
               <systemPropertyVariables>, so instead, the <argLine> value was used to set the JVM options. This
               approach was inspired by: https://stackoverflow.com/a/48213614/2077918
           -->
-          <argLine>${java8.localespi-tests.jvm.args}</argLine>
+          <argLine>${localespi-tests.jvm.args}</argLine>
           <systemPropertyVariables>
-            <java.locale.providers>${java8.localespi-tests.locale-providers}</java.locale.providers>
+            <java.locale.providers>${localespi-tests.locale-providers}</java.locale.providers>
           </systemPropertyVariables>
 
         </configuration>
