@@ -192,7 +192,15 @@
             <include>**/*IT.java</include>
             <include>**/*ITCase.java</include>
           </includes>
-          <!-- Set up the locale service provider using the .jar file of `icu4j-localespi` main code from the `package` phase -->
+
+          <!-- 
+            For Java 8:
+            Set up the locale service provider using the .jar file of `icu4j-localespi` main code from the `package` phase
+
+            Leave empty for Java 9+.
+            Using the `java.ext.dirs` special Java system property on Java 9+ runtimes triggers an
+             error that tells the user to place those jars on the classpath instead.
+          -->
           <!-- 
               Notes:
 
@@ -205,14 +213,20 @@
               by running this test in a phase following the `package` phase in which the .jar file is created.
 
               https://stackoverflow.com/questions/45223908/why-does-the-java-extension-mechanism-not-check-the-classpath-for-an-optional-pa
-          
-              https://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation
 
               For some reason, the plugin was effectively not honoring the values as expected that were set in
               <systemPropertyVariables>, so instead, the <argLine> value was used to set the JVM options. This
               approach was inspired by: https://stackoverflow.com/a/48213614/2077918
           -->
           <argLine>${localespi-tests.jvm.args}</argLine>
+
+          <!-- 
+              For Java 9+:
+              Configure to use the locale service provider using the .jar file of `icu4j-localespi` main code from the `package` phase
+
+              Leave empty for Java 8 to take defaults ("SPI,JRE").
+              See: https://stackoverflow.com/questions/45223908/why-does-the-java-extension-mechanism-not-check-the-classpath-for-an-optional-pa
+            -->
           <systemPropertyVariables>
             <java.locale.providers>${localespi-tests.locale-providers}</java.locale.providers>
           </systemPropertyVariables>
