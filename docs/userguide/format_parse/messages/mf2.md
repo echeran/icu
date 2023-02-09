@@ -69,8 +69,8 @@ import com.ibm.icu.message2.MessageFormatter;
 public void testMf2() {
     final Locale enGb = Locale.forLanguageTag("en-GB");
     Map<String, Object> arguments = new HashMap<>();
-    arguments.put("name", "John"); // March 27, 2023, 7:42:51 PM
-    arguments.put("exp", new Date(1679971371000L));
+    arguments.put("name", "John");
+    arguments.put("exp", new Date(1679971371000L));  // March 27, 2023, 7:42:51 PM
 
     MessageFormatter mf2 = MessageFormatter.builder()
         .setPattern("{Hello {$name}, your card expires on {$exp :datetime skeleton=yMMMdE}!}")
@@ -88,7 +88,7 @@ public void testMf2() {
 | Code to set runtime value for placeholder          | Examples of placeholder in message pattern                                   |
 |----------------------------------------------------|------------------------------------------------------------------------------|
 | `arguments.put("name", "John")`                    | `{$name}`                                                                    |
-| `arguments.put("exp", new Date(…))`                | `{$exp :datetime skeleton=yMMMdE}` <br/> `{$exp :datetime datestyle=full}!}` |
+| `arguments.put("exp", new Date(…))`                | `{$exp :datetime skeleton=yMMMdE}` <br/> `{$exp :datetime datestyle=full}` |
 | `arguments.put("val", 3.141592653)`                | `{$val}` <br/> `{$val :number skeleton=(.####)}`                             |
 | No argument, for fixed values known at build time  | `{(123456789.531) :number}`                                                  |
 
@@ -98,8 +98,8 @@ public void testMf2() {
 ```java
 @Test
 public void testMf2Selection() {
-   String message = "match {$count :plural}\n"
-           + " when 1 {You have one notification.}\n"
+   final String message = "match {$count :plural}\n"
+           + " when one {You have one notification.}\n"
            + " when * {You have {$count} notifications.}\n";
    final Locale enGb = Locale.forLanguageTag("en-GB");
    Map<String, Object> arguments = new HashMap<>();
