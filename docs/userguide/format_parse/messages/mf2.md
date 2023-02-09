@@ -67,13 +67,14 @@ import com.ibm.icu.message2.MessageFormatter;
 
 @Test
 public void testMf2() {
+    final Locale enGb = Locale.forLanguageTag("en-GB");
     Map<String, Object> arguments = new HashMap<>();
     arguments.put("name", "John"); // March 27, 2023, 7:42:51 PM
     arguments.put("exp", new Date(1679971371000L));
 
     MessageFormatter mf2 = MessageFormatter.builder()
         .setPattern("{Hello {$name}, your card expires on {$exp :datetime skeleton=yMMMdE}!}")
-        .setLocale(Locale.UK)
+        .setLocale(enGb)
         .build();
 
     assertEquals(
@@ -100,12 +101,13 @@ public void testMf2Selection() {
    String message = "match {$count :plural}\n"
            + " when 1 {You have one notification.}\n"
            + " when * {You have {$count} notifications.}\n";
+   final Locale enGb = Locale.forLanguageTag("en-GB");
    Map<String, Object> arguments = new HashMap<>();
 
 
    MessageFormatter mf2 = MessageFormatter.builder()
        .setPattern(message)
-       .setLocale(Locale.UK)
+       .setLocale(enGb)
        .build();
 
 
