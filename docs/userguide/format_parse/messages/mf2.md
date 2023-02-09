@@ -37,9 +37,9 @@ This new version builds on what we learned from using MessageFormat for 20 years
 
 It is more modular, easier to backport, and provides extension points to add new formatters and selectors without having to modify the specification.
 
-We will be able to add formatters for intervals, relative times, lists, measurement units, people names, and more, and support custom formatters implemented by developers outside of ICU itself, for company or even product specific needs.
+MessageFormat 2 will provide the ability to support custom formatters beyond those in the MF2 specification. These will eventually include support for the additional formatters in ICU, such as intervals, relative time, lists, measurement units, personal names, and more, as well as the ability for users to supply their own custom implementations.
 
-MessageFormat 2 will support more complex grammatical features, such as gender, inflections, and tagging parts of the message for style changes or speech.
+This includes, potentially, support for gender, inflection, markup regimes (such as those require for text-to-speech), and other complex message management needs.
 
 The reasoning for this effort is shared in the [“Why MessageFormat needs a successor”](https://github.com/unicode-org/message-format-wg/blob/main/docs/why_mf_next.md) document.
 
