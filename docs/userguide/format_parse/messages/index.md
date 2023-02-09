@@ -39,7 +39,7 @@ fragments.
 current, long-standing ICU API `MessageFormat`.
 A successor to this API is
 being developed [in a working group](https://github.com/unicode-org/message-format-wg),
-which has created a [draft of a specification](https://github.com/unicode-org/message-format-wg/tree/main/spec)
+which has created a [draft specification](https://github.com/unicode-org/message-format-wg/tree/main/spec)
 for MessageFormat 2.0.
 For more information on the Technial Preview implementation currently in ICU4J, visit the [page in the ICU User Guide](./mf2.md).*
 

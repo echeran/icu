@@ -26,7 +26,7 @@ MessageFormat 2.0.
 It will be a successor to the current [ICU MessageFormat](index.md).
 MessageFormat 2.0 is being developed
 [in a working group](https://github.com/unicode-org/message-format-wg),
-which has created a [draft of a specification](https://github.com/unicode-org/message-format-wg/tree/main/spec).
+which has created a [draft specification](https://github.com/unicode-org/message-format-wg/tree/main/spec).
 Also see the 
 [API docs for `MessageFormatter`](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/index.html?com/ibm/icu/message2/MessageFormatter.html).*
 
@@ -35,7 +35,7 @@ Also see the
 MessageFormatter is the next iteration of [MessageFormat](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/MessageFormat.html).
 This new version builds on what we learned from using MessageFormat for 20 years in various environments, either exposed "as is" or as a base for other public APIs.
 
-It is more modular, easier to backport, and provides extension points to add new formatters and selectors without having to modify the specification.
+It is more modular, easier to port and backport, and provides extension points to add new formatters and selectors without having to modify the specification.
 
 MessageFormat 2 will provide the ability to support custom formatters beyond those in the MF2 specification. These will eventually include support for the additional formatters in ICU, such as intervals, relative time, lists, measurement units, personal names, and more, as well as the ability for users to supply their own custom implementations.
 
