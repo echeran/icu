@@ -33,7 +33,7 @@ Also see the
 ## Overview of `MessageFormatter`
 
 In ICU4J, the `MessageFormatter` class is the next iteration of [MessageFormat](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/MessageFormat.html).
-This new version will build on the lessons learned from using MessageFormat for 20 years in various environments, when used directly or as a base for other public APIs.
+This new version will build on the lessons learned from using MessageFormat for 25 years in various environments, when used directly or as a base for other public APIs.
 
 The effort to design a succesor to `MessageFormat` will result in a specification referred to as MessageFormat 2.0.
 The reasoning for this effort is shared in the [“Why MessageFormat needs a successor”](https://github.com/unicode-org/message-format-wg/blob/main/docs/why_mf_next.md) document.

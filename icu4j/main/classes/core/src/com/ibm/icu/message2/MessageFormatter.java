@@ -10,7 +10,7 @@ import java.util.Map;
  * <h3>Overview of {@code MessageFormatter}</h3>
  * 
  * <p>In ICU4J, the {@code MessageFormatter} class is the next iteration of {@link com.ibm.icu.text.MessageFormat}.
- * This new version will build on the lessons learned from using MessageFormat for 20 years
+ * This new version will build on the lessons learned from using MessageFormat for 25 years
  * in various environments, when used directly or as a base for other public APIs.</p>
  *
  * 
