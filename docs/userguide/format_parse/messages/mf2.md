@@ -32,24 +32,22 @@ Also see the
 
 ## Overview of `MessageFormatter`
 
-MessageFormatter is the next iteration of [MessageFormat](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/MessageFormat.html).
-This new version builds on what we learned from using MessageFormat for 20 years in various environments, either exposed "as is" or as a base for other public APIs.
+In ICU4J, the `MessageFormatter` class is the next iteration of [MessageFormat](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/text/MessageFormat.html).
+This new version will build on the lessons learned from using MessageFormat for 20 years in various environments, when used directly or as a base for other public APIs.
 
-It is more modular, easier to port and backport, and provides extension points to add new formatters and selectors without having to modify the specification.
-
-MessageFormat 2 will provide the ability to support custom formatters beyond those in the MF2 specification. These will eventually include support for the additional formatters in ICU, such as intervals, relative time, lists, measurement units, personal names, and more, as well as the ability for users to supply their own custom implementations.
-
-This includes, potentially, support for gender, inflection, markup regimes (such as those require for text-to-speech), and other complex message management needs.
-
+The effort to design a succesor to `MessageFormat` will result in a specification referred to as MessageFormat 2.0.
 The reasoning for this effort is shared in the [“Why MessageFormat needs a successor”](https://github.com/unicode-org/message-format-wg/blob/main/docs/why_mf_next.md) document.
 
-The “MessageFormat 2” project, which develops the new data model, semantics, and syntax, is hosted on [GitHub](https://github.com/unicode-org/message-format-wg).
+MessageFormat 2.0 will be more modular and easier to port and backport.
+It will also provide extension points via interfaces to allow users to supply new formatters and selectors without having to modify the specification.
+ICU will eventually include support for new formatters, such as intervals, relative time, lists, measurement units, personal names, and more, as well as the ability for users to supply their own custom implementations.
+These will potentially support use cases like grammatical gender, inflection, markup regimes (such as those require for text-to-speech), and other complex message management needs.
 
+The MessageFormat Working Group, which develops the new data model, semantics, and syntax, is hosted on [GitHub](https://github.com/unicode-org/message-format-wg).
 The current specification for the syntax and data model can be found [here](https://github.com/unicode-org/message-format-wg/blob/main/spec/syntax.md).
 
-This tech preview implements enough of the MessageFormat functions to be useful, but the final set of functions and the parameters accepted by those functions is not yet finalized.
-
-
+This technical preview implements enough functions for `MessageFormater` to be useful in many situations,
+but the final set of functions and the parameters accepted by those functions is not yet finalized.
 
 ## Examples
 
@@ -90,7 +88,7 @@ public void testMf2() {
 | `arguments.put("name", "John")`                    | `{$name}`                                                                    |
 | `arguments.put("exp", new Date(…))`                | `{$exp :datetime skeleton=yMMMdE}` <br/> `{$exp :datetime datestyle=full}` |
 | `arguments.put("val", 3.141592653)`                | `{$val}` <br/> `{$val :number skeleton=(.####)}`                             |
-| No argument, for fixed values known at build time  | `{(123456789.531) :number}`                                                  |
+| No argument for fixed values known at build time   | `{(123456789.531) :number}`                                                  |
 
 
 ### Plural selection message
