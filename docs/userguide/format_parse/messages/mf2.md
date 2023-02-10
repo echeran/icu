@@ -96,9 +96,10 @@ public void testMf2() {
 ```java
 @Test
 public void testMf2Selection() {
-   final String message = "match {$count :plural}\n"
-           + " when one {You have one notification.}\n"
-           + " when * {You have {$count} notifications.}\n";
+   final String message = "match {$count :plural}"
+           + " when 1 {You have one notification.}"
+           + " when one {You have {$count} notification.}"
+           + " when * {You have {$count} notifications.}";
    final Locale enGb = Locale.forLanguageTag("en-GB");
    Map<String, Object> arguments = new HashMap<>();
 
