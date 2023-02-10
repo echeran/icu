@@ -143,7 +143,7 @@ These are the functions implemented right now:
 <table border="1">
 <tr>
   <td rowspan="4"><code>datetime</code></td>
-  <td>Similar to the ICU <code>date</code> and <code>time</code>.</td>
+  <td>Similar to MessageFormat's <code>date</code> and <code>time</code>.</td>
 </tr>
   <tr><td><code>datestyle</code> and <code>timestyle</code><br>
   Similar to <code>argStyle : short | medium | long | full</code>.<br>
@@ -161,7 +161,7 @@ These are the functions implemented right now:
   </td></tr>
 <tr>
   <td rowspan="4"><code>number</code></td>
-  <td>Similar to the ICU number.</td>
+  <td>Similar to MessageFormat's <code>number</code>.</td>
 </tr>
   <tr><td><code>skeleton</code><br>
   These are the number skeletons as supported by <a href=""><code>com.ibm.icu.number.NumberFormatter</code></a>.</td></tr>
@@ -174,7 +174,7 @@ These are the functions implemented right now:
 <tr><td ><code>identity</code></td><td>Returns the direct string value of the argument (calling <code>toString()</code>).</td></tr>
 <tr>
   <td rowspan="3"><code>plural</code></td>
-  <td>Similar to the ICU <code>plural</code>.</td>
+  <td>Similar to MessageFormat's <code>plural</code>.</td>
 </tr>
   <tr><td><code>skeleton</code><br>
   These are the number skeletons as supported by <a href=""><code>com.ibm.icu.number.NumberFormatter</code></a>.<br>
@@ -184,10 +184,10 @@ These are the functions implemented right now:
   Can also be indirect, from a local variable of type <code>number</code> (recommended).</td></tr>
 <tr>
   <td><code>selectordinal</code></td>
-  <td>Similar to the ICU <code>selectordinal</code>.<br>
+  <td>Similar to MessageFormat's <code>selectordinal</code>.<br>
 For now it accepts the same parameters as <code>plural</code>, although there is no use case for them.<br>
 TBD if this will be merged into <code>plural</code> (with some <code>kind</code> option) or not.</td></tr>
-<tr><td><code>select</code></td><td>Literal match, same as the ICU4 <code>select</code>.</td></tr>
+<tr><td><code>select</code></td><td>Literal match, same as MessageFormat's <code>select</code>.</td></tr>
 </table>
 
 ## Quickstart guide
