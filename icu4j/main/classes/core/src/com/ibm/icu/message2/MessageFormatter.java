@@ -142,7 +142,7 @@ import java.util.Map;
  * <table border="1">
  * <tr>
  *   <td rowspan="4">{@code datetime}</td>
- *   <td>Similar to the ICU {@code "date"} and {@code "time"}.</td>
+ *   <td>Similar to the ICU {@code date} and {@code time}.</td>
  * </tr>
  *
  *   <tr><td>{@code datestyle} and {@code timestyle}<br>
@@ -164,7 +164,7 @@ import java.util.Map;
  *
  * <tr>
  *   <td rowspan="4">{@code number}</td>
- *   <td>Similar to the ICU "number".</td>
+ *   <td>Similar to the ICU number.</td>
  * </tr>
  *
  *   <tr><td>{@code skeleton}<br>
@@ -182,7 +182,7 @@ import java.util.Map;
  *
  * <tr>
  *   <td rowspan="3">{@code plural}</td>
- *   <td>Similar to the ICU {@code "plural"}.</td>
+ *   <td>Similar to the ICU {@code plural}.</td>
  * </tr>
  *
  *   <tr><td>{@code skeleton}<br>
@@ -195,11 +195,11 @@ import java.util.Map;
  *
  * <tr>
  *   <td>{@code selectordinal}</td>
- *   <td>Similar to the ICU {@code "selectordinal"}.<br>
- * For now it accepts the same parameters as "plural", although there is no use case for them.<br>
- * TBD if this will be merged into "plural" (with some {@code kind} option) or not.</td></tr>
+ *   <td>Similar to the ICU {@code selectordinal}.<br>
+ * For now it accepts the same parameters as {@code plural}, although there is no use case for them.<br>
+ * TBD if this will be merged into {@code plural} (with some {@code kind} option) or not.</td></tr>
  *
- * <tr><td>{@code select}</td><td>Literal match, same as the ICU4 {@code "select"}.</td></tr>
+ * <tr><td>{@code select}</td><td>Literal match, same as the ICU4 {@code select}.</td></tr>
  * </table>
  *
  * @internal ICU 72 technology preview
