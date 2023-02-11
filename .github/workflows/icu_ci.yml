@@ -573,4 +573,37 @@ jobs:
           # To run all tests serially
           echo "Run all samples"
           pwd
-          PATH=$PATH:/tmp/icu_samples/bin LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/icu_samples/lib make check-samples-recursive                  
+          PATH=$PATH:/tmp/icu_samples/bin LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/icu_samples/lib make check-samples-recursive
+
+  icu4c-without-collation-rule-strings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install hjson dependency
+        run: |
+          sudo apt install python3-pip
+          pip3 install hjson
+      - name: Create data filter file to remove collation rule strings
+        run: |
+          cat > icu4c/coll-norules.hjson <<EOL
+          {
+            resourceFilters: [
+              {
+                categories: [
+                  coll_tree
+                ]
+                rules: [
+                  -/UCARules
+                  -/collations/*/Sequence
+                ]
+              }
+            ]
+          }
+          EOL
+      - name: Configure ICU4C with the data filter file
+        run: |
+          cd icu4c/source
+          ICU_DATA_FILTER_FILE=../coll-norules.hjson ./runConfigureICU Linux
+      - name: Run tests with data-errors-as-warnings
+        run: |
+          INTLTEST_OPTS=-w CINTLTST_OPTS=-w make -j2 check
