@@ -606,4 +606,5 @@ jobs:
           ICU_DATA_FILTER_FILE=../coll-norules.hjson ./runConfigureICU Linux
       - name: Run tests with data-errors-as-warnings
         run: |
+          cd icu4c/source
           INTLTEST_OPTS=-w CINTLTST_OPTS=-w make -j2 check
