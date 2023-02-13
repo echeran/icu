@@ -605,6 +605,19 @@ jobs:
         run: |
           cd icu4c/source
           ICU_DATA_FILTER_FILE=../coll-norules.hjson ./runConfigureICU Linux
+      - name: Debug
+        run: |
+          pwd
+      - name: Debug
+        run: |
+          ls
+      - name: Debug
+        run: |
+          ls ..
+      - name: Debug
+        run: |
+          cat ../coll-norules.hjson
+
       - name: Run tests with data-errors-as-warnings
         run: |
           cd icu4c/source
