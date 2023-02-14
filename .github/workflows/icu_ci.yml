@@ -635,5 +635,7 @@ jobs:
         run: |
           cd icu4c/source
           pushd stubdata && make && popd
+          # Ensure lib directory for output object file exists
+          mkdir -p lib
           pushd common && make && popd
           pushd i18n && make && popd
