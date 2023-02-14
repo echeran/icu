@@ -575,6 +575,7 @@ jobs:
           pwd
           PATH=$PATH:/tmp/icu_samples/bin LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/icu_samples/lib make check-samples-recursive
 
+  # https://unicode-org.github.io/icu/processes/release/tasks/integration.html#verify-that-icu4c-tests-pass-without-collation-rule-strings
   icu4c-without-collation-rule-strings:
     runs-on: ubuntu-latest
     steps:
@@ -608,3 +609,19 @@ jobs:
         run: |
           cd icu4c/source
           INTLTEST_OPTS=-w CINTLTST_OPTS=-w make -j2 check
+  
+  # https://unicode-org.github.io/icu/processes/release/tasks/healthy-code.html#test-uconfig_no_conversion
+  icu4c-uconfig-no-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set UCONFIG_NO_CONVERSION and configure ICU4C
+        run: |
+          cd icu4c/source
+          UCONFIG_NO_CONVERSION=1 ./runConfigureICU Linux
+      - name: Run make for stubdata, common, i18n
+        run: |
+          cd icu4c/source
+          pushd stubdata && make && popd
+          pushd common && make && popd
+          pushd i18n && make && popd
