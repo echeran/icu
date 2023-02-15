@@ -582,7 +582,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install hjson dependency
         run: |
-          sudo apt install python3-pip
+          sudo apt-get install python3-pip
           pip3 install hjson
       - name: Create data filter file to remove collation rule strings
         run: |
@@ -602,13 +602,18 @@ jobs:
           }
           EOL
       - name: Configure ICU4C with the data filter file
+        env:
+          ICU_DATA_FILTER_FILE: ../coll-norules.hjson
         run: |
           cd icu4c/source
-          ICU_DATA_FILTER_FILE=../coll-norules.hjson ./runConfigureICU Linux
+          ./runConfigureICU Linux
       - name: Run tests with data-errors-as-warnings
+        env:
+          INTLTEST_OPTS: -w
+          CINTLTST_OPTS: -w
         run: |
           cd icu4c/source
-          INTLTEST_OPTS=-w CINTLTST_OPTS=-w make -j2 check
+          make -j2 check
   
   # https://unicode-org.github.io/icu/processes/release/tasks/healthy-code.html#test-uconfig_no_conversion
   icu4c-uconfig-no-version:
@@ -616,9 +621,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set UCONFIG_NO_CONVERSION and configure ICU4C
+        env:
+          UCONFIG_NO_CONVERSION: 1
         run: |
           cd icu4c/source
-          UCONFIG_NO_CONVERSION=1 ./runConfigureICU Linux
+          ./runConfigureICU Linux
       - name: Run make for stubdata, common, i18n
         run: |
           cd icu4c/source
