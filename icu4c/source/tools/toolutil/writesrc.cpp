@@ -46,6 +46,26 @@ U_NAMESPACE_BEGIN
 
 ValueNameGetter::~ValueNameGetter() {}
 
+UChar32 UCPTrieRangeData::getRange(
+        UChar32 start,
+        UCPMapRangeOption option,
+        uint32_t surrogateValue,
+        UCPMapValueFilter *filter,
+        const void *context,
+        uint32_t *pValue) const {
+    return umutablecptrie_getRange(trie, start, option, surrogateValue, filter, context, pValue);
+}
+
+UChar32 UCPMapRangeData::getRange(
+    UChar32 start,
+        UCPMapRangeOption option,
+        uint32_t surrogateValue,
+        UCPMapValueFilter *filter,
+        const void *context,
+        uint32_t *pValue) const {
+    return ucpmap_getRange(map, start, option, surrogateValue, filter, context, pValue);
+}
+
 U_NAMESPACE_END
 
 U_NAMESPACE_USE
@@ -424,7 +444,7 @@ usrc_writeUnicodeSet(
 U_CAPI void U_EXPORT2
 usrc_writeUCPMap(
         FILE *f,
-        const UCPMap *pMap,
+        const UCPRangeData *rangeData,
         icu::ValueNameGetter *valueNameGetter,
         UTargetSyntax syntax) {
     // ccode is not yet supported
@@ -436,7 +456,7 @@ usrc_writeUCPMap(
     uint32_t value;
     fprintf(f, "# Code points `a` through `b` have value `v`, corresponding to `name`.\n");
     fprintf(f, "ranges = [\n");
-    while ((end = ucpmap_getRange(pMap, start, UCPMAP_RANGE_NORMAL, 0, nullptr, nullptr, &value)) >= 0) {
+    while ((end = rangeData->getRange(start, UCPMAP_RANGE_NORMAL, 0, nullptr, nullptr, &value)) >= 0) {
         if (valueNameGetter != nullptr) {
             const char *name = valueNameGetter->getName(value);
             fprintf(f, "  {a=0x%x, b=0x%x, v=%u, name=\"%s\"},\n", start, end, value, name);

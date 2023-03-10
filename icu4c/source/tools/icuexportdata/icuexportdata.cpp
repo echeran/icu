@@ -232,7 +232,8 @@ void dumpEnumeratedProperty(UProperty uproperty, FILE* f) {
     fprintf(f, "]\n");
 
     PropertyValueNameGetter valueNameGetter(uproperty);
-    usrc_writeUCPMap(f, umap, &valueNameGetter, UPRV_TARGET_SYNTAX_TOML);
+    UCPMapRangeData umapRangeData(umap);
+    usrc_writeUCPMap(f, &umapRangeData, &valueNameGetter, UPRV_TARGET_SYNTAX_TOML);
     fputs("\n", f);
 
 

@@ -153,6 +153,52 @@ public:
     virtual const char *getName(uint32_t value) = 0;
 };
 
+/* An interface to abstract out the identical getRange operation
+ * across both UCPMutableTrie and UCPMap. The interface is extended
+ * by subclasses which are wrappers for their underlying data type
+ * (ex: UCPMapRangeData wraps UCPMap).
+ */
+class U_TOOLUTIL_API UCPRangeData {
+public:
+    virtual ~UCPRangeData() {}
+    virtual UChar32 getRange(
+        UChar32 start,
+        UCPMapRangeOption option,
+        uint32_t surrogateValue,
+        UCPMapValueFilter *filter,
+        const void *context,
+        uint32_t *pValue) const
+        = 0;
+};
+
+class U_TOOLUTIL_API UCPTrieRangeData : public UCPRangeData {
+public:
+    UCPTrieRangeData(const UMutableCPTrie *p) : trie(p) {}
+    virtual UChar32 getRange(
+        UChar32 start,
+        UCPMapRangeOption option,
+        uint32_t surrogateValue,
+        UCPMapValueFilter *filter,
+        const void *context,
+        uint32_t *pValue) const override;
+private:
+    const UMutableCPTrie *trie;
+};
+
+class U_TOOLUTIL_API UCPMapRangeData : public UCPRangeData {
+public:
+    UCPMapRangeData(const UCPMap *p) : map(p) {}
+    virtual UChar32 getRange(
+        UChar32 start,
+        UCPMapRangeOption option,
+        uint32_t surrogateValue,
+        UCPMapValueFilter *filter,
+        const void *context,
+        uint32_t *pValue) const override;
+private:
+    const UCPMap *map;
+};
+
 U_NAMESPACE_END
 
 /**
@@ -164,7 +210,7 @@ U_NAMESPACE_END
 U_CAPI void U_EXPORT2
 usrc_writeUCPMap(
     FILE *f,
-    const UCPMap *pMap,
+    const icu::UCPRangeData *rangeData,
     icu::ValueNameGetter *valueNameGetter,
     UTargetSyntax syntax);
 
