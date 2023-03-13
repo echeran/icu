@@ -255,10 +255,10 @@ void dumpEnumeratedProperty(UProperty uproperty, FILE* f) {
 }
 
 /*
-* Export Bidi_Mirrored_Glyph values (code points) in a similar way to how enumerated
+* Export Bidi_Mirroring_Glyph values (code points) in a similar way to how enumerated
 * properties are dumped to file.
 * Note: the data will store 0 for code points without a value defined for
-* Bidi_Mirrored_Glyph.
+* Bidi_Mirroring_Glyph.
 */
 void dumpBidiMirroredGlyph(UProperty uproperty, FILE* f) {
     IcuToolErrorCode status("icuexportdata: dumpBidiMirroredGlyph");
@@ -297,7 +297,9 @@ void dumpBidiMirroredGlyph(UProperty uproperty, FILE* f) {
 
     fputs("[[enum_property]]\n", f);
     fprintf(f, "long_name = \"%s\"\n", fullPropName);
-    if (shortPropName) fprintf(f, "short_name = \"%s\"\n", shortPropName);
+    if (shortPropName) {
+        fprintf(f, "short_name = \"%s\"\n", shortPropName);
+    }
     fprintf(f, "uproperty_discr = 0x%X\n", uproperty);
     dumpPropertyAliases(uproperty, f);
 
