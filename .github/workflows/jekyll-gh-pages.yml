@@ -50,6 +50,8 @@ jobs:
         # Outputs to the './_site' directory by default
         run: |
           cd docs  # root directory containing Jekyll configs, etc.
+          gem install bundler
+          bundle update
           bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
