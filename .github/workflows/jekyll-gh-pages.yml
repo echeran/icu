@@ -9,7 +9,7 @@
 # of relying on Github's default Jekyll build process, which seems to be
 # causing errors with this theme.
 
-name: User Guide CI
+name: Deploy User Guide
 
 on:
   # Runs on pushes targeting the default branch
@@ -48,6 +48,13 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Switch to docs directory
         run: cd docs
+      - name: Debug
+        run: |
+          pwd
+          ls -l
+      - name: Debug setup
+        run: |
+          bundle update
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
