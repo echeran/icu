@@ -52,7 +52,8 @@ jobs:
           cd docs  # root directory containing Jekyll configs, etc.
           gem install bundler
           bundle update
-          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+          # the baseurl arg has to match what is in _config.yml
+          bundle exec jekyll build --baseurl "/icu"
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
