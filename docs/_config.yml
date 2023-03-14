@@ -14,7 +14,9 @@ url: "https://unicode-org.github.io" # the base hostname & protocol for your sit
 twitter_username: unicode
 github_username:  unicode-org
 
-remote_theme: pmarsceill/just-the-docs
+# Pin theme to branch "v0.3.3-docs". Github currently doesn't allow zip downloads using
+# git tag ref ids as it should.
+remote_theme: just-the-docs/just-the-docs@0.3.3-docs
 
 # GitHub uses its own markdown renderer called CommonMarkGhPages.
 #
