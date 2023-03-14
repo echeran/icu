@@ -46,18 +46,11 @@ jobs:
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: Switch to docs directory
-        run: cd docs
-      - name: Debug
-        run: |
-          pwd
-          ls -l
-      - name: Debug setup
-        run: |
-          bundle update
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
-        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        run: |
+          cd docs  # root directory containing Jekyll configs, etc.
+          bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
