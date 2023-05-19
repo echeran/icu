@@ -11,6 +11,8 @@ import com.ibm.icu.number.NumberFormatter.GroupingStrategy;
 import com.ibm.icu.number.NumberFormatter.SignDisplay;
 import com.ibm.icu.number.NumberFormatter.UnitWidth;
 import com.ibm.icu.text.DecimalFormatSymbols;
+import com.ibm.icu.text.DisplayOptions;
+import com.ibm.icu.text.DisplayOptions.GrammaticalCase;
 import com.ibm.icu.text.NumberingSystem;
 import com.ibm.icu.util.Currency;
 import com.ibm.icu.util.Measure;
@@ -137,7 +139,7 @@ public abstract class NumberFormatterSettings<T extends NumberFormatterSettings<
      *
      * <p>
      * If the input usage is correctly set the output unit <b>will change</b>
-     * according to `usage`, `locale` and `unit` value.
+     * according to {@code usage}, {@code locale} and {@code unit} value.
      * </p>
      *
      * @param unit
@@ -498,8 +500,8 @@ public abstract class NumberFormatterSettings<T extends NumberFormatterSettings<
      * "road", "rainfall", etc.)
      *
      * <p>
-     * When a `usage` is specified, the output unit will change depending on the
-     * `Locale` and the unit quantity. For example, formatting length
+     * When a {@code usage} is specified, the output unit will change depending on the
+     * {@code Locale} and the unit quantity. For example, formatting length
      * measurements specified in meters:
      *
      * <pre>
@@ -542,7 +544,7 @@ public abstract class NumberFormatterSettings<T extends NumberFormatterSettings<
      * @param usage A usage parameter from the units resource.
      * @return The fluent chain
      * @throws IllegalArgumentException in case of Setting a usage string but not a correct input unit.
-     * @draft ICU 68
+     * @stable ICU 68
      */
     public T usage(String usage) {
         if (usage != null && usage.isEmpty()) {
@@ -550,6 +552,22 @@ public abstract class NumberFormatterSettings<T extends NumberFormatterSettings<
         }
 
         return create(KEY_USAGE, usage);
+    }
+
+    /**
+     * Specifies the {@code DisplayOptions}. For example, {@code GrammaticalCase} specifies
+     * the desired case for a unit formatter's output (e.g. accusative, dative, genitive).
+     *
+     * @return The fluent chain.
+     * @draft ICU 72
+     */
+    public T displayOptions(DisplayOptions displayOptions) {
+        // `displayCase` does not recognise the `undefined`
+        if (displayOptions.getGrammaticalCase() == GrammaticalCase.UNDEFINED) {
+            return create(KEY_UNIT_DISPLAY_CASE, null);
+        }
+
+        return create(KEY_UNIT_DISPLAY_CASE, displayOptions.getGrammaticalCase().getIdentifier());
     }
 
     /**

@@ -20,12 +20,35 @@
 
 #include <stdio.h>
 #include <time.h>
+
+// The C99 standard suggested that C++ implementations not define PRId64 etc. constants
+// unless this macro is defined.
+// See the Notes at https://en.cppreference.com/w/cpp/types/integer .
+// Similar to defining __STDC_LIMIT_MACROS in unicode/ptypes.h .
+#ifndef __STDC_FORMAT_MACROS
+#   define __STDC_FORMAT_MACROS
+#endif
+#include <cinttypes>
+
 #include "unicode/utypes.h"
 #include "unicode/putil.h"
 #include "unicode/ucptrie.h"
+#include "unicode/errorcode.h"
+#include "unicode/uniset.h"
+#include "unicode/usetiter.h"
+#include "unicode/utf16.h"
 #include "utrie2.h"
 #include "cstring.h"
 #include "writesrc.h"
+#include "util.h"
+
+U_NAMESPACE_BEGIN
+
+ValueNameGetter::~ValueNameGetter() {}
+
+U_NAMESPACE_END
+
+U_NAMESPACE_USE
 
 static FILE *
 usrc_createWithoutHeader(const char *path, const char *filename) {
@@ -35,7 +58,7 @@ usrc_createWithoutHeader(const char *path, const char *filename) {
     FILE *f;
     char c;
 
-    if(path==NULL) {
+    if(path==nullptr) {
         p=filename;
     } else {
         /* concatenate path and filename, with U_FILE_SEP_CHAR in between if necessary */
@@ -49,11 +72,11 @@ usrc_createWithoutHeader(const char *path, const char *filename) {
     }
 
     f=fopen(p, "w");
-    if (f==NULL) {
+    if (f==nullptr) {
         fprintf(
             stderr,
             "usrc_create(%s, %s): unable to create file\n",
-            path!=NULL ? path : "", filename);
+            path!=nullptr ? path : "", filename);
     }
     return f;
 }
@@ -61,7 +84,7 @@ usrc_createWithoutHeader(const char *path, const char *filename) {
 U_CAPI FILE * U_EXPORT2
 usrc_create(const char *path, const char *filename, int32_t copyrightYear, const char *generator) {
     FILE *f = usrc_createWithoutHeader(path, filename);
-    if (f == NULL) {
+    if (f == nullptr) {
         return f;
     }
     usrc_writeCopyrightHeader(f, "//", copyrightYear);
@@ -72,7 +95,7 @@ usrc_create(const char *path, const char *filename, int32_t copyrightYear, const
 U_CAPI FILE * U_EXPORT2
 usrc_createTextData(const char *path, const char *filename, int32_t copyrightYear, const char *generator) {
     FILE *f = usrc_createWithoutHeader(path, filename);
-    if (f == NULL) {
+    if (f == nullptr) {
         return f;
     }
     usrc_writeCopyrightHeader(f, "#", copyrightYear);
@@ -113,7 +136,7 @@ usrc_writeFileNameGeneratedBy(
 
     time(&t);
     lt=localtime(&t);
-    if(generator==NULL) {
+    if(generator==nullptr) {
         strftime(buffer, sizeof(buffer), "%Y-%m-%d", lt);
         fprintf(f, pattern, prefix, prefix, filename, prefix, prefix, buffer);
     } else {
@@ -130,12 +153,14 @@ usrc_writeArray(FILE *f,
     const uint8_t *p8;
     const uint16_t *p16;
     const uint32_t *p32;
-    uint32_t value;
+    const int64_t *p64; // Signed due to TOML!
+    int64_t value; // Signed due to TOML!
     int32_t i, col;
 
-    p8=NULL;
-    p16=NULL;
-    p32=NULL;
+    p8=nullptr;
+    p16=nullptr;
+    p32=nullptr;
+    p64=nullptr;
     switch(width) {
     case 8:
         p8=(const uint8_t *)p;
@@ -146,11 +171,14 @@ usrc_writeArray(FILE *f,
     case 32:
         p32=(const uint32_t *)p;
         break;
+    case 64:
+        p64=(const int64_t *)p;
+        break;
     default:
         fprintf(stderr, "usrc_writeArray(width=%ld) unrecognized width\n", (long)width);
         return;
     }
-    if(prefix!=NULL) {
+    if(prefix!=nullptr) {
         fprintf(f, prefix, (long)length);
     }
     for(i=col=0; i<length; ++i, ++col) {
@@ -173,13 +201,16 @@ usrc_writeArray(FILE *f,
         case 32:
             value=p32[i];
             break;
+        case 64:
+            value=p64[i];
+            break;
         default:
             value=0; /* unreachable */
             break;
         }
-        fprintf(f, value<=9 ? "%lu" : "0x%lx", (unsigned long)value);
+        fprintf(f, value<=9 ? "%" PRId64 : "0x%" PRIx64, value);
     }
-    if(postfix!=NULL) {
+    if(postfix!=nullptr) {
         fputs(postfix, f);
     }
 }
@@ -189,7 +220,7 @@ usrc_writeUTrie2Arrays(FILE *f,
                        const char *indexPrefix, const char *data32Prefix,
                        const UTrie2 *pTrie,
                        const char *postfix) {
-    if(pTrie->data32==NULL) {
+    if(pTrie->data32==nullptr) {
         /* 16-bit trie */
         usrc_writeArray(f, indexPrefix, pTrie->index, 16, pTrie->indexLength+pTrie->dataLength, "", postfix);
     } else {
@@ -205,16 +236,16 @@ usrc_writeUTrie2Struct(FILE *f,
                        const UTrie2 *pTrie,
                        const char *indexName, const char *data32Name,
                        const char *postfix) {
-    if(prefix!=NULL) {
+    if(prefix!=nullptr) {
         fputs(prefix, f);
     }
-    if(pTrie->data32==NULL) {
+    if(pTrie->data32==nullptr) {
         /* 16-bit trie */
         fprintf(
             f,
             "    %s,\n"         /* index */
             "    %s+%ld,\n"     /* data16 */
-            "    NULL,\n",      /* data32 */
+            "    nullptr,\n",      /* data32 */
             indexName,
             indexName, 
             (long)pTrie->indexLength);
@@ -223,7 +254,7 @@ usrc_writeUTrie2Struct(FILE *f,
         fprintf(
             f,
             "    %s,\n"         /* index */
-            "    NULL,\n"       /* data16 */
+            "    nullptr,\n"       /* data16 */
             "    %s,\n",        /* data32 */
             indexName,
             data32Name);
@@ -238,12 +269,12 @@ usrc_writeUTrie2Struct(FILE *f,
         "    0x%lx,\n"          /* errorValue */
         "    0x%lx,\n"          /* highStart */
         "    0x%lx,\n"          /* highValueIndex */
-        "    NULL, 0, FALSE, FALSE, 0, NULL\n",
+        "    nullptr, 0, false, false, 0, nullptr\n",
         (long)pTrie->indexLength, (long)pTrie->dataLength,
         (short)pTrie->index2NullOffset, (short)pTrie->dataNullOffset,
         (long)pTrie->initialValue, (long)pTrie->errorValue,
         (long)pTrie->highStart, (long)pTrie->highValueIndex);
-    if(postfix!=NULL) {
+    if(postfix!=nullptr) {
         fputs(postfix, f);
     }
 }
@@ -270,7 +301,7 @@ usrc_writeUCPTrieStruct(FILE *f,
                         const char *indexName, const char *dataName,
                         const char *postfix,
                         UTargetSyntax syntax) {
-    if(prefix!=NULL) {
+    if(prefix!=nullptr) {
         fputs(prefix, f);
     }
     if (syntax == UPRV_TARGET_SYNTAX_CCODE) {
@@ -308,7 +339,7 @@ usrc_writeUCPTrieStruct(FILE *f,
         pTrie->type, pTrie->valueWidth,
         pTrie->index3NullOffset, (long)pTrie->dataNullOffset,
         (long)pTrie->nullValue);
-    if(postfix!=NULL) {
+    if(postfix!=nullptr) {
         fputs(postfix, f);
     }
 }
@@ -323,27 +354,26 @@ usrc_writeUCPTrie(FILE *f, const char *name, const UCPTrie *pTrie, UTargetSyntax
 
     switch (syntax) {
     case UPRV_TARGET_SYNTAX_CCODE:
-        sprintf(line, "static const uint16_t %s_trieIndex[%%ld]={\n", name);
-        sprintf(line2, "static const uint%d_t %s_trieData[%%ld]={\n", (int)width, name);
-        sprintf(line3, "\n};\n\n");
+        snprintf(line, sizeof(line), "static const uint16_t %s_trieIndex[%%ld]={\n", name);
+        snprintf(line2, sizeof(line2), "static const uint%d_t %s_trieData[%%ld]={\n", (int)width, name);
+        snprintf(line3, sizeof(line3), "\n};\n\n");
         break;
     case UPRV_TARGET_SYNTAX_TOML:
-        fprintf(f, "name = \"%s\"\n", name);
-        sprintf(line, "index = [\n  ");
-        sprintf(line2, "data_%d = [\n  ", (int)width);
-        sprintf(line3, "\n]\n");
+        snprintf(line, sizeof(line), "index = [\n  ");
+        snprintf(line2, sizeof(line2), "data_%d = [\n  ", (int)width);
+        snprintf(line3, sizeof(line3), "\n]\n");
         break;
     default:
-        UPRV_UNREACHABLE;
+        UPRV_UNREACHABLE_EXIT;
     }
     usrc_writeUCPTrieArrays(f, line, line2, pTrie, line3, syntax);
 
     switch (syntax) {
     case UPRV_TARGET_SYNTAX_CCODE:
-        sprintf(line, "static const UCPTrie %s_trie={\n", name);
-        sprintf(line2, "%s_trieIndex", name);
-        sprintf(line3, "%s_trieData", name);
-        sprintf(line4, "};\n\n");
+        snprintf(line, sizeof(line), "static const UCPTrie %s_trie={\n", name);
+        snprintf(line2, sizeof(line2), "%s_trieIndex", name);
+        snprintf(line3, sizeof(line3), "%s_trieData", name);
+        snprintf(line4, sizeof(line4), "};\n\n");
         break;
     case UPRV_TARGET_SYNTAX_TOML:
         line[0] = 0;
@@ -352,9 +382,70 @@ usrc_writeUCPTrie(FILE *f, const char *name, const UCPTrie *pTrie, UTargetSyntax
         line4[0] = 0;
         break;
     default:
-        UPRV_UNREACHABLE;
+        UPRV_UNREACHABLE_EXIT;
     }
     usrc_writeUCPTrieStruct(f, line, pTrie, line2, line3, line4, syntax);
+}
+
+U_CAPI void U_EXPORT2
+usrc_writeUnicodeSet(
+        FILE *f,
+        const USet *pSet,
+        UTargetSyntax syntax) {
+    // ccode is not yet supported
+    U_ASSERT(syntax == UPRV_TARGET_SYNTAX_TOML);
+
+    // Write out a list of ranges
+    const UnicodeSet* set = UnicodeSet::fromUSet(pSet);
+    UnicodeSetIterator it(*set);
+    fprintf(f, "# Inclusive ranges of the code points in the set.\n");
+    fprintf(f, "ranges = [\n");
+    bool seenFirstString = false;
+    while (it.nextRange()) {
+        if (it.isString()) {
+            if (!seenFirstString) {
+                seenFirstString = true;
+                fprintf(f, "]\nstrings = [\n");
+            }
+            const UnicodeString& str = it.getString();
+            fprintf(f, "  ");
+            usrc_writeStringAsASCII(f, str.getBuffer(), str.length(), syntax);
+            fprintf(f, ",\n");
+        } else {
+            U_ASSERT(!seenFirstString);
+            UChar32 start = it.getCodepoint();
+            UChar32 end = it.getCodepointEnd();
+            fprintf(f, "  [0x%x, 0x%x],\n", start, end);
+        }
+    }
+    fprintf(f, "]\n");
+}
+
+U_CAPI void U_EXPORT2
+usrc_writeUCPMap(
+        FILE *f,
+        const UCPMap *pMap,
+        icu::ValueNameGetter *valueNameGetter,
+        UTargetSyntax syntax) {
+    // ccode is not yet supported
+    U_ASSERT(syntax == UPRV_TARGET_SYNTAX_TOML);
+    (void) syntax; // silence unused variable errors
+
+    // Print out list of ranges
+    UChar32 start = 0, end;
+    uint32_t value;
+    fprintf(f, "# Code points `a` through `b` have value `v`, corresponding to `name`.\n");
+    fprintf(f, "ranges = [\n");
+    while ((end = ucpmap_getRange(pMap, start, UCPMAP_RANGE_NORMAL, 0, nullptr, nullptr, &value)) >= 0) {
+        if (valueNameGetter != nullptr) {
+            const char *name = valueNameGetter->getName(value);
+            fprintf(f, "  {a=0x%x, b=0x%x, v=%u, name=\"%s\"},\n", start, end, value, name);
+        } else {
+            fprintf(f, "  {a=0x%x, b=0x%x, v=%u},\n", start, end, value);
+        }
+        start = end + 1;
+    }
+    fprintf(f, "]\n");
 }
 
 U_CAPI void U_EXPORT2
@@ -365,7 +456,7 @@ usrc_writeArrayOfMostlyInvChars(FILE *f,
     int32_t i, col;
     int prev2, prev, c;
 
-    if(prefix!=NULL) {
+    if(prefix!=nullptr) {
         fprintf(f, prefix, (long)length);
     }
     prev2=prev=-1;
@@ -391,7 +482,34 @@ usrc_writeArrayOfMostlyInvChars(FILE *f,
         prev2=prev;
         prev=c;
     }
-    if(postfix!=NULL) {
+    if(postfix!=nullptr) {
         fputs(postfix, f);
     }
+}
+
+U_CAPI void U_EXPORT2
+usrc_writeStringAsASCII(FILE *f,
+        const char16_t* ptr, int32_t length,
+        UTargetSyntax) {
+    // For now, assume all UTargetSyntax values are valid here.
+    fprintf(f, "\"");
+    int32_t i = 0;
+    UChar32 cp;
+    while (i < length) {
+        U16_NEXT(ptr, i, length, cp);
+        if (cp == u'"') {
+            fprintf(f, "\\\"");
+        } else if (ICU_Utility::isUnprintable(cp)) {
+            UnicodeString u16result;
+            ICU_Utility::escapeUnprintable(u16result, cp);
+            std::string u8result;
+            u16result.toUTF8String(u8result);
+            fprintf(f, "%s", u8result.data());
+        } else {
+            U_ASSERT(cp < 0x80);
+            char s[2] = {static_cast<char>(cp), 0};
+            fprintf(f, "%s", s);
+        }
+    }
+    fprintf(f, "\"");
 }

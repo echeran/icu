@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -32,6 +33,7 @@ import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.dev.util.CollectionUtilities;
 import com.ibm.icu.impl.SortedSetRelation;
 import com.ibm.icu.impl.Utility;
+import com.ibm.icu.lang.CharacterProperties;
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.lang.UCharacterEnums.ECharacterCategory;
 import com.ibm.icu.lang.UProperty;
@@ -152,9 +154,19 @@ public class UnicodeSetTest extends TestFmwk {
                     }
                     UnicodeSet collectedErrors = new UnicodeSet();
                     for (UnicodeSetIterator it = new UnicodeSetIterator(testSet); it.next();) {
-                        int value = UCharacter.getIntPropertyValue(it.codepoint, propNum);
-                        if (value != valueNum) {
-                            collectedErrors.add(it.codepoint);
+                        if (it.codepoint == UnicodeSetIterator.IS_STRING) {
+                            // For binary properties of strings, only [:propName=true:] yields strings.
+                            // Therefore, we should always have valueNum=1 and b=true.
+                            boolean b = UCharacter.hasBinaryProperty(it.string, propNum);
+                            int value = b ? 1 : 0;
+                            if (value != valueNum) {
+                                collectedErrors.add(it.string);
+                            }
+                        } else {
+                            int value = UCharacter.getIntPropertyValue(it.codepoint, propNum);
+                            if (value != valueNum) {
+                                collectedErrors.add(it.codepoint);
+                            }
                         }
                     }
                     if (collectedErrors.size() != 0) {
@@ -1313,13 +1325,23 @@ public class UnicodeSetTest extends TestFmwk {
     @Test
     public void TestCloseOver() {
         String CASE = String.valueOf(UnicodeSet.CASE);
+        String CASE_MAPPINGS = String.valueOf(UnicodeSet.ADD_CASE_MAPPINGS);
+        String SIMPLE_CASE_INSENSITIVE = String.valueOf(UnicodeSet.SIMPLE_CASE_INSENSITIVE);
         String[] DATA = {
                 // selector, input, output
                 CASE,
                 "[aq\u00DF{Bc}{bC}{Fi}]",
                 "[aAqQ\u00DF\u1E9E\uFB01{ss}{bc}{fi}]", // U+1E9E LATIN CAPITAL LETTER SHARP S is new in Unicode 5.1
 
+                SIMPLE_CASE_INSENSITIVE,
+                "[aq\u00DF{Bc}{bC}{Fi}]",
+                "[aAqQ\u00DF\u1E9E{bc}{fi}]",
+
                 CASE,
+                "[\u01F1]", // 'DZ'
+                "[\u01F1\u01F2\u01F3]",
+
+                SIMPLE_CASE_INSENSITIVE,
                 "[\u01F1]", // 'DZ'
                 "[\u01F1\u01F2\u01F3]",
 
@@ -1327,24 +1349,74 @@ public class UnicodeSetTest extends TestFmwk {
                 "[\u1FB4]",
                 "[\u1FB4{\u03AC\u03B9}]",
 
+                SIMPLE_CASE_INSENSITIVE,
+                "[\u1FB4]",
+                "[\u1FB4]",
+
                 CASE,
                 "[{F\uFB01}]",
                 "[\uFB03{ffi}]",
 
+                CASE, // make sure binary search finds limits
+                "[a\uFF3A]",
+                "[aA\uFF3A\uFF5A]",
+
                 CASE,
                 "[a-z]","[A-Za-z\u017F\u212A]",
+
+                SIMPLE_CASE_INSENSITIVE,
+                "[a-z]","[A-Za-z\u017F\u212A]",
+
                 CASE,
                 "[abc]","[A-Ca-c]",
                 CASE,
                 "[ABC]","[A-Ca-c]",
+
+                CASE, "[i]", "[iI]",
+
+                CASE, "[\u0130]",          "[\u0130{i\u0307}]", // dotted I
+                CASE, "[{i\u0307}]",       "[\u0130{i\u0307}]", // i with dot
+
+                CASE, "[\u0131]",          "[\u0131]", // dotless i
+
+                CASE, "[\u0390]",          "[\u0390\u1FD3{\u03B9\u0308\u0301}]",
+
+                CASE, "[\u03c2]",          "[\u03a3\u03c2\u03c3]", // sigmas
+
+                CASE, "[\u03f2]",          "[\u03f2\u03f9]", // lunate sigmas
+
+                CASE, "[\u03f7]",          "[\u03f7\u03f8]",
+
+                CASE, "[\u1fe3]",          "[\u03b0\u1fe3{\u03c5\u0308\u0301}]",
+
+                CASE, "[\ufb05]",          "[\ufb05\ufb06{st}]",
+                CASE, "[{st}]",             "[\ufb05\ufb06{st}]",
+
+                CASE, "[\\U0001044F]",      "[\\U00010427\\U0001044F]",
+
+                CASE, "[{a\u02BE}]",       "[\u1E9A{a\u02BE}]", // first in sorted table
+
+                CASE, "[{\u1f7c\u03b9}]", "[\u1ff2{\u1f7c\u03b9}]", // last in sorted table
+
+                CASE_MAPPINGS,
+                "[aq\u00DF{Bc}{bC}{Fi}]",
+                "[aAqQ\u00DF{ss}{Ss}{SS}{Bc}{BC}{bC}{bc}{FI}{Fi}{fi}]",
+
+                CASE_MAPPINGS,
+                "[\u01F1]", // 'DZ'
+                "[\u01F1\u01F2\u01F3]",
+
+                CASE_MAPPINGS,
+                "[a-z]",
+                "[A-Za-z]",
         };
 
         UnicodeSet s = new UnicodeSet();
         UnicodeSet t = new UnicodeSet();
         for (int i=0; i<DATA.length; i+=3) {
             int selector = Integer.parseInt(DATA[i]);
-            String pat = DATA[i+1];
-            String exp = DATA[i+2];
+            String pat = Utility.unescape(DATA[i+1]);
+            String exp = Utility.unescape(DATA[i+2]);
             s.applyPattern(pat);
             s.closeOver(selector);
             t.applyPattern(exp);
@@ -1361,6 +1433,149 @@ public class UnicodeSetTest extends TestFmwk {
         expectContainment(s, "abcABC", "defDEF");
         s = new UnicodeSet("[^abc]", UnicodeSet.CASE);
         expectContainment(s, "defDEF", "abcABC");
+        s = new UnicodeSet("[abck]", UnicodeSet.ADD_CASE_MAPPINGS);
+        expectContainment(s, "abckABCK", "defDEF\u212A");
+    }
+
+    private void add(Map<Integer, Collection<Integer>> closure, Integer c, Integer t) {
+        Collection<Integer> values = closure.get(c);
+        if (values == null) {
+            values = new TreeSet<>();
+            closure.put(c, values);
+        }
+        values.add(t);
+    }
+
+    private void addIfAbsent(Map<Integer, Collection<Integer>> closure, Integer c, Integer t,
+            Map<Integer, Collection<Integer>> additions) {
+        Collection<Integer> values = closure.get(c);
+        if (values == null || !values.contains(t)) {
+            if (additions != closure) {
+                values = additions.get(c);
+            }
+            if (values == null) {
+                values = new TreeSet<>();
+                additions.put(c, values);
+            }
+            values.add(t);
+        }
+    }
+
+    @Test
+    public void TestCloseOverSimpleCaseFolding() {
+        UnicodeSet sensitive = CharacterProperties.getBinaryPropertySet(UProperty.CASE_SENSITIVE);
+        // Compute the scf=Simple_Case_Folding closure:
+        // For each scf(c)=t, start with mappings c->t and t->c.
+
+        // Poor man's multimap from code points to code points.
+        Map<Integer, Collection<Integer>> closure = new HashMap<>();
+        UnicodeSetIterator iter = new UnicodeSetIterator(sensitive);
+        while (iter.next()) {
+            int c = iter.codepoint;
+            int scfChar = UCharacter.foldCase(c, UCharacter.FOLD_CASE_DEFAULT);
+            if (scfChar != c) {
+                add(closure, c, scfChar);
+                add(closure, scfChar, c);
+            }
+        }
+        // Complete the closure: Add mappings of mappings.
+        Map<Integer, Collection<Integer>> additions = new HashMap<>();
+        for (;;) {
+            // for each mapping c->t
+            for (Map.Entry<Integer, Collection<Integer>> entry : closure.entrySet()) {
+                Integer c = entry.getKey();
+                Collection<Integer> cValues = entry.getValue();
+                for (Integer t : cValues) {
+                    // enumerate each t->u
+                    Collection<Integer> tValues = closure.get(t);
+                    if (tValues != null) {
+                        for (Integer u : tValues) {
+                            if (!u.equals(c)) {
+                                addIfAbsent(closure, c, u, additions);
+                                addIfAbsent(closure, u, c, additions);
+                            }
+                        }
+                    }
+                }
+
+            }
+            if (additions.isEmpty()) {
+                break;  // The closure is complete.
+            }
+            // Add all of the additions back into the closure.
+            for (Map.Entry<Integer, Collection<Integer>> entry : additions.entrySet()) {
+                Integer c = entry.getKey();
+                Collection<Integer> cValues = entry.getValue();
+                Collection<Integer> closureValues = closure.get(c);
+                if (closureValues == null) {
+                    closureValues = new TreeSet<>();
+                    closure.put(c, closureValues);
+                }
+                closureValues.addAll(cValues);
+            }
+            additions.clear();
+        }
+        // Compare closeOver(USET_SIMPLE_CASE_INSENSITIVE) with an unoptimized implementation.
+        // Here we focus on single code points as input.
+        // Other examples, including strings, are tested in TestCloseOver().
+        int errors = 0;
+        iter.reset();
+        UnicodeSet set = new UnicodeSet(), expected = new UnicodeSet();
+        while (iter.next()) {
+            int c = iter.codepoint;
+            // closeOver()
+            set.clear().add(c);
+            set.closeOver(UnicodeSet.SIMPLE_CASE_INSENSITIVE);
+            // From-first-principles implementation.
+            expected.clear().add(c);
+            Collection<Integer> values = closure.get(c);
+            if (values != null) {
+                for (Integer t : values) {
+                    expected.add(t);
+                }
+            }
+            // compare
+            if (!checkEqual(expected, set, "closeOver() vs. test impl")) {
+                errln("    c=U+" + Utility.hex(c));
+                if (++errors == 10) {
+                    break;
+                }
+            }
+        }
+    }
+
+    @Test
+    public void TestCloseOverLargeSets() {
+        // Check that an optimization for large sets does not change the result.
+
+        // Most code points except ones that are boring for case mappings.
+        UnicodeSet manyCp = new UnicodeSet("[^[:C:][:Ideographic:][:Hang:]]");
+        // Main Unihan block.
+        int LARGE_START = 0x4E00;
+        int LARGE_END = 0x9FFF;
+
+        int OPTIONS[] = {
+            UnicodeSet.CASE_INSENSITIVE, UnicodeSet.ADD_CASE_MAPPINGS,
+            UnicodeSet.SIMPLE_CASE_INSENSITIVE
+        };
+        UnicodeSet input = new UnicodeSet(), small, large;
+        for (int option : OPTIONS) {
+            UnicodeSetIterator iter = new UnicodeSetIterator(manyCp);
+            while (iter.next()) {
+                int c = iter.codepoint;
+                input.clear().add(c);
+                small = (UnicodeSet) input.clone();
+                small.closeOver(option);
+                large = (UnicodeSet) input.clone();
+                large.add(LARGE_START, LARGE_END);
+                large.closeOver(option);
+                large.remove(LARGE_START, LARGE_END);
+                if (!checkEqual(small, large, "small != large")) {
+                    errln("    option=" + option + " c=U+" + Utility.hex(c));
+                    break;
+                }
+            }
+        }
     }
 
     @Test
@@ -1699,8 +1914,8 @@ public class UnicodeSetTest extends TestFmwk {
             test2.add("a" + (max - i)); // add in reverse order
         }
         assertNotEquals("compare iterable test", test1, test2);
-        TreeSet<CharSequence> sortedTest1 = new TreeSet<CharSequence>(test1);
-        TreeSet<CharSequence> sortedTest2 = new TreeSet<CharSequence>(test2);
+        TreeSet<CharSequence> sortedTest1 = new TreeSet<>(test1);
+        TreeSet<CharSequence> sortedTest2 = new TreeSet<>(test2);
         assertEquals("compare iterable test", sortedTest1, sortedTest2);
     }
 
@@ -2742,6 +2957,42 @@ public class UnicodeSetTest extends TestFmwk {
     }
 
     @Test
+    public void TestPatternWithSurrogates() {
+        // Regression test for ICU-11891
+        UnicodeSet surrogates = new UnicodeSet();
+        surrogates.add(0xd000, 0xd82f);  // a range ending with a lead surrogate code point
+        surrogates.add(0xd83a);  // a lead surrogate
+        surrogates.add(0xdc00, 0xdfff);  // a range of trail surrogates
+        String pat = surrogates.toPattern(false);  // bad if U+D83A is immediately followed by U+DC00
+        UnicodeSet s2 = new UnicodeSet();
+        // was: IllegalArgumentException: Error: Invalid range at "[...\U0001E800-\uDFFF|...]"
+        s2.applyPattern(pat);
+        checkEqual(surrogates, s2, "surrogates (1) to/from pattern");
+
+        // create a range of DBFF-DC00, and in the complement form a range of DC01-DC03
+        surrogates.add(0xdbff).remove(0xdc01, 0xdc03);
+        // add a beyond-surrogates range, up to the last code point
+        surrogates.add(0x10affe, 0x10ffff);
+        pat = surrogates.toPattern(false);  // bad if U+DBFF is immediately followed by U+DC00
+        s2.applyPattern(pat);
+        checkEqual(surrogates, s2, "surrogates (2) to/from pattern");
+
+        // Test the toPattern() code path when the pattern is shorter in complement form:
+        // [^opposite-ranges]
+        surrogates.add(0, 0x6789);
+        pat = surrogates.toPattern(false);
+        s2.applyPattern(pat);
+        checkEqual(surrogates, s2, "surrogates (3) to/from pattern");
+
+        // Start with a pattern, in case the original pattern is kept but
+        // without the extra white space.
+        surrogates.applyPattern("[\\uD83A \\uDC00-\\uDFFF]");
+        pat = surrogates.toPattern(false);
+        s2.applyPattern(pat);
+        checkEqual(surrogates, s2, "surrogates from/to/from pattern");
+    }
+
+    @Test
     public void TestUnusedCcc() {
         // All numeric ccc values 0..255 are valid, but many are unused.
         UnicodeSet ccc2 = new UnicodeSet("[:ccc=2:]");
@@ -2876,5 +3127,80 @@ public class UnicodeSetTest extends TestFmwk {
         iter.skipToStrings();
         assertNext(iter, "ch");
         assertFalse("no next", iter.next());
+    }
+
+    @Test
+    public void TestPatternCodePointComplement() {
+        // ICU-21524 changes pattern ^ and equivalent functions to perform a "code point complement".
+        // [^abc{ch}] = [[:Any:]-[abc{ch}]] which removes all strings.
+        {
+            UnicodeSet simple = new UnicodeSet("[^abc{ch}]");
+            assertEquals("[^abc{ch}] --> lots of elements", 0x110000 - 3, simple.size());
+            assertFalse("[^abc{ch}] --> no strings", simple.hasStrings());
+            assertFalse("[^abc{ch}] --> no 'a'", simple.contains('a'));
+        }
+
+        {
+            UnicodeSet notBasic = new UnicodeSet("[:^Basic_Emoji:]");
+            assertTrue("[:^Basic_Emoji:] --> lots of elements", notBasic.size() > 1000);
+            assertFalse("[:^Basic_Emoji:] --> no strings", notBasic.hasStrings());
+            assertFalse("[:^Basic_Emoji:] --> no bicycle", notBasic.contains("🚲"));
+        }
+
+        {
+            UnicodeSet notBasic = new UnicodeSet("[:Basic_Emoji=No:]");
+            assertTrue("[:Basic_Emoji=No:] --> lots of elements", notBasic.size() > 1000);
+            assertFalse("[:Basic_Emoji=No:] --> no strings", notBasic.hasStrings());
+            assertFalse("[:Basic_Emoji=No:] --> no bicycle", notBasic.contains("🚲"));
+        }
+
+        {
+            UnicodeSet notBasic = new UnicodeSet();
+            notBasic.applyIntPropertyValue(UProperty.BASIC_EMOJI, 0);
+            assertTrue("[].applyIntPropertyValue(Basic_Emoji, 0) --> lots of elements",
+                    notBasic.size() > 1000);
+            assertFalse("[].applyIntPropertyValue(Basic_Emoji, 0) --> no strings",
+                    notBasic.hasStrings());
+            assertFalse("[].applyIntPropertyValue(Basic_Emoji, 0) --> no bicycle",
+                    notBasic.contains("🚲"));
+        }
+
+        {
+            UnicodeSet notBasic = new UnicodeSet();
+            notBasic.applyPropertyAlias("Basic_Emoji", "No");
+            assertTrue("[].applyPropertyAlias(Basic_Emoji, No) --> lots of elements",
+                    notBasic.size() > 1000);
+            assertFalse("[].applyPropertyAlias(Basic_Emoji, No) --> no strings",
+                    notBasic.hasStrings());
+            assertFalse("[].applyPropertyAlias(Basic_Emoji, No) --> no bicycle",
+                    notBasic.contains("🚲"));
+        }
+
+        // When there are strings, we must not use the complement for a more compact toPattern().
+        {
+            UnicodeSet set = new UnicodeSet();
+            set.add(0,  'Y').add('b', 'q').add('x', 0x10ffff);
+            String pattern = set.toPattern(true);
+            UnicodeSet set2 = new UnicodeSet(pattern);
+            checkEqual(set, set2, "set(with 0 & max, only code points) pattern round-trip");
+            assertEquals("set(with 0 & max, only code points).toPattern()", "[^Z-ar-w]", pattern);
+
+            set.add("ch").add("ss");
+            pattern = set.toPattern(true);
+            set2 = new UnicodeSet(pattern);
+            checkEqual(set, set2, "set(with 0 & max, with strings) pattern round-trip");
+            assertEquals("set(with 0 & max, with strings).toPattern()",
+                    "[\\u0000-Yb-qx-\\U0010FFFF{ch}{ss}]", pattern);
+        }
+
+        // The complement() API behavior does not change under this ticket.
+        {
+            UnicodeSet notBasic = new UnicodeSet("[:Basic_Emoji:]").complement();
+            assertTrue("[:Basic_Emoji:].complement() --> lots of elements", notBasic.size() > 1000);
+            assertTrue("[:Basic_Emoji:].complement() --> has strings", notBasic.hasStrings());
+            assertTrue("[:Basic_Emoji:].complement().contains(chipmunk+emoji)",
+                    notBasic.contains("🐿\uFE0F"));
+            assertFalse("[:Basic_Emoji:].complement() --> no bicycle", notBasic.contains("🚲"));
+        }
     }
 }

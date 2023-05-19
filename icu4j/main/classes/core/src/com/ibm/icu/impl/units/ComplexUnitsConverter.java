@@ -15,7 +15,8 @@ import com.ibm.icu.number.Precision;
 import com.ibm.icu.util.Measure;
 
 /**
- * Converts from single or compound unit to single, compound or mixed units. For example, from `meter` to `foot+inch`.
+ * Converts from single or compound unit to single, compound or mixed units. For example, from {@code meter}
+ * to {@code foot+inch}.
  * <p>
  * DESIGN: This class uses <code>UnitsConverter</code> in order to perform the single converter (i.e. converters from
  * a single unit to another single unit). Therefore, <code>ComplexUnitsConverter</code> class contains multiple
@@ -24,12 +25,15 @@ import com.ibm.icu.util.Measure;
 public class ComplexUnitsConverter {
     public static final BigDecimal EPSILON = BigDecimal.valueOf(Math.ulp(1.0));
     public static final BigDecimal EPSILON_MULTIPLIER = BigDecimal.valueOf(1).add(EPSILON);
-    private ArrayList<UnitsConverter> unitsConverters_;
+
+    // TODO(ICU-21937): Make it private after submitting the public units conversion API.
+    public ArrayList<UnitsConverter> unitsConverters_;
     /**
      * Individual units of mixed units, sorted big to small, with indices
      * indicating the requested output mixed unit order.
      */
-    private List<MeasureUnitImpl.MeasureUnitImplWithIndex> units_;
+    // TODO(ICU-21937): Make it private after submitting the public units conversion API.
+    public List<MeasureUnitImpl.MeasureUnitImplWithIndex> units_;
     private MeasureUnitImpl inputUnit_;
 
     /**
@@ -132,11 +136,12 @@ public class ComplexUnitsConverter {
     }
 
     /**
-     * Returns true if the specified `quantity` of the `inputUnit`, expressed in terms of the biggest unit in the
-     * MeasureUnit `outputUnit`, is greater than or equal to `limit`.
+     * Returns true if the specified {@code quantity} of the {@code inputUnit}, expressed in terms of the biggest
+     * unit in the MeasureUnit {@code outputUnit}, is greater than or equal to {@code limit}.
      * <p>
-     * For example, if the input unit is `meter` and the target unit is `foot+inch`. Therefore, this function will
-     * convert the `quantity` from `meter` to `foot`, then, it will compare the value in `foot` with the `limit`.
+     * For example, if the input unit is {@code meter} and the target unit is {@code foot+inch}. Therefore,
+     * this function will convert the {@code quantity} from {@code meter} to {@code foot}, then, it will
+     * compare the value in {@code foot} with the {@code limit}.
      */
     public boolean greaterThanOrEqual(BigDecimal quantity, BigDecimal limit) {
         assert !units_.isEmpty();
@@ -165,7 +170,7 @@ public class ComplexUnitsConverter {
      */
     public ComplexConverterResult convert(BigDecimal quantity, Precision rounder) {
         BigInteger sign = BigInteger.ONE;
-        if (quantity.compareTo(BigDecimal.ZERO) < 0) {
+        if (quantity.compareTo(BigDecimal.ZERO) < 0 && unitsConverters_.size() > 1) {
             quantity = quantity.abs();
             sign = sign.negate();
         }

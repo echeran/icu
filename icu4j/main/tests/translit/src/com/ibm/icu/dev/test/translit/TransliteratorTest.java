@@ -22,6 +22,7 @@ import org.junit.runners.JUnit4;
 
 import com.ibm.icu.dev.test.TestFmwk;
 import com.ibm.icu.dev.test.TestUtil;
+import com.ibm.icu.dev.test.rbbi.RBBITstUtils;
 import com.ibm.icu.impl.Utility;
 import com.ibm.icu.impl.UtilityExtensions;
 import com.ibm.icu.lang.CharSequences;
@@ -596,11 +597,11 @@ public class TransliteratorTest extends TestFmwk {
         //|        }
         //|        UnicodeString out(data[i]);
         //|        gl->transliterate(out);
-        //|        bool_t ok = TRUE;
+        //|        bool_t ok = true;
         //|        if (data[i].length() >= 2 && out.length() >= 2 &&
         //|            u_isupper(data[i].charAt(0)) && u_islower(data[i].charAt(1))) {
         //|            if (!(u_isupper(out.charAt(0)) && u_islower(out.charAt(1)))) {
-        //|                ok = FALSE;
+        //|                ok = false;
         //|            }
         //|        }
         //|        if (ok) {
@@ -2586,7 +2587,6 @@ public class TransliteratorTest extends TestFmwk {
         }
     }
 
-
     static final String[][] registerRules = {
         {"Any-Dev1", "x > X; y > Y;"},
         {"Any-Dev2", "XY > Z"},
@@ -3605,7 +3605,7 @@ the ::BEGIN/::END stuff)
     public void TestThai() {
         // The expectations in this test heavily depends on the Thai dictionary.
         // Therefore, we skip this test under the LSTM configuration.
-        org.junit.Assume.assumeTrue(!TestUtil.skipDictionaryTest());
+        org.junit.Assume.assumeTrue(!RBBITstUtils.skipDictionaryTest());
         Transliterator tr = Transliterator.getInstance("Any-Latin", Transliterator.FORWARD);
         String thaiText =
             "\u0e42\u0e14\u0e22\u0e1e\u0e37\u0e49\u0e19\u0e10\u0e32\u0e19\u0e41\u0e25\u0e49\u0e27, \u0e04\u0e2d" +

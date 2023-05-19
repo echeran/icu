@@ -580,7 +580,7 @@ public class RegionTest extends TestFmwk {
         // territories are one and the same.
         Set<Region> availableTerritories = Region.getAvailable(RegionType.TERRITORY);
         Region world = Region.getInstance("001");
-        Set<Region> containedInWorld = world.getContainedRegions(RegionType.TERRITORY);
+        Set<Region> containedInWorld = world.getContainedRegions(RegionType.TERRITORY); // unmodifiable
         if ( !availableTerritories.equals(containedInWorld) ) {
             errln("Available territories and all territories contained in world should be the same set.\n" +
                     "Available          = " + availableTerritories.toString() + "\n" +
@@ -609,7 +609,7 @@ public class RegionTest extends TestFmwk {
                 for (Region childRegion : actualChildren) {
                     actualChildIDs.add(childRegion.toString());
                 }
-                actualChildIDs.sort(null);
+                java.util.Collections.sort(actualChildIDs);
                 
                 for (int i = 0; i < actualChildIDs.size() && i < expectedChildren.length; i++) {
                     if (!expectedChildren[i].equals(actualChildIDs.get(i))) {

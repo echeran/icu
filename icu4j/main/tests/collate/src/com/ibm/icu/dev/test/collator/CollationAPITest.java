@@ -1582,7 +1582,7 @@ public class CollationAPITest extends TestFmwk {
          */
         try {
             TestCreateCollator tcc = new TestCreateCollator();
-            tcc.createCollator(new Locale("en_US"));
+            tcc.createCollator(new Locale("en", "US"));
         } catch (Exception e) {
             errln("Collator.createCollator(Locale) was not suppose to " + "return an exception.");
         }
@@ -1602,7 +1602,7 @@ public class CollationAPITest extends TestFmwk {
          */
         try {
             TestCreateCollator tcc = new TestCreateCollator();
-            tcc.getDisplayName(new Locale("en_US"), new Locale("jp_JP"));
+            tcc.getDisplayName(new Locale("en", "US"), new Locale("jp", "JP"));
         } catch (Exception e) {
             errln("Collator.getDisplayName(Locale,Locale) was not suppose to return an exception.");
         }
@@ -1700,6 +1700,19 @@ public class CollationAPITest extends TestFmwk {
             assertTrue("tailored Han before currency", coll.compare("\u4E00", "$") < 0);
         } catch (Exception e) {
             errln("unexpected exception for tailoring many characters at the end of symbols: " + e);
+        }
+    }
+
+    @Test
+    public void TestBogusLocaleID() {
+        try {
+            Collator c1 = Collator.getInstance(new ULocale("en-US-u-kn-true"));
+            Collator c2 = Collator.getInstance(new ULocale("en_US-u-kn-true"));
+
+            assertTrue("Comparison using \"normal\" collator failed", c1.compare("2", "10") < 0);
+            assertTrue("Comparison using \"bad\" collator failed", c2.compare("2", "10") < 0);
+        } catch (Exception e) {
+            errln("Exception creating collators: " + e);
         }
     }
 }

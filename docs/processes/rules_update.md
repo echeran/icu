@@ -77,14 +77,14 @@ The rule updates are done first for ICU4C, and then ported (code changes) or mov
 
         diff icu4c/source/test/testdata/rbbitst.txt icu4j/main/tests/core/src/com/ibm/icu/dev/test/rbbi/rbbitst.txt
 
-    Should show no differrence.
+    Should show no difference.
 
 
 2.  **Run the ICU4C break iterator tests**, and verify that the newly added tests fail as expected.
     (We haven't updated the rules yet)
 
             cd icu/icu4c/source
-            make -j6 check
+            make -j -l2.5 check
 
     To run just the RBBI Tests (you will be doing this a lot)
 

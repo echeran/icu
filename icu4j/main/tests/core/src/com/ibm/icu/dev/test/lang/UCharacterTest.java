@@ -56,7 +56,7 @@ public final class UCharacterTest extends TestFmwk
     /**
      * Expected Unicode version.
      */
-    private final VersionInfo VERSION_ = VersionInfo.getInstance(14);
+    private final VersionInfo VERSION_ = VersionInfo.getInstance(15);
 
     // constructor ===================================================
 
@@ -623,15 +623,14 @@ public final class UCharacterTest extends TestFmwk
     @Test
     public void TestIdentifier()
     {
-        int unicodeidstart[] = {0x0250, 0x0000e2, 0x000061};
-        int nonunicodeidstart[] = {0x2000, 0x00000a, 0x002019};
-        int unicodeidpart[] = {0x005f, 0x000032, 0x000045};
-        int nonunicodeidpart[] = {0x2030, 0x0000a3, 0x000020};
+        int unicodeidstart[] = {0x0250, 0x0000e2, 0x000061, 0x001885, 0x00212e, 0x00309b};
+        int nonunicodeidstart[] = {0x2000, 0x00000a, 0x002019, 0x002e2f};
+        int unicodeidpart[] = {0x005f, 0x000032, 0x000045, 0x001886, 0x00212e, 0x00309c};
+        int nonunicodeidpart[] = {0x2030, 0x0000a3, 0x000020, 0x002019, 0x002e2f};
         int idignore[] = {0x0006, 0x0010, 0x206b};
         int nonidignore[] = {0x0075, 0x0000a3, 0x000061};
 
-        int size = unicodeidstart.length;
-        for (int i = 0; i < size; i ++)
+        for (int i = 0; i < unicodeidstart.length; i ++)
         {
             if (!UCharacter.isUnicodeIdentifierStart(unicodeidstart[i]))
             {
@@ -639,6 +638,9 @@ public final class UCharacterTest extends TestFmwk
                     " expected to be a unicode identifier start character");
                 break;
             }
+        }
+        for (int i = 0; i < nonunicodeidstart.length; i ++)
+        {
             if (UCharacter.isUnicodeIdentifierStart(nonunicodeidstart[i]))
             {
                 errln("FAIL \\u" + hex(nonunicodeidstart[i]) +
@@ -646,12 +648,18 @@ public final class UCharacterTest extends TestFmwk
                         "character");
                 break;
             }
+        }
+        for (int i = 0; i < unicodeidpart.length; i ++)
+        {
             if (!UCharacter.isUnicodeIdentifierPart(unicodeidpart[i]))
             {
                 errln("FAIL \\u" + hex(unicodeidpart[i]) +
                     " expected to be a unicode identifier part character");
                 break;
             }
+        }
+        for (int i = 0; i < nonunicodeidpart.length; i ++)
+        {
             if (UCharacter.isUnicodeIdentifierPart(nonunicodeidpart[i]))
             {
                 errln("FAIL \\u" + hex(nonunicodeidpart[i]) +
@@ -659,23 +667,24 @@ public final class UCharacterTest extends TestFmwk
                         "character");
                 break;
             }
+         }
+        for (int i = 0; i < idignore.length; i ++)
+        {
             if (!UCharacter.isIdentifierIgnorable(idignore[i]))
             {
                 errln("FAIL \\u" + hex(idignore[i]) +
                         " expected to be a ignorable unicode character");
                 break;
             }
+        }
+        for (int i = 0; i < nonidignore.length; i ++)
+        {
             if (UCharacter.isIdentifierIgnorable(nonidignore[i]))
             {
                 errln("FAIL \\u" + hex(nonidignore[i]) +
                     " expected not to be a ignorable unicode character");
                 break;
             }
-            logln("Ok    \\u" + hex(unicodeidstart[i]) + " and \\u" +
-                    hex(nonunicodeidstart[i]) + " and \\u" +
-                    hex(unicodeidpart[i]) + " and \\u" +
-                    hex(nonunicodeidpart[i]) + " and \\u" +
-                    hex(idignore[i]) + " and \\u" + hex(nonidignore[i]));
         }
     }
 
@@ -1526,8 +1535,14 @@ public final class UCharacterTest extends TestFmwk
                 ch ++;
             }
         }
-        try
-        {
+        // Test with both char & int values.
+        try {
+            UCharacter.getCodePoint(0xD7ff, 0xDC00);
+            errln("Invalid surrogate characters should not form a " +
+                  "supplementary");
+        } catch(Exception e) {
+        }
+        try {
             UCharacter.getCodePoint((char)0xD7ff, (char)0xDC00);
             errln("Invalid surrogate characters should not form a " +
                   "supplementary");
@@ -1588,6 +1603,8 @@ public final class UCharacterTest extends TestFmwk
             { 0x10800, UCharacterDirection.LEFT_TO_RIGHT },
             { 0x10D00, UCharacterDirection.RIGHT_TO_LEFT },  // Unicode 11 changes U+10D00..U+10D3F from R to AL.
             { 0x10D40, UCharacterDirection.RIGHT_TO_LEFT_ARABIC },
+            { 0x10EC0, UCharacterDirection.RIGHT_TO_LEFT },  // Unicode 15 changes U+10EC0..U+10EFF from R to AL.
+            { 0x10F00, UCharacterDirection.RIGHT_TO_LEFT_ARABIC },
             { 0x10F30, UCharacterDirection.RIGHT_TO_LEFT },  // Unicode 11 changes U+10F30..U+10F6F from R to AL.
             { 0x10F70, UCharacterDirection.RIGHT_TO_LEFT_ARABIC },
             { 0x11000, UCharacterDirection.RIGHT_TO_LEFT },
@@ -2556,6 +2573,150 @@ public final class UCharacterTest extends TestFmwk
                 UCharacter.hasBinaryProperty(0x2A, UProperty.EMOJI_COMPONENT));
         assertTrue("copyright is Extended_Pictographic",
                 UCharacter.hasBinaryProperty(0xA9, UProperty.EXTENDED_PICTOGRAPHIC));
+    }
+
+    private static boolean hbp(CharSequence s, int property) {
+        return UCharacter.hasBinaryProperty(s, property);
+    }
+
+    @Test
+    public void TestEmojiPropertiesOfStrings() {
+        // Property of code points, for coverage
+        assertFalse("empty string is not Ideographic", hbp("", UProperty.IDEOGRAPHIC));
+        assertFalse("L is not Ideographic", hbp("L", UProperty.IDEOGRAPHIC));
+        assertTrue("U+4E02 is Ideographic", hbp("丂", UProperty.IDEOGRAPHIC));
+        assertFalse("2*U+4E02 is not Ideographic", hbp("丂丂", UProperty.IDEOGRAPHIC));
+        assertFalse("bicycle is not Ideographic", hbp("🚲", UProperty.IDEOGRAPHIC));
+        assertTrue("U+23456 is Ideographic", hbp(UTF16.valueOf(0x23456), UProperty.IDEOGRAPHIC));
+
+        // Property of (code points and) strings
+        assertFalse("empty string is not Basic_Emoji", hbp("", UProperty.BASIC_EMOJI));
+        assertFalse("L is not Basic_Emoji", hbp("L", UProperty.BASIC_EMOJI));
+        assertFalse("U+4E02 is not Basic_Emoji", hbp("丂", UProperty.BASIC_EMOJI));
+        assertTrue("bicycle is Basic_Emoji", hbp("🚲", UProperty.BASIC_EMOJI));
+        assertFalse("2*bicycle is Basic_Emoji", hbp("🚲🚲", UProperty.BASIC_EMOJI));
+        assertFalse("U+23456 is not Basic_Emoji", hbp(UTF16.valueOf(0x23456), UProperty.BASIC_EMOJI));
+
+        assertFalse("stopwatch is not Basic_Emoji", hbp("⏱", UProperty.BASIC_EMOJI));
+        assertTrue("stopwatch+emoji is Basic_Emoji", hbp("⏱\uFE0F", UProperty.BASIC_EMOJI));
+
+        assertFalse("chipmunk is not Basic_Emoji", hbp("🐿", UProperty.BASIC_EMOJI));
+        assertTrue("chipmunk+emoji is Basic_Emoji", hbp("🐿\uFE0F", UProperty.BASIC_EMOJI));
+        assertFalse("chipmunk+2*emoji is not Basic_Emoji", hbp("🐿\uFE0F\uFE0F", UProperty.BASIC_EMOJI));
+
+        // Properties of strings (only)
+        assertFalse("4+emoji is not Emoji_Keycap_Sequence",
+                    hbp("4\uFE0F", UProperty.EMOJI_KEYCAP_SEQUENCE));
+        assertTrue("4+emoji+keycap is Emoji_Keycap_Sequence",
+                   hbp("4\uFE0F\u20E3", UProperty.EMOJI_KEYCAP_SEQUENCE));
+
+        assertFalse("[B] is not RGI_Emoji_Flag_Sequence",
+                    hbp(UTF16.valueOf(0x1F1E7), UProperty.RGI_EMOJI_FLAG_SEQUENCE));
+        assertTrue("[BE] is RGI_Emoji_Flag_Sequence",
+                   hbp("🇧🇪", UProperty.RGI_EMOJI_FLAG_SEQUENCE));
+
+        assertFalse("[flag] is not RGI_Emoji_Tag_Sequence",
+                    hbp(UTF16.valueOf(0x1F3F4), UProperty.RGI_EMOJI_TAG_SEQUENCE));
+        assertTrue("[Scotland] is RGI_Emoji_Tag_Sequence",
+                   hbp("🏴󠁧󠁢󠁳󠁣󠁴󠁿", UProperty.RGI_EMOJI_TAG_SEQUENCE));
+
+        assertFalse("bicyclist is not RGI_Emoji_Modifier_Sequence",
+                    hbp("🚴", UProperty.RGI_EMOJI_MODIFIER_SEQUENCE));
+        assertTrue("bicyclist+medium is RGI_Emoji_Modifier_Sequence",
+                   hbp("🚴" + UTF16.valueOf(0x1F3FD), UProperty.RGI_EMOJI_MODIFIER_SEQUENCE));
+
+        assertFalse("woman+dark+ZWJ is not RGI_Emoji_ZWJ_Sequence",
+                    hbp("👩" + UTF16.valueOf(0x1F3FF) + "\u200D", UProperty.RGI_EMOJI_ZWJ_SEQUENCE));
+        assertTrue("woman pilot: dark skin tone is RGI_Emoji_ZWJ_Sequence",
+                   hbp("👩" + UTF16.valueOf(0x1F3FF) + "\u200D✈\uFE0F",
+                   UProperty.RGI_EMOJI_ZWJ_SEQUENCE));
+
+        // RGI_Emoji = all of the above
+        assertFalse("stopwatch is not RGI_Emoji", hbp("⏱", UProperty.RGI_EMOJI));
+        assertTrue("stopwatch+emoji is RGI_Emoji", hbp("⏱\uFE0F", UProperty.RGI_EMOJI));
+
+        assertFalse("chipmunk is not RGI_Emoji", hbp("🐿", UProperty.RGI_EMOJI));
+        assertTrue("chipmunk+emoji is RGI_Emoji", hbp("🐿\uFE0F", UProperty.RGI_EMOJI));
+
+        assertFalse("4+emoji is not RGI_Emoji", hbp("4\uFE0F", UProperty.RGI_EMOJI));
+        assertTrue("4+emoji+keycap is RGI_Emoji", hbp("4\uFE0F\u20E3", UProperty.RGI_EMOJI));
+
+        assertFalse("[B] is not RGI_Emoji", hbp(UTF16.valueOf(0x1F1E7), UProperty.RGI_EMOJI));
+        assertTrue("[BE] is RGI_Emoji", hbp("🇧🇪", UProperty.RGI_EMOJI));
+
+        assertTrue("[flag] is RGI_Emoji", hbp(UTF16.valueOf(0x1F3F4), UProperty.RGI_EMOJI));
+        assertTrue("[Scotland] is RGI_Emoji", hbp("🏴󠁧󠁢󠁳󠁣󠁴󠁿", UProperty.RGI_EMOJI));
+
+        assertTrue("bicyclist is RGI_Emoji", hbp("🚴", UProperty.RGI_EMOJI));
+        assertTrue("bicyclist+medium is RGI_Emoji",
+                   hbp("🚴" + UTF16.valueOf(0x1F3FD), UProperty.RGI_EMOJI));
+
+        assertFalse("woman+dark+ZWJ is not RGI_Emoji",
+                    hbp("👩" + UTF16.valueOf(0x1F3FF) + "\u200D", UProperty.RGI_EMOJI));
+        assertTrue("woman pilot: dark skin tone is RGI_Emoji",
+                   hbp("👩" + UTF16.valueOf(0x1F3FF) + "\u200D✈\uFE0F", UProperty.RGI_EMOJI));
+
+        // UnicodeSet with properties of strings
+        UnicodeSet basic = new UnicodeSet("[:Basic_Emoji:]");
+        UnicodeSet keycaps = new UnicodeSet("[:Emoji_Keycap_Sequence:]");
+        UnicodeSet modified = new UnicodeSet("[:RGI_Emoji_Modifier_Sequence:]");
+        UnicodeSet flags = new UnicodeSet("[:RGI_Emoji_Flag_Sequence:]");
+        UnicodeSet tags = new UnicodeSet("[:RGI_Emoji_Tag_Sequence:]");
+        UnicodeSet combos = new UnicodeSet("[:RGI_Emoji_ZWJ_Sequence:]");
+        UnicodeSet rgi = new UnicodeSet("[:RGI_Emoji:]");
+
+        // union of all sets except for "rgi" -- should be the same as "rgi"
+        UnicodeSet all = new UnicodeSet(basic);
+        all.addAll(keycaps).addAll(modified).addAll(flags).addAll(tags).addAll(combos);
+
+        UnicodeSet basicOnlyCp = new UnicodeSet(basic).removeAllStrings();
+        UnicodeSet rgiOnlyCp = new UnicodeSet(rgi).removeAllStrings();
+
+        assertTrue("lots of Basic_Emoji", basic.size() > 1000);
+        assertEquals("12 Emoji_Keycap_Sequence", 12, keycaps.size());
+        assertTrue("lots of RGI_Emoji_Modifier_Sequence", modified.size() > 600);
+        assertTrue("lots of RGI_Emoji_Flag_Sequence", flags.size() > 250);
+        assertTrue("some RGI_Emoji_Tag_Sequence", tags.size() >= 3);
+        assertTrue("lots of RGI_Emoji_ZWJ_Sequence", combos.size() > 1300);
+        assertTrue("lots of RGI_Emoji", rgi.size() > 3000);
+
+        assertTrue("lots of Basic_Emoji code points", basicOnlyCp.size() > 1000);
+        assertTrue("Basic_Emoji.hasStrings()", basic.hasStrings());
+        assertEquals("no Emoji_Keycap_Sequence code points", 0, keycaps.getRangeCount());
+        assertEquals("lots of RGI_Emoji_Modifier_Sequence", 0, modified.getRangeCount());
+        assertEquals("lots of RGI_Emoji_Flag_Sequence", 0, flags.getRangeCount());
+        assertEquals("some RGI_Emoji_Tag_Sequence", 0, tags.getRangeCount());
+        assertEquals("lots of RGI_Emoji_ZWJ_Sequence", 0, combos.getRangeCount());
+
+        assertTrue("lots of RGI_Emoji code points", rgiOnlyCp.size() > 1000);
+        assertTrue("RGI_Emoji.hasStrings()", rgi.hasStrings());
+        assertEquals("RGI_Emoji/only-cp.size() == Basic_Emoji/only-cp.size()",
+                     rgiOnlyCp.size(), basicOnlyCp.size());
+        assertEquals("RGI_Emoji/only-cp == Basic_Emoji/only-cp", rgiOnlyCp, basicOnlyCp);
+        assertEquals("RGI_Emoji.size() == union.size()", rgi.size(), all.size());
+        assertEquals("RGI_Emoji == union", rgi, all);
+
+        assertTrue("Basic_Emoji.contains(stopwatch+emoji)", basic.contains("⏱\uFE0F"));
+        assertTrue("Basic_Emoji.contains(chipmunk+emoji)", basic.contains("🐿\uFE0F"));
+        assertTrue("Emoji_Keycap_Sequence.contains(4+emoji+keycap)",
+                   keycaps.contains("4\uFE0F\u20E3"));
+        assertTrue("RGI_Emoji_Flag_Sequence.contains([BE])", flags.contains("🇧🇪"));
+        assertTrue("RGI_Emoji_Tag_Sequence.contains([Scotland])", tags.contains("🏴󠁧󠁢󠁳󠁣󠁴󠁿"));
+        assertTrue("RGI_Emoji_Modifier_Sequence.contains(bicyclist+medium)",
+                   modified.contains("🚴" + UTF16.valueOf(0x1F3FD)));
+        assertTrue("RGI_Emoji_ZWJ_Sequence.contains(woman pilot: dark skin tone)",
+                   combos.contains("👩" + UTF16.valueOf(0x1F3FF) + "\u200D✈\uFE0F"));
+        assertTrue("RGI_Emoji.contains(stopwatch+emoji)", rgi.contains("⏱\uFE0F"));
+        assertTrue("RGI_Emoji.contains(chipmunk+emoji)", rgi.contains("🐿\uFE0F"));
+        assertTrue("RGI_Emoji.contains(4+emoji+keycap)", rgi.contains("4\uFE0F\u20E3"));
+        assertTrue("RGI_Emoji.contains([BE] is RGI_Emoji)", rgi.contains("🇧🇪"));
+        assertTrue("RGI_Emoji.contains([flag])", rgi.contains(UTF16.valueOf(0x1F3F4)));
+        assertTrue("RGI_Emoji.contains([Scotland])", rgi.contains("🏴󠁧󠁢󠁳󠁣󠁴󠁿"));
+        assertTrue("RGI_Emoji.contains(bicyclist)", rgi.contains("🚴"));
+        assertTrue("RGI_Emoji.contains(bicyclist+medium)",
+                   rgi.contains("🚴" + UTF16.valueOf(0x1F3FD)));
+        assertTrue("RGI_Emoji.contains(woman pilot: dark skin tone)",
+                   rgi.contains("👩" + UTF16.valueOf(0x1F3FF) + "\u200D✈\uFE0F"));
     }
 
     @Test
@@ -3683,8 +3844,8 @@ public final class UCharacterTest extends TestFmwk
         // Spot-check getBinaryPropertySet() vs. hasBinaryProperty().
         for (int prop = 0; prop < UProperty.BINARY_LIMIT; ++prop) {
             UnicodeSet set = CharacterProperties.getBinaryPropertySet(prop);
-            int size = set.size();
-            if (size == 0) {
+            int count = set.getRangeCount();
+            if (count == 0) {
                 assertFalse("!hasBinaryProperty(U+0020, " + prop + ')',
                         UCharacter.hasBinaryProperty(0x20, prop));
                 assertFalse("!hasBinaryProperty(U+0061, " + prop + ')',
@@ -3692,14 +3853,14 @@ public final class UCharacterTest extends TestFmwk
                 assertFalse("!hasBinaryProperty(U+4E00, " + prop + ')',
                         UCharacter.hasBinaryProperty(0x4e00, prop));
             } else {
-                int c = set.charAt(0);
+                int c = set.getRangeStart(0);
                 if (c > 0) {
                     assertFalse("!hasBinaryProperty(" + Utility.hex(c - 1) + ", " + prop + ')',
                             UCharacter.hasBinaryProperty(c - 1, prop));
                 }
                 assertTrue("hasBinaryProperty(" + Utility.hex(c) + ", " + prop + ')',
                         UCharacter.hasBinaryProperty(c, prop));
-                c = set.charAt(size - 1);
+                c = set.getRangeEnd(count - 1);
                 assertTrue("hasBinaryProperty(" + Utility.hex(c) + ", " + prop + ')',
                         UCharacter.hasBinaryProperty(c, prop));
                 if (c < 0x10ffff) {
@@ -3732,5 +3893,94 @@ public final class UCharacterTest extends TestFmwk
             assertEquals("int property later range value at " + Utility.hex(end),
                     UCharacter.getIntPropertyValue(end, prop), range.getValue());
         }
+    }
+
+    private static final String getPropName(int property, int nameChoice) {
+        try {
+            return UCharacter.getPropertyName(property, nameChoice);
+        } catch(IllegalArgumentException e) {
+            return "null";
+        }
+    }
+
+    private static final String getValueName(int property, int value, int nameChoice) {
+        try {
+            return UCharacter.getPropertyValueName(property, value, nameChoice);
+        } catch(IllegalArgumentException e) {
+            return "null";
+        }
+    }
+
+    @Test
+    public void TestPropertyNames() {
+        // Test names of certain properties & values.
+        // The UProperty.NameChoice is really an integer with only a couple of named constants.
+        int prop = UProperty.WHITE_SPACE;
+        final int SHORT = UProperty.NameChoice.SHORT;
+        final int LONG = UProperty.NameChoice.LONG;
+        assertEquals("White_Space: index -1", "null", getPropName(prop, -1));
+        assertEquals("White_Space: short", "WSpace", getPropName(prop, SHORT));
+        assertEquals("White_Space: long", "White_Space", getPropName(prop, LONG));
+        assertEquals("White_Space: index 2", "space", getPropName(prop, 2));
+        assertEquals("White_Space: index 3", "null", getPropName(prop, 3));
+
+        prop = UProperty.SIMPLE_CASE_FOLDING;
+        assertEquals("Simple_Case_Folding: index -1", "null", getPropName(prop, -1));
+        assertEquals("Simple_Case_Folding: short", "scf", getPropName(prop, SHORT));
+        assertEquals("Simple_Case_Folding: long", "Simple_Case_Folding", getPropName(prop, LONG));
+        assertEquals("Simple_Case_Folding: index 2", "sfc", getPropName(prop, 2));
+        assertEquals("Simple_Case_Folding: index 3", "null", getPropName(prop, 3));
+
+        prop = UProperty.CASED;
+        assertEquals("Cased=Y: index -1", "null", getValueName(prop, 1, -1));
+        assertEquals("Cased=Y: short", "Y", getValueName(prop, 1, SHORT));
+        assertEquals("Cased=Y: long", "Yes", getValueName(prop, 1, LONG));
+        assertEquals("Cased=Y: index 2", "T", getValueName(prop, 1, 2));
+        assertEquals("Cased=Y: index 3", "True", getValueName(prop, 1, 3));
+        assertEquals("Cased=Y: index 4", "null", getValueName(prop, 1, 4));
+
+        prop = UProperty.DECOMPOSITION_TYPE;
+        int value = UCharacter.DecompositionType.NOBREAK;
+        assertEquals("dt=Nb: index -1", "null", getValueName(prop, value, -1));
+        assertEquals("dt=Nb: short", "Nb", getValueName(prop, value, SHORT));
+        assertEquals("dt=Nb: long", "Nobreak", getValueName(prop, value, LONG));
+        assertEquals("dt=Nb: index 2", "nb", getValueName(prop, value, 2));
+        assertEquals("dt=Nb: index 3", "null", getValueName(prop, value, 3));
+
+        // Canonical_Combining_Class:
+        // The UCD inserts the numeric values in the second filed of its
+        // PropertyValueAliases.txt lines.
+        // In ICU, we don't treat these as names,
+        // they are just the numeric values returned by u_getCombiningClass().
+        // We return the real short and long names for the usual choice constants.
+        prop = UProperty.CANONICAL_COMBINING_CLASS;
+        assertEquals("ccc=230: index -1", "null", getValueName(prop, 230, -1));
+        assertEquals("ccc=230: short", "A", getValueName(prop, 230, SHORT));
+        assertEquals("ccc=230: long", "Above", getValueName(prop, 230, LONG));
+        assertEquals("ccc=230: index 2", "null", getValueName(prop, 230, 2));
+
+        prop = UProperty.GENERAL_CATEGORY;
+        value = UCharacterCategory.DECIMAL_DIGIT_NUMBER;
+        assertEquals("gc=Nd: index -1", "null", getValueName(prop, value, -1));
+        assertEquals("gc=Nd: short", "Nd", getValueName(prop, value, SHORT));
+        assertEquals("gc=Nd: long", "Decimal_Number", getValueName(prop, value, LONG));
+        assertEquals("gc=Nd: index 2", "digit", getValueName(prop, value, 2));
+        assertEquals("gc=Nd: index 3", "null", getValueName(prop, value, 3));
+
+        prop = UProperty.GENERAL_CATEGORY_MASK;
+        final int U_GC_P_MASK =
+                (1 << UCharacterCategory.DASH_PUNCTUATION) |
+                (1 << UCharacterCategory.START_PUNCTUATION) |
+                (1 << UCharacterCategory.END_PUNCTUATION) |
+                (1 << UCharacterCategory.CONNECTOR_PUNCTUATION) |
+                (1 << UCharacterCategory.OTHER_PUNCTUATION) |
+                (1 << UCharacterCategory.INITIAL_PUNCTUATION) |
+                (1 << UCharacterCategory.FINAL_PUNCTUATION);
+        value = U_GC_P_MASK;
+        assertEquals("gc=P mask: index -1", "null", getValueName(prop, value, -1));
+        assertEquals("gc=P mask: short", "P", getValueName(prop, value, SHORT));
+        assertEquals("gc=P mask: long", "Punctuation", getValueName(prop, value, LONG));
+        assertEquals("gc=P mask: index 2", "punct", getValueName(prop, value, 2));
+        assertEquals("gc=P mask: index 3", "null", getValueName(prop, value, 3));
     }
 }

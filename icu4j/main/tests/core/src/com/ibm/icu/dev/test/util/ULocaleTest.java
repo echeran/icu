@@ -822,6 +822,20 @@ public class ULocaleTest extends TestFmwk {
                 { "ji", "yid", "ji", "", "" },
                 { "jw", "jaw", "jw", "", "" },
                 { "sh", "srp", "sh", "", "" },
+                { "mo", "ron", "mo", "", "" },
+                // and some non-obsolete ones
+                { "az", "aze", "az", "", "" },
+                { "cy", "cym", "cy", "", "" },
+                { "hz", "her", "hz", "", "" },
+                { "ky", "kir", "ky", "", "" },
+                { "na", "nau", "na", "", "" },
+                { "sa", "san", "sa", "", "" },
+                { "ts", "tso", "ts", "", "" },
+                { "zu", "zul", "zu", "", "" },
+                { "zz_DG", "", "zz", "DGA", "DG" },
+                { "zz_IC", "", "zz", "XIC", "IC" },
+                { "zz_XK", "", "zz", "XKK", "XK" },
+                // terminator
                 { "", "", "", "", "" }
         };
 
@@ -1189,22 +1203,22 @@ public class ULocaleTest extends TestFmwk {
                 new Item("da", NM_DIA, CAP_BEG, LEN_FU, SUB_SU, "en_GB", "Britisk engelsk"),
                 new Item("da", NM_DIA, CAP_UIL, LEN_FU, SUB_SU, "en_GB", "Britisk engelsk"),
                 new Item("da", NM_DIA, CAP_STA, LEN_FU, SUB_SU, "en_GB", "britisk engelsk"),
-                new Item("es", NM_STD, CAP_MID, LEN_FU, SUB_SU, "en", "ingl\u00E9s"),
-                new Item("es", NM_STD, CAP_BEG, LEN_FU, SUB_SU, "en", "Ingl\u00E9s"),
-                new Item("es", NM_STD, CAP_UIL, LEN_FU, SUB_SU, "en", "Ingl\u00E9s"),
-                new Item("es", NM_STD, CAP_STA, LEN_FU, SUB_SU, "en", "Ingl\u00E9s"),
-                new Item("es", NM_STD, CAP_MID, LEN_FU, SUB_SU, "en_GB", "ingl\u00E9s (Reino Unido)"),
-                new Item("es", NM_STD, CAP_BEG, LEN_FU, SUB_SU, "en_GB", "Ingl\u00E9s (Reino Unido)"),
-                new Item("es", NM_STD, CAP_UIL, LEN_FU, SUB_SU, "en_GB", "Ingl\u00E9s (Reino Unido)"),
-                new Item("es", NM_STD, CAP_STA, LEN_FU, SUB_SU, "en_GB", "Ingl\u00E9s (Reino Unido)"),
-                new Item("es", NM_STD, CAP_MID, LEN_SH, SUB_SU, "en_GB", "ingl\u00E9s (RU)"),
-                new Item("es", NM_STD, CAP_BEG, LEN_SH, SUB_SU, "en_GB", "Ingl\u00E9s (RU)"),
-                new Item("es", NM_STD, CAP_UIL, LEN_SH, SUB_SU, "en_GB", "Ingl\u00E9s (RU)"),
-                new Item("es", NM_STD, CAP_STA, LEN_SH, SUB_SU, "en_GB", "Ingl\u00E9s (RU)"),
-                new Item("es", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_GB", "ingl\u00E9s brit\u00E1nico"),
-                new Item("es", NM_DIA, CAP_BEG, LEN_FU, SUB_SU, "en_GB", "Ingl\u00E9s brit\u00E1nico"),
-                new Item("es", NM_DIA, CAP_UIL, LEN_FU, SUB_SU, "en_GB", "Ingl\u00E9s brit\u00E1nico"),
-                new Item("es", NM_DIA, CAP_STA, LEN_FU, SUB_SU, "en_GB", "Ingl\u00E9s brit\u00E1nico"),
+                new Item("es", NM_STD, CAP_MID, LEN_FU, SUB_SU, "en", "inglés"),
+                new Item("es", NM_STD, CAP_BEG, LEN_FU, SUB_SU, "en", "Inglés"),
+                new Item("es", NM_STD, CAP_UIL, LEN_FU, SUB_SU, "en", "Inglés"),
+                new Item("es", NM_STD, CAP_STA, LEN_FU, SUB_SU, "en", "Inglés"),
+                new Item("es", NM_STD, CAP_MID, LEN_FU, SUB_SU, "en_GB", "inglés (Reino Unido)"),
+                new Item("es", NM_STD, CAP_BEG, LEN_FU, SUB_SU, "en_GB", "Inglés (Reino Unido)"),
+                new Item("es", NM_STD, CAP_UIL, LEN_FU, SUB_SU, "en_GB", "Inglés (Reino Unido)"),
+                new Item("es", NM_STD, CAP_STA, LEN_FU, SUB_SU, "en_GB", "Inglés (Reino Unido)"),
+                new Item("es", NM_STD, CAP_MID, LEN_SH, SUB_SU, "en_GB", "inglés (RU)"),
+                new Item("es", NM_STD, CAP_BEG, LEN_SH, SUB_SU, "en_GB", "Inglés (RU)"),
+                new Item("es", NM_STD, CAP_UIL, LEN_SH, SUB_SU, "en_GB", "Inglés (RU)"),
+                new Item("es", NM_STD, CAP_STA, LEN_SH, SUB_SU, "en_GB", "Inglés (RU)"),
+                new Item("es", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_GB", "inglés británico"),
+                new Item("es", NM_DIA, CAP_BEG, LEN_FU, SUB_SU, "en_GB", "Inglés británico"),
+                new Item("es", NM_DIA, CAP_UIL, LEN_FU, SUB_SU, "en_GB", "Inglés británico"),
+                new Item("es", NM_DIA, CAP_STA, LEN_FU, SUB_SU, "en_GB", "Inglés británico"),
                 new Item("ru", NM_STD, CAP_MID, LEN_FU, SUB_SU, "uz_Latn", "\u0443\u0437\u0431\u0435\u043A\u0441\u043A\u0438\u0439 (\u043B\u0430\u0442\u0438\u043D\u0438\u0446\u0430)"),
                 new Item("ru", NM_STD, CAP_BEG, LEN_FU, SUB_SU, "uz_Latn", "\u0423\u0437\u0431\u0435\u043A\u0441\u043A\u0438\u0439 (\u043B\u0430\u0442\u0438\u043D\u0438\u0446\u0430)"),
                 new Item("ru", NM_STD, CAP_UIL, LEN_FU, SUB_SU, "uz_Latn", "\u0423\u0437\u0431\u0435\u043A\u0441\u043A\u0438\u0439 (\u043B\u0430\u0442\u0438\u043D\u0438\u0446\u0430)"),
@@ -1214,6 +1228,51 @@ public class ULocaleTest extends TestFmwk {
                 new Item("en", NM_STD, CAP_MID, LEN_SH, SUB_SU, "ur@numbers=arabext", "Urdu (X Arabic-Indic Digits)"),
                 new Item("af", NM_STD, CAP_NON, LEN_FU, SUB_NO, "aa", "Afar"),
                 new Item("cs", NM_STD, CAP_NON, LEN_FU, SUB_NO, "vai", "vai"),
+                // https://unicode-org.atlassian.net/browse/ICU-20870:
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "fa_AF",  "Persian (Afghanistan)" ),
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "prs",    "Dari" ),
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "prs_AF", "Dari (Afghanistan)" ),
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "prs_TJ", "Dari (Tajikistan)" ),
+                new Item("en", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "fa_AF",  "Dari" ),
+                new Item("en", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "prs",    "Dari" ),
+                new Item("en", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "prs_AF", "Dari (Afghanistan)" ),
+                new Item("en", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "prs_TJ", "Dari (Tajikistan)" ),
+                // https://unicode-org.atlassian.net/browse/ICU-21742:
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "ji",     "Yiddish" ),
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "ji_US",  "Yiddish (United States)" ),
+                new Item("yi", NM_STD, CAP_MID, LEN_FU, SUB_SU, "ji",     "ייִדיש" ),
+                new Item("yi", NM_STD, CAP_MID, LEN_FU, SUB_SU, "ji_US",  "ייִדיש (פֿאַראייניגטע שטאַטן)" ),
+                 // https://unicode-org.atlassian.net/browse/ICU-11563:
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "mo",     "Romanian" ),
+                new Item("en", NM_STD, CAP_MID, LEN_FU, SUB_SU, "mo_MD",  "Romanian (Moldova)" ),
+                new Item("en", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "mo",     "Romanian" ),
+                new Item("ro", NM_STD, CAP_MID, LEN_FU, SUB_SU, "mo",     "română" ),
+                new Item("ro", NM_STD, CAP_MID, LEN_FU, SUB_SU, "mo_MD",  "română (Republica Moldova)" ),
+                 // https://unicode-org.atlassian.net/browse/ICU-10297:
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "ar_001", "现代标准阿拉伯语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "nl_BE",  "弗拉芒语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "ro_MD",  "摩尔多瓦语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_AU",  "澳大利亚英语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_CA",  "加拿大英语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_GB",  "英国英语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_US",  "美国英语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "es_419", "拉丁美洲西班牙语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "es_ES",  "欧洲西班牙语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "es_MX",  "墨西哥西班牙语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "fr_CA",  "加拿大法语" ),
+                new Item("zh",      NM_DIA, CAP_MID, LEN_FU, SUB_SU, "fr_CH",  "瑞士法语" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "ar_001", "現代標準阿拉伯文" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "nl_BE",  "佛蘭芒文" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "ro_MD",  "摩爾多瓦文" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_AU",  "英文（澳洲）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_CA",  "英文（加拿大）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_GB",  "英文（英國）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "en_US",  "英文（美國）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "es_419", "西班牙文（拉丁美洲）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "es_ES",  "西班牙文（西班牙）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "es_MX",  "西班牙文（墨西哥）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "fr_CA",  "法文（加拿大）" ),
+                new Item("zh_Hant", NM_DIA, CAP_MID, LEN_FU, SUB_SU, "fr_CH",  "法文（瑞士）" ),
             };
             for (Item item: items) {
                 ULocale locale = new ULocale(item.displayLocale);
@@ -1227,14 +1286,44 @@ public class ULocaleTest extends TestFmwk {
                 DisplayContext substituteHandling = ldn.getContext(DisplayContext.Type.SUBSTITUTE_HANDLING);
                 if (dialectHandling != item.dialectHandling || capitalization != item.capitalization || nameLength != item.nameLength || substituteHandling != item.substituteHandling) {
                     errln("FAIL: displayLoc: " + item.displayLocale + ", dialectNam?: " + item.dialectHandling +
-                            ", capitalize: " + item.capitalization + ", nameLen: " + item.nameLength + ", substituteHandling: " + item.substituteHandling + ", locToName: " + item.localeToBeNamed +
-                            ", => read back dialectNam?: " + dialectHandling + ", capitalize: " + capitalization + ", nameLen: " + nameLength + ", substituteHandling: " + substituteHandling);
+                            ", capitalize: " + item.capitalization + ", nameLen: " + item.nameLength +
+                            ", substituteHandling: " + item.substituteHandling + ", locToName: " + item.localeToBeNamed +
+                            ", => read back dialectNam?: " + dialectHandling + ", capitalize: " + capitalization +
+                            ", nameLen: " + nameLength + ", substituteHandling: " + substituteHandling);
                 } else {
+                    boolean checkULocaleDisplay = (dialectHandling==NM_STD && capitalization==CAP_MID && nameLength==LEN_FU && substituteHandling==SUB_SU);
+                    boolean checkJustLanguage = item.localeToBeNamed.matches("[a-z]{2,3}");
                     String result = ldn.localeDisplayName(item.localeToBeNamed);
                     if (!(item.result == null && result == null) && !(result != null && result.equals(item.result))) {
                         errln("FAIL: displayLoc: " + item.displayLocale + ", dialectNam?: " + item.dialectHandling +
-                                ", capitalize: " + item.capitalization + ", nameLen: " + item.nameLength + ", substituteHandling: " + item.substituteHandling + ", locToName: " + item.localeToBeNamed +
-                                ", => expected result: " + item.result + ", got: " + result);
+                                ", capitalize: " + item.capitalization + ", nameLen: " + item.nameLength +
+                                ", substituteHandling: " + item.substituteHandling + "; locToName: " + item.localeToBeNamed +
+                                ", => expected result: " + item.result + ", got LDN name: " + result);
+                    }
+                    if (checkULocaleDisplay) {
+                        result = ULocale.getDisplayName(item.localeToBeNamed, locale);
+                        if (!(item.result == null && result == null) && !(result != null && result.equals(item.result))) {
+                            errln("FAIL: displayLoc: " + item.displayLocale +
+                                    ", dialectNam: std, capitalize: mid, nameLen: full, substitute: yes; locToName: " + item.localeToBeNamed +
+                                    ", => expected result: " + item.result + ", got ULoc name: " + result);
+                        }
+                    }
+                    if (checkJustLanguage) {
+                        result = ldn.languageDisplayName(item.localeToBeNamed);
+                        if (!(item.result == null && result == null) && !(result != null && result.equals(item.result))) {
+                            errln("FAIL: displayLoc: " + item.displayLocale + ", dialectNam?: " + item.dialectHandling +
+                                    ", capitalize: " + item.capitalization + ", nameLen: " + item.nameLength +
+                                    ", substituteHandling: " + item.substituteHandling + "; locToName: " + item.localeToBeNamed +
+                                    ", => expected result: " + item.result + ", got LDN lang: " + result);
+                        }
+                        if (checkULocaleDisplay) {
+                            result = ULocale.getDisplayLanguage(item.localeToBeNamed, locale);
+                            if (!(item.result == null && result == null) && !(result != null && result.equals(item.result))) {
+                                errln("FAIL: displayLoc: " + item.displayLocale +
+                                        ", dialectNam: std, capitalize: mid, nameLen: full, substitute: yes; locToName: " + item.localeToBeNamed +
+                                        ", => expected result: " + item.result + ", got ULoc lang: " + result);
+                            }
+                        }
                     }
                 }
             }
@@ -2249,7 +2338,7 @@ public class ULocaleTest extends TestFmwk {
                     "pa_PK"
                 }, {
                     "pap",
-                    "pap_Latn_AW",
+                    "pap_Latn_CW",
                     "pap"
                 }, {
                     "pau",
@@ -3946,7 +4035,7 @@ public class ULocaleTest extends TestFmwk {
                 }, {
                     "aae_Latn_IT",
                     "aae_Latn_IT",
-                    "aae_Latn_IT"
+                    "aae"
                 }, {
                     "aae_Thai_CO",
                     "aae_Thai_CO",
@@ -3954,7 +4043,7 @@ public class ULocaleTest extends TestFmwk {
                 }, {
                     "und_CW",
                     "pap_Latn_CW",
-                    "pap_CW"
+                    "pap"
                 }, {
                     "zh_Hant",
                     "zh_Hant_TW",

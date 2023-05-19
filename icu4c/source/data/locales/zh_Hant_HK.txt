@@ -147,10 +147,15 @@ zh_Hant_HK{
             }
             availableFormats{
                 Ed{"d日E"}
+                GyMMMM{"r(U)年MMMM"}
+                GyMMMMEd{"r(U)年MMMMd日 E"}
+                GyMMMMd{"r(U)年MMMMd日"}
                 H{"HH"}
                 h{"ah時"}
                 hm{"ah:mm"}
                 hms{"ah:mm:ss"}
+                yyyyMMMMEd{"r(U)年MMMMd日 E"}
+                yyyyMMMMd{"r(U)年MMMMd日"}
             }
             intervalFormats{
                 h{
@@ -286,6 +291,21 @@ zh_Hant_HK{
             }
         }
         dangi{
+            DateTimePatterns{
+                "ah:mm:ss [zzzz]",
+                "ah:mm:ss [z]",
+                "ah:mm:ss",
+                "ah:mm",
+                "U年MMMd日EEEE",
+                "U年MMMd日",
+                "U年MMMd日",
+                "U/M/d",
+                "{1}, {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1}, {0}",
+                "{1}, {0}",
+            }
             intervalFormats{
                 h{
                     a{"ah時至ah時"}
@@ -345,10 +365,15 @@ zh_Hant_HK{
                 "{1} {0}",
                 "{1} {0}",
             }
+            DateTimePatterns%atTime{
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
             availableFormats{
                 Ed{"d日E"}
                 Ehm{"E ah:mm"}
-                Ehms{"E ah:mm:ss"}
                 Gy{"Gy年"}
                 GyMMM{"Gy年M月"}
                 GyMMMEd{"Gy年M月d日E"}
@@ -356,9 +381,6 @@ zh_Hant_HK{
                 MEd{"d/M（E）"}
                 MMMEd{"M月d日E"}
                 Md{"d/M"}
-                h{"ah時"}
-                hm{"ah:mm"}
-                hms{"ah:mm:ss"}
                 y{"Gy年"}
                 yyyy{"Gy年"}
                 yyyyM{"Gy/M"}
@@ -567,21 +589,17 @@ zh_Hant_HK{
                     d{"d/M 至 d/M"}
                 }
                 h{
-                    a{"ah時至ah時"}
                     h{"ah時至h時"}
                 }
                 hm{
-                    a{"ah:mm至ah:mm"}
                     h{"ah:mm至h:mm"}
                     m{"ah:mm至h:mm"}
                 }
                 hmv{
-                    a{"ah:mm至ah:mm [v]"}
                     h{"ah:mm至h:mm [v]"}
                     m{"ah:mm至h:mm [v]"}
                 }
                 hv{
-                    a{"ah時至ah時 [v]"}
                     h{"ah時至h時 [v]"}
                 }
                 yM{
@@ -685,6 +703,21 @@ zh_Hant_HK{
             }
         }
         japanese{
+            DateTimePatterns{
+                "ah:mm:ss [zzzz]",
+                "ah:mm:ss [z]",
+                "ah:mm:ss",
+                "ah:mm",
+                "Gy年M月d日EEEE",
+                "Gy年M月d日",
+                "Gy年M月d日",
+                "Gy/M/d",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+                "{1} {0}",
+            }
             availableFormats{
                 h{"ah時"}
                 hm{"ah:mm"}
@@ -1288,6 +1321,10 @@ zh_Hant_HK{
     }
     listPattern{
         standard{
+            2{"{0}及{1}"}
+            end{"{0}及{1}"}
+        }
+        standard-narrow{
             2{"{0}及{1}"}
             end{"{0}及{1}"}
         }

@@ -132,8 +132,8 @@ import com.ibm.icu.util.VersionInfo;
  * "[:Lu:]" and the Perl-like syntax "\p{Lu}" are recognized.  For a
  * complete list of supported property patterns, see the User's Guide
  * for UnicodeSet at
- * <a href="http://www.icu-project.org/userguide/unicodeSet.html">
- * http://www.icu-project.org/userguide/unicodeSet.html</a>.
+ * <a href="https://unicode-org.github.io/icu/userguide/strings/unicodeset">
+ * https://unicode-org.github.io/icu/userguide/strings/unicodeset</a>.
  * Actual determination of property data is defined by the underlying
  * Unicode database as implemented by UCharacter.
  *
@@ -143,6 +143,13 @@ import com.ibm.icu.util.VersionInfo;
  * after the opening '['.  Property patterns are inverted by modifying
  * their delimiters; "[:^foo]" and "\P{foo}".  In any other location,
  * '^' has no special meaning.
+ *
+ * <p>Since ICU 70, "[^...]", "[:^foo]", "\P{foo}", and "[:binaryProperty=No:]"
+ * perform a “code point complement” (all code points minus the original set),
+ * removing all multicharacter strings,
+ * equivalent to .{@link #complement()}.{@link #removeAllStrings()} .
+ * The {@link #complement()} API function continues to perform a
+ * symmetric difference with all code points and thus retains all multicharacter strings.
  *
  * <p>Ranges are indicated by placing two a '-' between two
  * characters, as in "a-z".  This specifies the range of all
@@ -225,9 +232,8 @@ import com.ibm.icu.util.VersionInfo;
  *     </tr>
  *     <tr style="vertical-align: top">
  *       <td style="white-space: nowrap; vertical-align: top;" align="right"><code>hex :=&nbsp; </code></td>
- *       <td style="vertical-align: top;"><em>any character for which
- *       </em><code>Character.digit(c, 16)</code><em>
- *       returns a non-negative result</em></td>
+ *       <td style="vertical-align: top;"><code>'0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' |<br>
+ *       &nbsp;&nbsp;&nbsp;&nbsp;'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f'</code></td>
  *     </tr>
  *     <tr>
  *       <td style="white-space: nowrap; vertical-align: top;" align="right"><code>property :=&nbsp; </code></td>
@@ -453,7 +459,9 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * for the syntax of the pattern language.
      * @param pattern a string specifying what characters are in the set
      * @param options a bitmask indicating which options to apply.
-     * Valid options are IGNORE_SPACE and CASE.
+     * Valid options are {@link #IGNORE_SPACE} and
+     * at most one of {@link #CASE_INSENSITIVE}, {@link #ADD_CASE_MAPPINGS},
+     * {@link #SIMPLE_CASE_INSENSITIVE}. These case options are mutually exclusive.
      * @exception java.lang.IllegalArgumentException if the pattern contains
      * a syntax error.
      * @stable ICU 3.8
@@ -489,7 +497,9 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * @param symbols a symbol table mapping variables to char[] arrays
      * and chars to UnicodeSets
      * @param options a bitmask indicating which options to apply.
-     * Valid options are IGNORE_SPACE and CASE.
+     * Valid options are {@link #IGNORE_SPACE} and
+     * at most one of {@link #CASE_INSENSITIVE}, {@link #ADD_CASE_MAPPINGS},
+     * {@link #SIMPLE_CASE_INSENSITIVE}. These case options are mutually exclusive.
      * @exception java.lang.IllegalArgumentException if the pattern
      * contains a syntax error.
      * @stable ICU 3.2
@@ -581,7 +591,9 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * See the class description for the syntax of the pattern language.
      * @param pattern a string specifying what characters are in the set
      * @param options a bitmask indicating which options to apply.
-     * Valid options are IGNORE_SPACE and CASE.
+     * Valid options are {@link #IGNORE_SPACE} and
+     * at most one of {@link #CASE_INSENSITIVE}, {@link #ADD_CASE_MAPPINGS},
+     * {@link #SIMPLE_CASE_INSENSITIVE}. These case options are mutually exclusive.
      * @exception java.lang.IllegalArgumentException if the pattern
      * contains a syntax error.
      * @stable ICU 3.8
@@ -651,12 +663,10 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      */
     private static <T extends Appendable> T _appendToPat(T buf, int c, boolean escapeUnprintable) {
         try {
-            if (escapeUnprintable && Utility.isUnprintable(c)) {
+            if (escapeUnprintable ? Utility.isUnprintable(c) : Utility.shouldAlwaysBeEscaped(c)) {
                 // Use hex escape notation (<backslash>uxxxx or <backslash>Uxxxxxxxx) for anything
                 // unprintable
-                if (Utility.escapeUnprintable(buf, c)) {
-                    return buf;
-                }
+                return Utility.escape(buf, c);
             }
             // Okay to let ':' pass through
             switch (c) {
@@ -686,6 +696,24 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
         }
     }
 
+    private static <T extends Appendable> T _appendToPat(
+            T result, int start, int end, boolean escapeUnprintable) {
+        _appendToPat(result, start, escapeUnprintable);
+        if (start != end) {
+            if ((start+1) != end ||
+                    // Avoid writing what looks like a lead+trail surrogate pair.
+                    start == 0xdbff) {
+                try {
+                    result.append('-');
+                } catch (IOException e) {
+                    throw new ICUUncheckedIOException(e);
+                }
+            }
+            _appendToPat(result, end, escapeUnprintable);
+        }
+        return result;
+    }
+
     /**
      * Returns a string representation of this set.  If the result of
      * calling this function is passed to a UnicodeSet constructor, it
@@ -713,6 +741,10 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
         }
         try {
             if (!escapeUnprintable) {
+                // TODO: The C++ version does not have this shortcut, and instead
+                // always cleans up the pattern string,
+                // which also escapes Utility.shouldAlwaysBeEscaped(c).
+                // We should sync these implementations.
                 result.append(pat);
                 return result;
             }
@@ -724,7 +756,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
                     // If the unprintable character is preceded by an odd
                     // number of backslashes, then it has been escaped
                     // and we omit the last backslash.
-                    Utility.escapeUnprintable(result, c);
+                    Utility.escape(result, c);
                     oddNumberOfBackslashes = false;
                 } else if (!oddNumberOfBackslashes && c == '\\') {
                     // Temporarily withhold an odd-numbered backslash.
@@ -750,6 +782,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * Generate and append a string representation of this set to result.
      * This does not use this.pat, the cleaned up copy of the string
      * passed to applyPattern().
+     *
      * @param result the buffer into which to generate the pattern
      * @param escapeUnprintable escape unprintable characters if true
      * @stable ICU 2.0
@@ -762,6 +795,9 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * Generate and append a string representation of this set to result.
      * This does not use this.pat, the cleaned up copy of the string
      * passed to applyPattern().
+     *
+     * @param result the buffer into which to generate the pattern
+     * @param escapeUnprintable escape unprintable characters if true
      * @param includeStrings if false, doesn't include the strings.
      * @stable ICU 3.8
      */
@@ -770,47 +806,58 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
         return appendNewPattern(result, escapeUnprintable, includeStrings);
     }
 
+    // Implementation of public _generatePattern().
+    // Allows other callers to use a StringBuilder while the existing API is stuck with StringBuffer.
     private <T extends Appendable> T appendNewPattern(
             T result, boolean escapeUnprintable, boolean includeStrings) {
         try {
             result.append('[');
 
-            int count = getRangeCount();
+            int i = 0;
+            int limit = len & ~1;  // = 2 * getRangeCount()
 
             // If the set contains at least 2 intervals and includes both
             // MIN_VALUE and MAX_VALUE, then the inverse representation will
             // be more economical.
-            if (count > 1 &&
-                    getRangeStart(0) == MIN_VALUE &&
-                    getRangeEnd(count-1) == MAX_VALUE) {
-
+            //     if (getRangeCount() >= 2 &&
+            //             getRangeStart(0) == MIN_VALUE &&
+            //             getRangeEnd(last) == MAX_VALUE)
+            // Invariant: list[len-1] == HIGH == MAX_VALUE + 1
+            // If limit == len then len is even and the last range ends with MAX_VALUE.
+            //
+            // *But* do not write the inverse (complement) if there are strings.
+            // Since ICU 70, the '^' performs a code point complement which removes all strings.
+            if (len >= 4 && list[0] == 0 && limit == len && !hasStrings()) {
                 // Emit the inverse
                 result.append('^');
-
-                for (int i = 1; i < count; ++i) {
-                    int start = getRangeEnd(i-1)+1;
-                    int end = getRangeStart(i)-1;
-                    _appendToPat(result, start, escapeUnprintable);
-                    if (start != end) {
-                        if ((start+1) != end) {
-                            result.append('-');
-                        }
-                        _appendToPat(result, end, escapeUnprintable);
-                    }
-                }
+                // Offsetting the inversion list index by one lets us
+                // iterate over the ranges of the set complement.
+                i = 1;
+                --limit;
             }
 
-            // Default; emit the ranges as pairs
-            else {
-                for (int i = 0; i < count; ++i) {
-                    int start = getRangeStart(i);
-                    int end = getRangeEnd(i);
-                    _appendToPat(result, start, escapeUnprintable);
-                    if (start != end) {
-                        if ((start+1) != end) {
-                            result.append('-');
-                        }
-                        _appendToPat(result, end, escapeUnprintable);
+            // Emit the ranges as pairs.
+            while (i < limit) {
+                int start = list[i];  // getRangeStart()
+                int end = list[i + 1] - 1;  // getRangeEnd() = range limit minus one
+                if (!(0xd800 <= end && end <= 0xdbff)) {
+                    _appendToPat(result, start, end, escapeUnprintable);
+                    i += 2;
+                } else {
+                    // The range ends with a lead surrogate.
+                    // Avoid writing what looks like a lead+trail surrogate pair.
+                    // 1. Postpone ranges that start with a lead surrogate code point.
+                    int firstLead = i;
+                    while ((i += 2) < limit && list[i] <= 0xdbff) {}
+                    int firstAfterLead = i;
+                    // 2. Write following ranges that start with a trail surrogate code point.
+                    while (i < limit && (start = list[i]) <= 0xdfff) {
+                        _appendToPat(result, start, list[i + 1] - 1, escapeUnprintable);
+                        i += 2;
+                    }
+                    // 3. Now write the postponed ranges.
+                    for (int j = firstLead; j < firstAfterLead; j += 2) {
+                        _appendToPat(result, list[j], list[j + 1] - 1, escapeUnprintable);
                     }
                 }
             }
@@ -858,7 +905,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
 
     /**
      * @return true if this set contains multi-character strings or the empty string.
-     * @draft ICU 70
+     * @stable ICU 70
      */
     public boolean hasStrings() {
         return !strings.isEmpty();
@@ -1658,6 +1705,12 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
     /**
      * This is equivalent to
      * <code>complement(MIN_VALUE, MAX_VALUE)</code>.
+     *
+     * <p><strong>Note:</strong> This performs a symmetric difference with all code points
+     * <em>and thus retains all multicharacter strings</em>.
+     * In order to achieve a “code point complement” (all code points minus this set),
+     * the easiest is to .{@link #complement()}.{@link #removeAllStrings()} .
+     *
      * @stable ICU 2.0
      */
     public UnicodeSet complement() {
@@ -2537,8 +2590,10 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * variables, or null if none.
      * @param rebuiltPat the pattern that was parsed, rebuilt or
      * copied from the input pattern, as appropriate.
-     * @param options a bit mask of zero or more of the following:
-     * IGNORE_SPACE, CASE.
+     * @param options a bit mask.
+     * Valid options are {@link #IGNORE_SPACE} and
+     * at most one of {@link #CASE_INSENSITIVE}, {@link #ADD_CASE_MAPPINGS},
+     * {@link #SIMPLE_CASE_INSENSITIVE}. These case options are mutually exclusive.
      */
     private void applyPattern(RuleCharacterIterator chars, SymbolTable symbols,
             Appendable rebuiltPat, int options, int depth) {
@@ -2918,11 +2973,11 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
          * to close over case BEFORE COMPLEMENTING.  This makes
          * patterns like /[^abc]/i work.
          */
-        if ((options & CASE) != 0) {
-            closeOver(CASE);
+        if ((options & CASE_MASK) != 0) {
+            closeOver(options);
         }
         if (invert) {
-            complement();
+            complement().removeAllStrings();  // code point complement
         }
 
         // Use the rebuilt pattern (pat) only if necessary.  Prefer the
@@ -3443,7 +3498,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
             if (value == 0 || value == 1) {
                 set(CharacterProperties.getBinaryPropertySet(prop));
                 if (value == 0) {
-                    complement();
+                    complement().removeAllStrings();  // code point complement
                 }
             } else {
                 clear();
@@ -3639,7 +3694,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
 
         applyIntPropertyValue(p, v);
         if(invert) {
-            complement();
+            complement().removeAllStrings();  // code point complement
         }
 
         return this;
@@ -3767,7 +3822,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
         applyPropertyAlias(propName, valueName, symbols);
 
         if (invert) {
-            complement();
+            complement().removeAllStrings();  // code point complement
         }
 
         // Move to the limit position after the close delimiter
@@ -3814,57 +3869,81 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
     public static final int IGNORE_SPACE = 1;
 
     /**
-     * Bitmask for constructor, applyPattern(), and closeOver()
-     * indicating letter case.  This may be ORed together with other
-     * selectors.
+     * Alias for {@link #CASE_INSENSITIVE}.
      *
+     * @deprecated ICU 73 Use {@link #CASE_INSENSITIVE} instead.
+     */
+    @Deprecated
+    public static final int CASE = 2;
+
+    /**
      * Enable case insensitive matching.  E.g., "[ab]" with this flag
      * will match 'a', 'A', 'b', and 'B'.  "[^ab]" with this flag will
      * match all except 'a', 'A', 'b', and 'B'. This performs a full
-     * closure over case mappings, e.g. U+017F for s.
+     * closure over case mappings, e.g. 'ſ' (U+017F long s) for 's'.
      *
-     * The resulting set is a superset of the input for the code points but
+     * <p>This value is an options bit set value for some
+     * constructors, applyPattern(), and closeOver().
+     * It can be ORed together with other, unrelated options.
+     *
+     * <p>The resulting set is a superset of the input for the code points but
      * not for the strings.
      * It performs a case mapping closure of the code points and adds
      * full case folding strings for the code points, and reduces strings of
      * the original set to their full case folding equivalents.
      *
-     * This is designed for case-insensitive matches, for example
+     * <p>This is designed for case-insensitive matches, for example
      * in regular expressions. The full code point case closure allows checking of
      * an input character directly against the closure set.
      * Strings are matched by comparing the case-folded form from the closure
      * set with an incremental case folding of the string in question.
      *
-     * The closure set will also contain single code points if the original
+     * <p>The closure set will also contain single code points if the original
      * set contained case-equivalent strings (like U+00DF for "ss" or "Ss" etc.).
      * This is not necessary (that is, redundant) for the above matching method
      * but results in the same closure sets regardless of whether the original
      * set contained the code point or a string.
-     * @stable ICU 3.8
-     */
-    public static final int CASE = 2;
-
-    /**
-     * Alias for UnicodeSet.CASE, for ease of porting from C++ where ICU4C
-     * also has both USET_CASE and USET_CASE_INSENSITIVE (see uset.h).
-     * @see #CASE
+     *
      * @stable ICU 3.4
      */
     public static final int CASE_INSENSITIVE = 2;
 
     /**
-     * Bitmask for constructor, applyPattern(), and closeOver()
-     * indicating letter case.  This may be ORed together with other
-     * selectors.
-     *
-     * Enable case insensitive matching.  E.g., "[ab]" with this flag
-     * will match 'a', 'A', 'b', and 'B'.  "[^ab]" with this flag will
-     * match all except 'a', 'A', 'b', and 'B'. This adds the lower-,
-     * title-, and uppercase mappings as well as the case folding
+     * Adds all case mappings for each element in the set.
+     * This adds the full lower-, title-, and uppercase mappings as well as the full case folding
      * of each existing element in the set.
+     *
+     * <p>This value is an options bit set value for some
+     * constructors, applyPattern(), and closeOver().
+     * It can be ORed together with other, unrelated options.
+     *
+     * <p>Unlike the “case insensitive” options, this does not perform a closure.
+     * For example, it does not add 'ſ' (U+017F long s) for 's',
+     * 'K' (U+212A Kelvin sign) for 'k', or replace set strings by their case-folded versions.
+     *
      * @stable ICU 3.4
      */
     public static final int ADD_CASE_MAPPINGS = 4;
+
+    /**
+     * Enable case insensitive matching.
+     * Same as {@link #CASE_INSENSITIVE} but using only Simple_Case_Folding (scf) mappings,
+     * which map each code point to one code point,
+     * not full Case_Folding (cf) mappings, which map some code points to multiple code points.
+     *
+     * <p>This is designed for case-insensitive matches, for example in certain
+     * regular expression implementations where only Simple_Case_Folding mappings are used,
+     * such as in ECMAScript (JavaScript) regular expressions.
+     *
+     * <p>This value is an options bit set value for some
+     * constructors, applyPattern(), and closeOver().
+     * It can be ORed together with other, unrelated options.
+     *
+     * @draft ICU 73
+     */
+    public static final int SIMPLE_CASE_INSENSITIVE = 6;
+
+    private static final int CASE_MASK = CASE_INSENSITIVE | ADD_CASE_MAPPINGS;
 
     //  add the result of a full case mapping to the set
     //  use str as a temporary string to avoid constructing one
@@ -3883,97 +3962,191 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
         // see UCaseProps
     }
 
+    /** For case closure on a large set, look only at code points with relevant properties. */
+    UnicodeSet maybeOnlyCaseSensitive(UnicodeSet src) {
+        if (src.size() < 30) {
+            return src;
+        }
+        // Return the intersection of the src code points with Case_Sensitive ones.
+        UnicodeSet sensitive = CharacterProperties.getBinaryPropertySet(UProperty.CASE_SENSITIVE);
+        // Start by cloning the "smaller" set. Try not to copy the strings, if there are any in src.
+        if (src.hasStrings() || src.getRangeCount() > sensitive.getRangeCount()) {
+            return sensitive.cloneAsThawed().retainAll(src);
+        } else {
+            return ((UnicodeSet) src.clone()).retainAll(sensitive);
+        }
+    }
+
+    // Per-character scf = Simple_Case_Folding of a string.
+    // (Normally when we case-fold a string we use full case foldings.)
+    private static final boolean scfString(CharSequence s, StringBuilder scf) {
+        int length = s.length();
+        // Loop while not needing modification.
+        for (int i = 0; i < length;) {
+            int c = Character.codePointAt(s, i);
+            int scfChar = UCharacter.foldCase(c, UCharacter.FOLD_CASE_DEFAULT);
+            if (scfChar != c) {
+                // Copy the characters before c.
+                scf.setLength(0);
+                scf.append(s, 0, i);
+                // Loop over the rest of the string and keep case-folding.
+                for (;;) {
+                    scf.appendCodePoint(scfChar);
+                    i += Character.charCount(c);
+                    if (i == length) {
+                        return true;
+                    }
+                    c = Character.codePointAt(s, i);
+                    scfChar = UCharacter.foldCase(c, UCharacter.FOLD_CASE_DEFAULT);
+                }
+            }
+            i += Character.charCount(c);
+        }
+        return false;
+    }
+
     /**
      * Close this set over the given attribute.  For the attribute
-     * CASE, the result is to modify this set so that:
+     * {@link #CASE_INSENSITIVE}, the result is to modify this set so that:
      *
-     * 1. For each character or string 'a' in this set, all strings
+     * <ol>
+     * <li>For each character or string 'a' in this set, all strings
      * 'b' such that foldCase(a) == foldCase(b) are added to this set.
      * (For most 'a' that are single characters, 'b' will have
      * b.length() == 1.)
      *
-     * 2. For each string 'e' in the resulting set, if e !=
+     * <li>For each string 'e' in the resulting set, if e !=
      * foldCase(e), 'e' will be removed.
+     * </ol>
      *
-     * Example: [aq\u00DF{Bc}{bC}{Fi}] =&gt; [aAqQ\u00DF\uFB01{ss}{bc}{fi}]
+     * <p>Example: [aq\u00DF{Bc}{bC}{Fi}] =&gt; [aAqQ\u00DF\uFB01{ss}{bc}{fi}]
      *
-     * (Here foldCase(x) refers to the operation
+     * <p>(Here foldCase(x) refers to the operation
      * UCharacter.foldCase(x, true), and a == b actually denotes
      * a.equals(b), not pointer comparison.)
      *
      * @param attribute bitmask for attributes to close over.
-     * Currently only the CASE bit is supported.  Any undefined bits
-     * are ignored.
+     * Valid options:
+     * At most one of {@link #CASE_INSENSITIVE}, {@link #ADD_CASE_MAPPINGS},
+     * {@link #SIMPLE_CASE_INSENSITIVE}. These case options are mutually exclusive.
+     * Unrelated options bits are ignored.
      * @return a reference to this set.
      * @stable ICU 3.8
      */
     public UnicodeSet closeOver(int attribute) {
         checkFrozen();
-        if ((attribute & (CASE | ADD_CASE_MAPPINGS)) != 0) {
-            UCaseProps csp = UCaseProps.INSTANCE;
-            UnicodeSet foldSet = new UnicodeSet(this);
-            ULocale root = ULocale.ROOT;
-
-            // start with input set to guarantee inclusion
-            // CASE: remove strings because the strings will actually be reduced (folded);
-            //       therefore, start with no strings and add only those needed
-            if((attribute & CASE) != 0 && foldSet.hasStrings()) {
-                foldSet.strings.clear();
-            }
-
-            int n = getRangeCount();
-            int result;
-            StringBuilder full = new StringBuilder();
-
-            for (int i=0; i<n; ++i) {
-                int start = getRangeStart(i);
-                int end   = getRangeEnd(i);
-
-                if((attribute & CASE) != 0) {
-                    // full case closure
-                    for (int cp=start; cp<=end; ++cp) {
-                        csp.addCaseClosure(cp, foldSet);
-                    }
-                } else {
-                    // add case mappings
-                    // (does not add long s for regular s, or Kelvin for k, for example)
-                    for (int cp=start; cp<=end; ++cp) {
-                        result = csp.toFullLower(cp, null, full, UCaseProps.LOC_ROOT);
-                        addCaseMapping(foldSet, result, full);
-
-                        result = csp.toFullTitle(cp, null, full, UCaseProps.LOC_ROOT);
-                        addCaseMapping(foldSet, result, full);
-
-                        result = csp.toFullUpper(cp, null, full, UCaseProps.LOC_ROOT);
-                        addCaseMapping(foldSet, result, full);
-
-                        result = csp.toFullFolding(cp, full, 0);
-                        addCaseMapping(foldSet, result, full);
-                    }
-                }
-            }
-            if (hasStrings()) {
-                if ((attribute & CASE) != 0) {
-                    for (String s : strings) {
-                        String str = UCharacter.foldCase(s, 0);
-                        if(!csp.addStringCaseClosure(str, foldSet)) {
-                            foldSet.add(str); // does not map to code points: add the folded string itself
-                        }
-                    }
-                } else {
-                    BreakIterator bi = BreakIterator.getWordInstance(root);
-                    for (String str : strings) {
-                        // TODO: call lower-level functions
-                        foldSet.add(UCharacter.toLowerCase(root, str));
-                        foldSet.add(UCharacter.toTitleCase(root, str, bi));
-                        foldSet.add(UCharacter.toUpperCase(root, str));
-                        foldSet.add(UCharacter.foldCase(str, 0));
-                    }
-                }
-            }
-            set(foldSet);
+        switch (attribute & CASE_MASK) {
+        case 0:
+            break;
+        case CASE_INSENSITIVE:
+            closeOverCaseInsensitive(/* simple= */ false);
+            break;
+        case ADD_CASE_MAPPINGS:
+            closeOverAddCaseMappings();
+            break;
+        case SIMPLE_CASE_INSENSITIVE:
+            closeOverCaseInsensitive(/* simple= */ true);
+            break;
+        default:
+            // bad option (unreachable)
+            break;
         }
         return this;
+    }
+
+    private void closeOverCaseInsensitive(boolean simple) {
+        UCaseProps csp = UCaseProps.INSTANCE;
+        // Start with input set to guarantee inclusion.
+        UnicodeSet foldSet = new UnicodeSet(this);
+
+        // Full case mappings closure:
+        // Remove strings because the strings will actually be reduced (folded);
+        // therefore, start with no strings and add only those needed.
+        // Do this before processing code points, because they may add strings.
+        if (!simple && foldSet.hasStrings()) {
+            foldSet.strings.clear();
+        }
+
+        UnicodeSet codePoints = maybeOnlyCaseSensitive(this);
+
+        // Iterate over the ranges of single code points. Nested loop for each code point.
+        int n = codePoints.getRangeCount();
+        for (int i=0; i<n; ++i) {
+            int start = codePoints.getRangeStart(i);
+            int end   = codePoints.getRangeEnd(i);
+
+            if (simple) {
+                for (int cp=start; cp<=end; ++cp) {
+                    csp.addSimpleCaseClosure(cp, foldSet);
+                }
+            } else {
+                for (int cp=start; cp<=end; ++cp) {
+                    csp.addCaseClosure(cp, foldSet);
+                }
+            }
+        }
+        if (hasStrings()) {
+            StringBuilder sb = simple ? new StringBuilder() : null;
+            for (String s : strings) {
+                if (simple) {
+                    if (scfString(s, sb)) {
+                        foldSet.remove(s).add(sb);
+                    }
+                } else {
+                    String str = UCharacter.foldCase(s, 0);
+                    if(!csp.addStringCaseClosure(str, foldSet)) {
+                        foldSet.add(str); // does not map to code points: add the folded string itself
+                    }
+                }
+            }
+        }
+        set(foldSet);
+    }
+
+    private void closeOverAddCaseMappings() {
+        UCaseProps csp = UCaseProps.INSTANCE;
+        // Start with input set to guarantee inclusion.
+        UnicodeSet foldSet = new UnicodeSet(this);
+
+        UnicodeSet codePoints = maybeOnlyCaseSensitive(this);
+
+        // Iterate over the ranges of single code points. Nested loop for each code point.
+        int n = codePoints.getRangeCount();
+        int result;
+        StringBuilder full = new StringBuilder();
+
+        for (int i=0; i<n; ++i) {
+            int start = codePoints.getRangeStart(i);
+            int end   = codePoints.getRangeEnd(i);
+
+            // add case mappings
+            // (does not add long s for regular s, or Kelvin for k, for example)
+            for (int cp=start; cp<=end; ++cp) {
+                result = csp.toFullLower(cp, null, full, UCaseProps.LOC_ROOT);
+                addCaseMapping(foldSet, result, full);
+
+                result = csp.toFullTitle(cp, null, full, UCaseProps.LOC_ROOT);
+                addCaseMapping(foldSet, result, full);
+
+                result = csp.toFullUpper(cp, null, full, UCaseProps.LOC_ROOT);
+                addCaseMapping(foldSet, result, full);
+
+                result = csp.toFullFolding(cp, full, 0);
+                addCaseMapping(foldSet, result, full);
+            }
+        }
+        if (hasStrings()) {
+            ULocale root = ULocale.ROOT;
+            BreakIterator bi = BreakIterator.getWordInstance(root);
+            for (String str : strings) {
+                // TODO: call lower-level functions
+                foldSet.add(UCharacter.toLowerCase(root, str));
+                foldSet.add(UCharacter.toTitleCase(root, str, bi));
+                foldSet.add(UCharacter.toUpperCase(root, str));
+                foldSet.add(UCharacter.foldCase(str, 0));
+            }
+        }
+        set(foldSet);
     }
 
     /**
@@ -4603,7 +4776,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * Same results as turning the code point into a string (with the [ugly] new StringBuilder().appendCodePoint(codepoint).toString())
      * and comparing, but much faster (no object creation).
      * Actually, there is one difference; a null compares as less.
-     * Note that this (=String) order is UTF-16 order -- *not* code point order.
+     * Note that this (=String) order is UTF-16 order -- <i>not</i> code point order.
      * @stable ICU 4.4
      */
 
@@ -4615,7 +4788,7 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      * Utility to compare a string to a code point.
      * Same results as turning the code point into a string and comparing, but much faster (no object creation).
      * Actually, there is one difference; a null compares as less.
-     * Note that this (=String) order is UTF-16 order -- *not* code point order.
+     * Note that this (=String) order is UTF-16 order -- <i>not</i> code point order.
      * @stable ICU 4.4
      */
     public static int compare(int codePoint, CharSequence string) {
@@ -4737,9 +4910,10 @@ public class UnicodeSet extends UnicodeFilter implements Iterable<String>, Compa
      */
     @Deprecated
     public UnicodeSet addBridges(UnicodeSet dontCare) {
-        UnicodeSet notInInput = new UnicodeSet(this).complement();
+        UnicodeSet notInInput = new UnicodeSet(this).complement().removeAllStrings();
         for (UnicodeSetIterator it = new UnicodeSetIterator(notInInput); it.nextRange();) {
-            if (it.codepoint != 0 && it.codepoint != UnicodeSetIterator.IS_STRING && it.codepointEnd != 0x10FFFF && dontCare.contains(it.codepoint,it.codepointEnd)) {
+            if (it.codepoint != 0 && it.codepointEnd != 0x10FFFF &&
+                    dontCare.contains(it.codepoint, it.codepointEnd)) {
                 add(it.codepoint,it.codepointEnd);
             }
         }

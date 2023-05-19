@@ -1060,6 +1060,11 @@ public final class UScript {
     /** @stable ICU 70 */
     public static final int VITHKUQI = 197; /* Vith */
 
+    /** @stable ICU 72 */
+    public static final int KAWI = 198; /* Kawi */
+    /** @stable ICU 72 */
+    public static final int NAG_MUNDARI = 199; /* Nagm */
+
     /**
      * One more than the highest normal UScript code.
      * The highest value is available via UCharacter.getIntPropertyMaxValue(UProperty.SCRIPT).
@@ -1067,7 +1072,7 @@ public final class UScript {
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
     @Deprecated
-    public static final int CODE_LIMIT   = 198;
+    public static final int CODE_LIMIT   = 200;
 
     private static int[] getCodesFromLocale(ULocale locale) {
         // Multi-script languages, equivalent to the LocaleScript data
@@ -1146,7 +1151,20 @@ public final class UScript {
      */
     public static final int[] getCode(String nameOrAbbrOrLocale) {
         boolean triedCode = false;
-        if (nameOrAbbrOrLocale.indexOf('_') < 0 && nameOrAbbrOrLocale.indexOf('-') < 0) {
+        int lastSepPos = nameOrAbbrOrLocale.indexOf('_');
+        if (lastSepPos < 0) {
+            lastSepPos = nameOrAbbrOrLocale.indexOf('-');
+        }
+        // Favor interpretation of nameOrAbbrOrLocale as a script alias if either
+        // 1. nameOrAbbrOrLocale does not contain -/_. Handles Han, Mro, Nko, etc.
+        // 2. The last instance of -/_ is at offset 3, and the portion after that is
+        //    longer than 4 characters (i.e. not a script or region code). This handles
+        //    Old_Hungarian, Old_Italic, etc. ("old" is a valid language code)
+        // 3. The last instance of -/_ is at offset 7, and the portion after that is
+        //    3 characters. This handles New_Tai_Lue ("new" is a valid language code).
+        if ( lastSepPos < 0
+                || (lastSepPos == 3 && nameOrAbbrOrLocale.length() > 8)
+                || (lastSepPos == 7 && nameOrAbbrOrLocale.length() == 11) ) {
             int propNum = UCharacter.getPropertyValueEnumNoThrow(UProperty.SCRIPT, nameOrAbbrOrLocale);
             if (propNum != UProperty.UNDEFINED) {
                 return new int[] {propNum};
@@ -1547,6 +1565,8 @@ public final class UScript {
             0x16ABC | EXCLUSION,  // Tnsa
             0x1E290 | EXCLUSION,  // Toto
             0x10582 | EXCLUSION | CASED,  // Vith
+            0x11F1B | EXCLUSION | LB_LETTERS,  // Kawi
+            0x1E4E6 | EXCLUSION,  // Nagm
             // End copy-paste from parsescriptmetadata.py
         };
 

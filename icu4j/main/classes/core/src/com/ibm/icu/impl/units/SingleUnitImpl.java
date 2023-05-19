@@ -28,7 +28,7 @@ public class SingleUnitImpl {
      */
     private String simpleUnitID = "";
     /**
-     * Determine the power of the `SingleUnit`. For example, for "square-meter", the dimensionality will be `2`.
+     * Determine the power of the {@code SingleUnit}. For example, for "square-meter", the dimensionality will be {@code 2}.
      * <p>
      * NOTE:
      * Default dimensionality is 1.
@@ -122,21 +122,35 @@ public class SingleUnitImpl {
         if (index > other.index) {
             return 1;
         }
-        // TODO: revisit if the spec dictates prefix sort order - it doesn't
-        // currently. For now we're sorting binary prefixes before SI prefixes,
-        // as per ICU4C's enum values order.
-        if (this.getPrefix().getBase() < other.getPrefix().getBase()) {
+
+        // When comparing binary prefixes vs SI prefixes, instead of comparing the actual values, we can
+        // multiply the binary prefix power by 3 and compare the powers. if they are equal, we can can
+        // compare the bases.
+        // NOTE: this methodology will fail if the binary prefix more than or equal 98.
+        int unitBase = this.unitPrefix.getBase();
+        int otherUnitBase = other.unitPrefix.getBase();
+        // Values for comparison purposes only.
+        int unitPowerComp =
+                unitBase == 1024 /* Binary Prefix */ ? this.unitPrefix.getPower() * 3
+                        : this.unitPrefix.getPower();
+        int otherUnitPowerComp =
+                otherUnitBase == 1024 /* Binary Prefix */ ? other.unitPrefix.getPower() * 3
+                        : other.unitPrefix.getPower();
+
+        if (unitPowerComp < otherUnitPowerComp) {
             return 1;
         }
-        if (this.getPrefix().getBase() > other.getPrefix().getBase()) {
+        if (unitPowerComp > otherUnitPowerComp) {
             return -1;
         }
-        if (this.getPrefix().getPower() < other.getPrefix().getPower()) {
-            return -1;
-        }
-        if (this.getPrefix().getPower() > other.getPrefix().getPower()) {
+
+        if (unitBase < otherUnitBase) {
             return 1;
         }
+        if (unitBase > otherUnitBase) {
+            return -1;
+        }
+
         return 0;
     }
 

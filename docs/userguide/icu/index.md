@@ -93,7 +93,7 @@ open components, and look forward to your questions, comments and suggestions.
 
 Download ICU in one of the following ways:
 
-1.  From the download page, <http://www.icu-project.org/download/>, for
+1.  From the download page, <https://icu.unicode.org/download>, for
     packaged stable releases of ICU.
 
 2.  From the source code repository, <https://github.com/unicode-org/icu/releases/>,
@@ -104,6 +104,6 @@ included, building, installing, etc.
 
 ## ICU License
 
-Current license: <https://github.com/unicode-org/icu/blob/main/icu4c/LICENSE>
+Current license: <https://github.com/unicode-org/icu/blob/main/LICENSE>
 
 See also FAQ section ["How is the ICU licensed"](icufaq/index#how-is-icu-licensed)

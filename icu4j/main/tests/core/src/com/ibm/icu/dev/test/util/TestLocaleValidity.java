@@ -72,6 +72,7 @@ public class TestLocaleValidity extends TestFmwk {
                 {"OK", "en-u-kr-latn-digit-others-Cyrl"}, // reorder codes, duplicat
                 {"OK", "en-u-ks-identic"},
                 {"OK", "en-u-kv-currency"},
+                {"OK", "en-u-mu-celsius"},
                 {"OK", "en-u-nu-ahom"},
                 {"OK", "en-u-sd-usny"},
                 {"OK", "en-u-tz-adalv"},
@@ -89,6 +90,8 @@ public class TestLocaleValidity extends TestFmwk {
                 {"OK", "en-u-ss-none"},
                 {"OK", "en-t-t0-und"},
                 {"OK", "en-t-x0-12345678"},
+                {"OK", "en-u-tz-camtr"}, // CLDR 43 no longer deprecated, see CLDR-16489
+
 
                 // tests from LDML spec section on Hybrid Locale Identifiers
                 {"OK", "hi-t-en-h0-hybrid"},
@@ -178,7 +181,7 @@ public class TestLocaleValidity extends TestFmwk {
                 //{"{u, ca-civil}", "en-u-ca-islamicc"}, // deprecated, but turns into valid
                 {"{u, co-direct}", "en-u-co-direct"}, // deprecated
                 {"{u, kh}", "en-u-kh-false"}, // deprecated
-                {"{u, tz-camtr}", "en-u-tz-camtr"}, // deprecated
+                //{"{u, tz-camtr}", "en-u-tz-camtr"}, // CLDR 43 no longer deprecated, see CLDR-16489
                 {"{u, vt}", "en-u-vt-0020-0041"}, // deprecated
         };
         final LinkedHashSet<String> foundKeys = new LinkedHashSet<String>();
