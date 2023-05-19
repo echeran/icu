@@ -1,10 +1,9 @@
+# Updating ICU's built-in Break Iterator rules
+
 <!--
 Copyright (C) 2016 and later: Unicode, Inc. and others.
 License & terms of use: http://www.unicode.org/copyright.html
 -->
-
-Updating ICU's built-in Break Iterator rules
-============================================
 
 Here are instructions for updating ICU's built-in break iterator rules, for Grapheme, Word, Line and Sentence breaks.
 

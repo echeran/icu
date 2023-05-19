@@ -1,10 +1,9 @@
+# Developing Fuzzer Targets for ICU APIs
+
 <!--
 © 2019 and later: Unicode, Inc. and others.
 License & terms of use: http://www.unicode.org/copyright.html
 -->
-
-Developing Fuzzer Targets for ICU APIs
-======================================
 
 This documents describes how to develop a [fuzzer](https://opensource.google.com/projects/oss-fuzz)
 target for an ICU API and its integration into the ICU build process.
