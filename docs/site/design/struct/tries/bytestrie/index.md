@@ -1,3 +1,10 @@
+---
+layout: default
+title: BytesTrie
+parent: Data Structures
+grand_parent: Design Docs
+---
+
 # BytesTrie
 
 This is an idea for a trie that is intended to be fairly simple but also fairly

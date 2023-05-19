@@ -1,3 +1,10 @@
+---
+layout: default
+title: UCharsTrie
+parent: Data Structures
+grand_parent: Design Docs
+---
+
 # UCharsTrie
 
 Same design as a [BytesTrie](bytestrie/index.md), but mapping any UnicodeString

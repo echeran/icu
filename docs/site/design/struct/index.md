@@ -1,3 +1,10 @@
+---
+layout: default
+title: Data Structures
+parent: Design Docs
+has_children: true
+---
+
 # Data Structures
 
 ## Subpage Listing

@@ -1,3 +1,10 @@
+---
+layout: default
+title: ICU String Tries
+parent: Data Structures
+grand_parent: Design Docs
+---
+
 # ICU String Tries
 
 We have several implementations of string tries, mapping strings to boolean or

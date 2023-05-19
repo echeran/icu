@@ -1,3 +1,10 @@
+---
+layout: default
+title: ICU Code Point Tries
+parent: Data Structures
+grand_parent: Design Docs
+---
+
 # ICU Code Point Tries
 
 ## Fast lookup in arrays
