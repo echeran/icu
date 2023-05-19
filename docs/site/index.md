@@ -19,5 +19,3 @@ It is the official landing page for the ICU project.
 
 Some of the pages from the ICU Site have been migrated here.
 The migrated sections and pages from the ICU Site are visible in the navigation bar of this site below the "ICU Site" section heading.
-
-These migrated versions are the canonical location for the corresponding pages (since 2022 October).
