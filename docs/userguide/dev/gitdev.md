@@ -1,6 +1,12 @@
+---
+layout: default
+title: git for ICU Developers
+parent: Contributors
+---
+
 # git for ICU Developers
 
-For git & git lfs installation see the [Source Code Access](../../index.md)
+For git & git lfs installation see the [Source Code Access](source.md)
 page.
 
 For setup with Eclipse, Xcode, etc. see the [Setup](../../setup/index.md) page
