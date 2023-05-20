@@ -6,10 +6,10 @@ parent: Contributors
 
 # git and Github for ICU Developers
 
-For git & git lfs installation see the [Source Code Access](source.md)
+For git & git lfs installation see the [Source Code Setup](../../devsetup/source/index.md)
 page.
 
-For setup with Eclipse, Xcode, etc. see the [Setup](../../setup/index.md) page
+For setup with language compilers and IDEs, see the [Setup for Contributors](../../devsetup/source/index.md) page
 and its subpages.
 
 ## Overview
@@ -43,18 +43,8 @@ your own GitHub account. Then clone that to your local machine. You need only
 one fork for all of your ICU work.
 
 ```
-Linux:
-```
-
-```
 mkdir -p icu/mine/src
-```
-
-```
 git clone git@github.com:markusicu/icu.git icu/mine/src
-```
-
-```
 cd icu/mine/src
 ```
 
@@ -67,26 +57,22 @@ Instead, create a new branch in your local clone for each piece of work. You
 need a separate branch for each pull request. More on that later.
 
 ```
-Linux: git checkout -b mybranchname
+git checkout -b mybranchname
 ```
 
 Now you are in a new development branch in your local git repo. Confirm with
 `git status`. Change stuff. Do `git status` again, use `git add` for staging and
-`git commit -m 'ICU-23456 what I changed'` to commit, or use `git commit **-a**
--m 'ICU-23456 what I changed'` if you want to commit everything that git status
+`git commit -m 'ICU-23456 what I changed'` to commit, or use `git commit -a -m 'ICU-23456 what I changed'` if you want to commit everything that git status
 shows as changed.
 
 For looking at changes, you should set up a visual diff program for use with
-`git difftool`. See the [Setup: git difftool &
-mergetool](../../setup/git-difftool.md) page.
+`git difftool`. See the [Setup: git difftool & mergetool](../../source/gittooling.md) page.
 
 For new files: Remember to add the appropriate copyright lines. Copy from a file
 of the same type, and set the copyright year to the current year (that is, the
 year you are creating the file).
 
-You should have a Jira ticket for each line of work. (See [Submitting ICU Bugs
-and Feature Requests](../../bugs.md) and [ICU Ticket Life
-cycle](../../processes/ticket-lifecycle.md).) You can have multiple pull
+You should have a Jira ticket for each line of work. (See [Submitting ICU Bugs and Feature Requests](https://icu.unicode.org/bugs) and [ICU Ticket Life cycle](https://icu.unicode.org/processes/ticket-lifecycle).) You can have multiple pull
 requests per ticket. Each pull request needs a ticket in Accepted state.
 
 Always prefix your commit statements with the Jira ticket number using this
@@ -100,7 +86,7 @@ changes are gone. `git push` your commits to your GitHub fork.
 
 Shane
 [recommends](https://blog.sffc.xyz/post/185195398930/why-you-should-use-git-pull-ff-only)
-setting the default behavior of "git pull" to --ff-only. Shane also
+setting the default behavior of `git pull` to `--ff-only`. Shane also
 [prevents](https://stackoverflow.com/a/40465455/1407170) local commits to the
 **main** branch via *.git/hooks/pre-commit*. These two measures make it easier
 to do the right thing in Git.
@@ -169,15 +155,17 @@ is nothing more than a squash. If you change the parent hash, you may also be
 pulling in other people's changes, and it may be harder for the reviewer to
 verify that the squash was done correctly.
 
-**Options on how to squash:**
+### Options on how to squash
 
-*Option 1:* Use the online PR commit checker bot. Please note: this makes the
+#### Option 1: Use the online PR commit checker bot
+
+Please note: this makes the
 change in your remote branch but not in your local branch. Click the "Details"
 link in the GitHub status, which brings you to a page with a summary of your PR.
 Find the "Squash..." button. Sign in using your GitHub account, and follow the
 flow to squash your branch.
 
-Warning: do not git pull after you use the remote tool! If you subsequently need
+Warning: do not `git pull` after you use the remote tool! If you subsequently need
 to update your local branch to the squash commit, you need to fetch and reset:
 
 ```
@@ -186,7 +174,9 @@ git checkout BRANCHNAME
 git reset origin/BRANCHNAME
 ```
 
-*Option 2:* Use git rebase. This works as long as you have no merge commits with
+#### Option 2: Use git rebase
+
+This works as long as you have no merge commits with
 conflicts in your history. Plenty of examples:
 
 *   <https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History#_squashing>
@@ -197,32 +187,43 @@ conflicts in your history. Plenty of examples:
 *   Several other options:
     <https://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git>
 
-*Option 3:* Use git merge. This is a little tricker but works even if you have
+#### Option 3: Use git merge
+
+This is a little tricker but works even if you have
 merge commits with conflicts. Assuming your feature branch is called BRANCHNAME:
 
 ```
 # Make sure your branch is up-to-date with main and that the tests pass:
+
 git checkout BRANCHNAME
 git merge main
 git push
+
 # At this point, wait for an LGTM from a reviewer before proceeding.
 # Once confirmed, make your squash commit in a new temp branch.
 # NOTE: In the first line, make sure to checkout the same sha as
 # you most recently merged into your branch!
+
 git checkout main
 git checkout -b temp
 git merge --squash BRANCHNAME
 git commit
+
 # Point your branch to the squash commit, and there should be no dirty files:
+
 git checkout BRANCHNAME
 git reset temp
 git status  # should be empty! If it's not, you didn't check out the right sha.
+
 # Push your squash commit and clean up:
+
 git push -f
 git branch -d temp
 ```
 
-*Option 4:* When making code review changes on a small PR, you can amend your
+#### Option 4: Amend a small commit
+
+When making code review changes on a small PR, you can amend your
 previous commit rather than making a new commit. Instead of running "git
 commit", just run "git commit --amend". You will need to force-push. The PR bot
 will post a link for the reviewer to see the changes from your old commit to
@@ -260,6 +261,7 @@ Once the reviewer(s) has/have approved your (squashed) changes:
         both for reviewing and for merging your PR, and then also for closing
         the ticket.
 
+
 ## Merge conflicts
 
 When someone else has made changes that conflict with yours, then you can't
@@ -279,16 +281,15 @@ Switch to your local **main**.
 git checkout main
 ```
 
-**Pull updates from the Unicode main** (rather than a vanilla `git pull` which
+### Pull from upstream
+
+Pull updates from the Unicode main (rather than a vanilla `git pull` which
 pulls form your out-of-date fork), push to your fork's main.
 
 *Norbert’s version:*
 
 ```
 git pull git@github.com:unicode-org/icu.git
-```
-
-```
 git push
 ```
 
@@ -299,13 +300,7 @@ following, but this may be incomplete!
 
 ```
 git remote add upstream https://github.com/unicode-org/icu.git
-```
-
-```
 git pull upstream main
-```
-
-```
 git push origin main
 ```
 
@@ -321,7 +316,7 @@ git branch -u upstream/main
 git pull
 ```
 
-**Now, resolve the conflicts.**
+### Resolve conflicts
 
 There are two ways to do this. You can rebase, or you can create a merge commit.
 The advantage of rebase is that it makes it somewhat easier to squash later on.
@@ -330,7 +325,9 @@ so it makes it easier to work across different workstations, you are less likely
 to get something wrong, and it makes it easier for the reviewer because GitHub
 keeps track of comment history better when shas don't change.
 
-*Option 1: Merge.* Switch to your dev branch, then merge in main. I like to use
+#### Option 1: Merge
+
+Switch to your dev branch, then merge in main. I like to use
 the --no-commit option:
 
 ```
@@ -347,7 +344,9 @@ git commit
 git push
 ```
 
-*Option 2: Rebase.* First switch back to your dev branch (without the -b option
+#### Option 2: Rebase
+
+First switch back to your dev branch (without the -b option
 which is for creating a new branch).
 
 ```
@@ -394,7 +393,9 @@ Follow these steps for adding a commit to a maintenance branch.
 The process is different between when we are between RC and GA and when we are
 after GA.
 
-**Between RC and GA:** When working on a commit that you know at the time of
+### Between RC and GA
+
+When working on a commit that you know at the time of
 authorship to be a candidate for the maintenance branch, write the commit and
 send the PR directly against the maintenance branch. All commits on the maint
 branch will be merged *from maint to main* as a BRS task (see the next section).
@@ -416,7 +417,9 @@ git checkout -b ICU-12345-maint-64
 Now, write your change and send it for review. Open your PR against the maint
 branch.
 
-**After GA:** Write the commit against the main branch, and send your own
+### After GA
+
+Write the commit against the main branch, and send your own
 cherry-pick commits to put it on the desired maint branches.
 
 Update your local main from the Unicode main (see above). Otherwise your git
@@ -565,18 +568,13 @@ git commit -am "ICU-##### Merge branch 'maint/maint-39' into 64-merge-branch"
 git push -u origin 64-merge-branch
 ```
 
-As in the Easy Way, you may need to add "DISABLE_JIRA_ISSUE_MATCH=true" and/or
-"ALLOW_MANY_COMMITS=true" to the PR description to silence errors coming from
+As in the Easy Way, you may need to add `DISABLE_JIRA_ISSUE_MATCH=true` and/or
+`ALLOW_MANY_COMMITS=true` to the PR description to silence errors coming from
 the Unicode bot.
 
 Send the PR off for review. As in the Easy Way, **you should use the MERGE COMMIT option in GitHub to land the PR!!**
 
-## Manually Landing PRs
-
-There may be times when a PR is landed manually. This dangerous topic is covered
-in a [separate subpage](manual-land.md).
-
-**Requesting an Exhaustive Test run on a Pull-Request (PR)**
+## Requesting an Exhaustive Test run on a Pull-Request (PR)
 
 The ICU4C and ICU4J Exhaustive Tests run on the main branch after a pull-request
 has been submitted. They do not run on pull-requests by default as they take 1-2
@@ -585,7 +583,9 @@ hours to run.
 However, you can manually request the CI builds to run the exhaustive tests on a
 PR by commenting with the following text:
 
+```
 /azp run CI-Exhaustive
+```
 
 This will trigger the test run on the PR. This is covered more in a separate
 [document](https://docs.google.com/document/d/1kmcFFUozpWah_y7dk_Inlw_BIq3vG3-ZR2A28tIiXJc/edit?usp=sharing).
