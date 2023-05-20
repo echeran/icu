@@ -6,6 +6,16 @@ parent: Java Setup
 ---
 
 # Java Profiling and Monitoring tools
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 
 There are many Java development tools available for analyzing Java application
 run time performance. Eclipse has a set of plug-ins called TPTP which provides
@@ -13,7 +23,7 @@ Java application profiling/monitoring framework. However, TPTP is very slow and
 I experienced frequent crash while profiling ICU4J codes. For ICU4J development,
 I recommend several tools described below.
 
-#### VisualVM
+## VisualVM
 
 VisualVM is available as a separate download since JDK 9. You can download the latest
 version from here - <https://visualvm.github.io/download.html>

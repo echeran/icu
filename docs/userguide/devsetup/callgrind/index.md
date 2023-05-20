@@ -6,6 +6,17 @@ parent: C++ Setup
 ---
 
 # Profiling ICU4C with callgrind
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+## Prerequisites
 
 Valgrind, callgrind and kcachegrind together proved performance profiling of C++
 code, including annotated source code with time consumption at each line.
@@ -26,6 +37,8 @@ cd icu4c/source
 ./runConfigureICU --enable-debug Linux
 make -j6 check
 ```
+
+## Run test code
 
 Prepare the test code you wish to measure. Valgrind is very slow, so be wary of
 long running tests. Because Valgrind tracks every last machine instruction (it's
@@ -51,6 +64,8 @@ The raw profiling data will be left in a callgrind.out file,
 ls -l callgrind*
 -rw------- 1 aheninger eng 325779 Oct 3 15:51 callgrind.out
 ```
+
+## View in kcachegrind
 
 Run kcachegrind to view the results.
 

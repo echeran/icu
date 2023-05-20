@@ -6,6 +6,16 @@ has_children: true
 ---
 
 # C++ Setup
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 
 ## C/C++ workspace structure
 

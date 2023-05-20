@@ -6,6 +6,15 @@ parent: Source Code Setup
 ---
 
 # Local tooling configs for git and Github
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## git difftool & mergetool
 

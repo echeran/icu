@@ -5,6 +5,16 @@ parent: Contributors
 ---
 
 # git and Github for ICU Developers
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 
 For git & git lfs installation see the [Source Code Setup](../../devsetup/source/index.md)
 page.

@@ -6,6 +6,16 @@ parent: Java Setup
 ---
 
 # Eclipse Setup for Java Developers
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 
 ICU4J source layout was changed after 4.2. There are several ways to set up the ICU4J development environment.
 

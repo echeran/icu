@@ -7,6 +7,16 @@ has_children: true
 
 
 # Source Code Setup
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 
 > Announcement 07/16/2018: The ICU source code repository has been migrated from
 > Subversion to Git, and is now hosted on GitHub.
