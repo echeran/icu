@@ -1,3 +1,9 @@
+---
+layout: default
+title: Updating ICU's built-in Break Iterator rules
+parent: Contributors
+---
+
 # Updating ICU's built-in Break Iterator rules
 
 <!--

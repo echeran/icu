@@ -1,3 +1,9 @@
+---
+layout: default
+title: Developing Fuzzer Targets for ICU APIs
+parent: Contributors
+---
+
 # Developing Fuzzer Targets for ICU APIs
 
 <!--

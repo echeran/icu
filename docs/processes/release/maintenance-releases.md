@@ -1,3 +1,11 @@
+---
+layout: default
+title: Maintenance Release Procedure
+parent: Release & Milestone Tasks
+grand_parent: Contributors
+nav_order: 75
+---
+
 # Maintenance Release Procedure
 
 When a critical problem is found in ICU libraries, we try to fix the problem in
