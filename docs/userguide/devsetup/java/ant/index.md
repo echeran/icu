@@ -108,16 +108,14 @@ You can pass arguments to the test system by using the 'testclass' and
 'testnames' variables and the 'checkTest' target. For example:
 
 |Command Line|Meaning|
-----------------------
-`ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript'` | Runs all the
-tests in test class 'TestUScript'.
-`ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript' -Dtestnames='TestNewCode,TestHasScript'` | Runs the tests `TestNewCode` and
-`TestHasScript` in test class `TestUScript`. 
-`ant checkTest -Dtestnames='TestNewCode,TestHasScript'` | Error: test class not specified.
-`ant checkTest` | Runs the standard ICU4J test suite (same as 'ant check').
+|------------|--------|
+|`ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript'` | Runs all the tests in test class 'TestUScript'.|
+|`ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript' -Dtestnames='TestNewCode,TestHasScript'` | Runs the tests `TestNewCode` and `TestHasScript` in test class `TestUScript`. |
+|`ant checkTest -Dtestnames='TestNewCode,TestHasScript'` | Error: test class not specified.|
+|`ant checkTest` | Runs the standard ICU4J test suite (same as 'ant check').|
 
 The JUnit-generated test result reports are in out/junit-results/checkTest. Go
-into the 'html/' subdirectory and load 'index.html' into a browser.
+into the `html/` subdirectory and load `index.html` into a browser.
 
 ## Generating Test Code Coverage Report
 
@@ -126,9 +124,9 @@ target "coverageJaCoCo" in the ICU4J ant build.xml. To run the target:
 
 1.  Download JaCoCo library from [EclEmma
     site](http://eclemma.org/jacoco/index.html).
-2.  Extract library files to your local system - e.g. C:\\jacoco-0.7.6
+2.  Extract library files to your local system - e.g. `C:\jacoco-0.7.6`
 3.  Set environment variable JACOCO_DIR pointing to the directory where JaCoCo
-    files are extracted - e.g. set JACOCO_DIR=C:\\jacoco-0.7.6
+    files are extracted - e.g. `set JACOCO_DIR=C:\jacoco-0.7.6`
 4.  Set up ICU4J ant build environment.
 5.  Run the ant target "coverageJaCoCo" in the top-level ICU4J build.xml
 
@@ -151,16 +149,16 @@ To set up the environment:
     *   The Internet Archive has a copy of the last version of JCite found on
         Google Code before it was closed down:
         [jcite-1.13.0-bin.zip](https://web.archive.org/web/20160710183051/http://jcite.googlecode.com/files/jcite-1.13.0-bin.zip)
-2.  Extract JCite file to your local system - e.g. C:\\jcite-1.13.0
-3.  Set environment variable JCITE_DIR pointing to the directory where JCite
-    files are extracted. - e.g. set JCITE_DIR=C:\\jcite-1.13.0
+2.  Extract JCite file to your local system - e.g. `C:\jcite-1.13.0`
+3.  Set environment variable `JCITE_DIR` pointing to the directory where JCite
+    files are extracted. - e.g. `set JCITE_DIR=C:\jcite-1.13.0`
 4.  Set up ICU4J ant build environment.
 5.  Run the ant target "docs" in the top-level ICU4J build.xml
 6.  If the build (on Linux) fails because package com.sun.javadoc is not found
-    then set the JAVA_HOME environment variable to point to <path>/java/jdk. The
-    Javadoc package is in <path>/java/jdk/lib/tools.jar.
+    then set the JAVA_HOME environment variable to point to `<path>/java/jdk`. The
+    Javadoc package is in `<path>/java/jdk/lib/tools.jar`.
 
-*Note: The ant target "docs" checks if JCITE_DIR is defined or not. If not
+*Note: The ant target "docs" checks if `JCITE_DIR` is defined or not. If not
 defined, it will build ICU4J API docs without JCite. In this case, JCite taglet
 "{@.jcite ....}" won't be resolved and the embedded tag is left unchanged in the
 output files.*
@@ -211,18 +209,21 @@ Plugin integration test
     `<eclipse>/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info`
     in a text editor, and update the line including com.ibm.icu plugin
     information.
-    `com.ibm.icu,58.2.0.v20170418-1837,plugins/com.ibm.icu_58.2.0.v20170418-1837.jar,4,false`
-    `->
-    com.ibm.icu,**61.1.0.v20190502**,plugins/com.ibm.icu_**61.1.0.v20190502**.jar,4,false`
+    ```
+    com.ibm.icu,58.2.0.v20170418-1837,plugins/com.ibm.icu_58.2.0.v20170418-1837.jar,4,false
+    ```
+     then becomes ->
+    ```
+    com.ibm.icu,**61.1.0.v20190502**,plugins/com.ibm.icu_**61.1.0.v20190502**.jar,4,false
+    ```
 6.  Make sure Eclipse can successfully starts with no errors. If ICU4J plug-in
     is not successfully loaded, Eclipse IDE won't start.
 
 ICU4J plugin test - Note: This is currently broken
-\[<http://bugs.icu-project.org/trac/ticket/13072>\]
+<http://bugs.icu-project.org/trac/ticket/13072>
 
 1.  Start the Eclipse (with new ICU4J plugin), and create a new workspace.
-2.  Import existing Eclipse project from `<icu4j
-    root>/eclipse-build/out/projects/com.ibm.icu.tests`
+2.  Import existing Eclipse project from `<icu4jroot>/eclipse-build/out/projects/com.ibm.icu.tests`
 3.  Run the project as JUnit Plug-in Test.
 
 ## Building ICU4J Release Files
