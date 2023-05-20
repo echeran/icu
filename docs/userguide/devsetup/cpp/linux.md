@@ -1,4 +1,4 @@
-# Linux Tips
+# Linux Tips for ICU4C
 
 ## Compiler
 
@@ -97,6 +97,7 @@ You will probably need to modify them to reflect where you keep your most
 commonly used ICU build, and whether you routinely use an out-of-source ICU
 build.
 
+```
 $ cat \`which b\`
 
 #! /bin/sh
@@ -146,3 +147,4 @@ DIR=\`pwd\`
 PROG=\`basename $DIR\`
 LD_LIBRARY_PATH=$ICU_HOME/source/lib:$ICU_HOME/source/stubdata
 ICU_DATA=$ICU_HOME/source/data/out valgrind --leak-check=full ./$PROG
+```

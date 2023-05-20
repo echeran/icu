@@ -1,4 +1,4 @@
-# Tips (for developers)
+# C++ Tips
 
 ## C/C++ workspace structure
 
@@ -89,66 +89,3 @@ For example:
 ## Linux Tips
 
 For more Linux-specific tips see the [Linux Tips subpage](linux.md).
-
-## Merging and Branching
-
-See the [git for ICU Developers](../gitdev/index.md) page.
-
-## Obsolete svn branch workflow
-
-Note: work on your workspace from the 'icu' or 'icu4j' level, not from the
-'icu/source' or 'icu4j/src' level.
-
-### Obsolete: Making a branch
-
-This makes a branch on the subversion server. It does not use or modify your
-workspace. It branches both icu4c and icu4j.
-`# (The following command should be typed as one line. )`
-` svn copy svn+ssh://source.icu-project.org/repos/icu/trunk`
-` svn+ssh://source.icu-project.org/repos/icu/icu/branches/*user*/somebranch`
-
-### Obsolete: Working on the branch (ICU4C)
-
-Use "svn info" to determine what path a certain workspace is connected to.
-You can check out the branch into an entirely new workspace locally:
-` svn co
-svn+ssh://source.icu-project.org/repos/branches/*user*/somebranch/icu4c`
-Or, if you want an existing workspace to be connected to a branch, you can
-switch its URL.
-Any local changes against trunk will become changes against the branch.
-` svn switch ^/branches/*user*/somebranch/icu4c `
-Commits, etc can be done in any subdirectory of the workspace.
-
-### Obsolete: Merging a branch back onto the trunk
-
-**If you are very confident that the trunk hasn't changed substantially since
-you branched off**, you can simply merge all changes made on the branch, back
-into the trunk. Otherwise, bring the branch up to date (see the next section)
-before merging back to the trunk (this section).
-First, make sure all changes, including new files, have been checked into the
-branch. If you can, test the branch on other platforms before merging.
-Now, enter a directory containing the latest up-to-date trunk. You can use 'svn
-switch' with the trunk URL (as above) to switch the branch workspace, if
-desired.
-` svn switch ^/trunk/icu4c`
-Here is a command to do the dry run (to see what will be merged and check for
-errors/conflicts). Take out --dry-run to make it stick.
-`svn merge --dry-run ^/branches/*user*/somebranch/icu4c`
-Note, you'll need to resolve any conflicts that occur.
-Now, you can review diffs, test and check in your revised working copy of the
-trunk.
-
-### Obsolete: Keeping the branch up to date
-
-If the branch is unmerged for any length of time, you will want to merge in the
-latest from the trunk, and commit it onto the branch, before attempting to merge
-it back onto the trunk.
-First, check in all changes on the branch, and make sure it builds cleanly. You
-can commit merges and other changes at the same time, but it's probably better
-to have a commit just be one or the other, in case you need to undo something.
-Now, merge the trunk into your local workspace
-svn merge ^/trunk/icu4c`
-Deal with any conflicts that arise here, try a build out, etc.
-Then, you can commit this merge back to the trunk. Again, you can make manual
-changes besides the merge, but you may want to keep track of them separately.
-Repeat as needed..
