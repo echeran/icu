@@ -1,7 +1,8 @@
 ---
 layout: default
 title: git for ICU Developers
-parent: Contributors
+grand_parent: Setup for Contributors
+parent: Source Code Setup
 ---
 
 # git for ICU Developers

@@ -1,4 +1,11 @@
-# Linux Tips for ICU4C
+---
+layout: default
+title: C++ Setup on Linux
+grand_parent: Setup for Contributors
+parent: C++ Setup
+---
+
+# C++ Setup on Linux
 
 ## Compiler
 
@@ -39,7 +46,7 @@ and updates views of variables & memory etc.
 *   kdbg versions below 2.5.2 do not work with gdb 7.5; you get a message box
     with "GDB: Reading symbols from..."
 *   As a workaround,
-    *   Create a `~/.gdbinit` file with "`set print symbol-loading off`"
+    *   Create a `~/.gdbinit` file with `set print symbol-loading off`
     *   Start kdbg, open `Settings/Global options` and remove the `--nx`
         argument to gdb.
 
@@ -57,10 +64,12 @@ logs for new warnings on platforms other than the one used for development.
 Clang has built-in santizers to check for several classes of problems. Here are
 the configure options for building ICU with the address checker:
 
-`CPPFLAGS=-fsanitize=address LDFLAGS=-fsanitize=address ./runConfigureICU
---enable-debug --disable-release Linux --disable-renaming`
+```
+CPPFLAGS=-fsanitize=address LDFLAGS=-fsanitize=address ./runConfigureICU
+--enable-debug --disable-release Linux --disable-renaming
+```
 
-The other available sanitizers are `thread`, `memory` and `undefined `behavior.
+The other available sanitizers are `thread`, `memory` and `undefined` behavior.
 At the time of this writing, thread and address run cleanly, the others show
 warnings that have not yet been resolved.
 
@@ -75,8 +84,10 @@ stack to see more detail.
 
 To install on Linux,
 
-> `sudo apt install heaptrack`
-> sudo apt install heaptrack-gui`
+```
+sudo apt install heaptrack
+sudo apt install heaptrack-gui
+```
 
 ## Quick Scripts for small test programs
 
@@ -85,6 +96,7 @@ stand-alone programs against ICU, without needing to set up makefiles. They
 assume a program with a single .cpp file with the same name as the directory in
 which it resides.
 
+```
 b: build
 
 r: run
@@ -92,6 +104,7 @@ r: run
 d: debug
 
 v: run under valgrind
+```
 
 You will probably need to modify them to reflect where you keep your most
 commonly used ICU build, and whether you routinely use an out-of-source ICU

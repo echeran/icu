@@ -1,4 +1,11 @@
-# Ant Setup for Java Developers
+---
+layout: default
+title: Ant Setup for Java
+grand_parent: Setup for Contributors
+parent: Java Setup
+---
+
+# Ant Setup for Java
 
 ## Overview
 
@@ -7,177 +14,108 @@ ICU4J development environment.
 
 Get the source code by following the [Quick Start
 instruction](http://site.icu-project.org/repository). Go into the icu4j/
-directory to see the build.xml file. You can run targets displayed by "ant -p".
+directory to see the build.xml file. You can run targets displayed by `ant -p`.
 
 Main targets:
-all Build all primary targets
 
-apireport Run API report generator tool
-
-apireportOld Run API report generator tool (Pre Java 5 Style)
-
-build-tools Build build-tool classes
-
-charset Build charset classes
-
-charset-tests Build charset tests
-
-charsetCheck Run only the charset tests
-
-check Run the standard ICU4J test suite
-
-checkDeprecated Check consistency between javadoc @deprecated and @Deprecated
-annotation
-
-checkTest Run only the specified tests of the specified test class or, if no
-arguments are given, the standard ICU4J test suite.
-
-checktags Check API tags before release
-
-cldrUtil Build Utilities for CLDR tooling
-
-clean Clean up build outputs
-
-collate Build collation classes
-
-collate-tests Build core tests
-
-collateCheck Run only the collation tests
-
-core Build core classes
-
-core-tests Build core tests
-
-coreCheck Run only the core tests
-
-coverageJaCoCo Run the ICU4J unit tests and generate code coverage report
-
-currdata Build currency data classes
-
-demos Build demo classes
-
-docs Build API documents
-
-docsStrict Build API documents with all doclint check enabled
-
-draftAPIs Run API collector tool and generate draft API report
-
-exhaustiveCheck Run the standard ICU4J test suite in exhaustive mode
-
-findbugs Run FindBugs on all library sub projects.
-
-gatherapi Run API database generator tool
-
-gatherapiOld Run API database generator tool (Pre Java 5 style)
-
-icu4jJar Build ICU4J all-in-one core jar
-
-icu4jSrcJar Build icu4j-src.jar
-
-icu4jtestsJar Build ICU4J all-in-one test jar
-
-indicIMEJar Build indic IME 'icuindicime.jar' jar file
-
-info Display the build environment information
-
-init Initialize the environment for build and test. May require internet access.
-
-jar Build ICU4J runtime library jar files
-
-jarDemos Build ICU4J demo jar file
-
-jdktzCheck Run the standard ICU4J test suite with JDK TimeZone
-
-langdata Build language data classes
-
-localespi Build Locale SPI classes
-
-localespi-tests Build Locale SPI tests
-
-localespiCheck Run the ICU4J Locale SPI test suite
-
-main Build ICU4J runtime library classes
-
-packaging-tests Build packaging tests
-
-packagingCheck Run packaging tests
-
-perf-tests Build performance test classes
-
-regiondata Build region data classes
-
-release Build all ICU4J release files for distribution
-
-releaseBinaries Build ICU4J binary files for distribution
-
-releaseCLDR Build release files for CLDR tooling
-
-releaseDocs Build ICU4J API reference doc jar file for distribution
-
-releaseSourceArchiveTgz Build ICU4J source release archive (.tgz)
-
-releaseSourceArchiveZip Build ICU4J source release archive (.zip)
-
-releaseSrcJars Build ICU4J src jar files for distribution
-
-releaseVer Build all ICU4J release files for distribution with versioned file
-names
-
-runTest Run the standard ICU4J test suite without calling any other build
-targets
-
-samples Build sample classes
-
-secure (Deprecated)Build ICU4J API and test classes for running the ICU4J test
-suite with Java security manager enabled
-
-secureCheck Run the secure (applet-like) ICU4J test suite
-
-test-framework Build test framework classes
-
-tests Build ICU4J test classes
-
-timeZoneCheck Run the complete test for TimeZoneRoundTripAll
-
-tools Build tool classes
-
-translit Build translit classes
-
-translit-tests Build translit tests
-
-translitCheck Run the ICU4J Translit test suite
-
-translitIMEJar Build transliterator IME 'icutransime.jar' jar file
-
-xliff Build xliff converter tool
+* `all` Build all primary targets
+* `apireport` Run API report generator tool
+* `apireportOld` Run API report generator tool (Pre Java 5 Style)
+* `build-tools` Build build-tool classes
+* `charset` Build charset classes
+* `charset-tests` Build charset tests
+* `charsetCheck` Run only the charset tests
+* `check` Run the standard ICU4J test suite
+* `checkDeprecated` Check consistency between javadoc @deprecated and @Deprecated annotation
+* `checkTest` Run only the specified tests of the specified test class or, if no arguments are given, the standard ICU4J test suite.
+* `checktags` Check API tags before release
+* `cldrUtil` Build Utilities for CLDR tooling
+* `clean` Clean up build outputs
+* `collate` Build collation classes
+* `collate-tests` Build core tests
+* `collateCheck` Run only the collation tests
+* `core` Build core classes
+* `core-tests` Build core tests
+* `coreCheck` Run only the core tests
+* `coverageJaCoCo` Run the ICU4J unit tests and generate code coverage report
+* `currdata` Build currency data classes
+* `demos` Build demo classes
+* `docs` Build API documents
+* `docsStrict` Build API documents with all doclint check enabled
+* `draftAPIs` Run API collector tool and generate draft API report
+* `exhaustiveCheck` Run the standard ICU4J test suite in exhaustive mode
+* `findbugs` Run FindBugs on all library sub projects.
+* `gatherapi` Run API database generator tool
+* `gatherapiOld` Run API database generator tool (Pre Java 5 style)
+* `icu4jJar` Build ICU4J all-in-one core jar
+* `icu4jSrcJar` Build icu4j-src.jar
+* `icu4jtestsJar` Build ICU4J all-in-one test jar
+* `indicIMEJar` Build indic IME 'icuindicime.jar' jar file
+* `info` Display the build environment information
+* `init` Initialize the environment for build and test. May require internet access.
+* `jar` Build ICU4J runtime library jar files
+* `jarDemos` Build ICU4J demo jar file
+* `jdktzCheck` Run the standard ICU4J test suite with JDK TimeZone
+* `langdata` Build language data classes
+* `localespi` Build Locale SPI classes
+* `localespi-tests` Build Locale SPI tests
+* `localespiCheck` Run the ICU4J Locale SPI test suite
+* `main` Build ICU4J runtime library classes
+* `packaging-tests` Build packaging tests
+* `packagingCheck` Run packaging tests
+* `perf-tests` Build performance test classes
+* `regiondata` Build region data classes
+* `release` Build all ICU4J release files for distribution
+* `releaseBinaries` Build ICU4J binary files for distribution
+* `releaseCLDR` Build release files for CLDR tooling
+* `releaseDocs` Build ICU4J API reference doc jar file for distribution
+* `releaseSourceArchiveTgz` Build ICU4J source release archive (.tgz)
+* `releaseSourceArchiveZip` Build ICU4J source release archive (.zip)
+* `releaseSrcJars` Build ICU4J src jar files for distribution
+* `releaseVer` Build all ICU4J release files for distribution with versioned file names
+* `runTest` Run the standard ICU4J test suite without calling any other build targets
+* `samples` Build sample classes
+* `secure` (Deprecated)Build ICU4J API and test classes for running the ICU4J test suite with Java security manager enabled
+* `secureCheck` Run the secure (applet-like) ICU4J test suite
+* `test-framework` Build test framework classes
+* `tests` Build ICU4J test classes
+* `timeZoneCheck` Run the complete test for TimeZoneRoundTripAll
+* `tools` Build tool classes
+* `translit` Build translit classes
+* `translit-tests` Build translit tests
+* `translitCheck` Run the ICU4J Translit test suite
+* `translitIMEJar` Build transliterator IME 'icutransime.jar' jar file
+* `xliff` Build xliff converter tool
 
 Default target: main
-The typical usage is - "ant check", which will build main ICU4J libraries and
+The typical usage is `ant check`, which will build main ICU4J libraries and
 run the standard unit test suite.
 
 For running ant you may need to set up some environment variables first. For
 example, on Windows:
 
+```
 set ANT_HOME=C:\\ant\\apache-ant-1.7.1
 
 set JAVA_HOME=C:\\Program Files\\Java\\jdk1.5.0_07
 
 set PATH=%JAVA_HOME%\\bin;%ANT_HOME%\\bin;%PATH%
+```
 
 ## Test arguments and running just one test or the tests of just one test class
 
 You can pass arguments to the test system by using the 'testclass' and
 'testnames' variables and the 'checkTest' target. For example:
-**Command Line**
-Meaning**
-ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript' Runs all the
+
+|Command Line|Meaning|
+----------------------
+`ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript'` | Runs all the
 tests in test class 'TestUScript'.
-ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript'
--Dtestnames='TestNewCode,TestHasScript' Runs the tests 'TestNewCode' and
-'TestHasScript' in test class 'TestUScript'. ant checkTest
--Dtestnames='TestNewCode,TestHasScript' Error: test class not specified. ant
-checkTest
-Runs the standard ICU4J test suite (same as 'ant check').
+`ant checkTest -Dtestclass='com.ibm.icu.dev.test.lang.TestUScript' -Dtestnames='TestNewCode,TestHasScript'` | Runs the tests `TestNewCode` and
+`TestHasScript` in test class `TestUScript`. 
+`ant checkTest -Dtestnames='TestNewCode,TestHasScript'` | Error: test class not specified.
+`ant checkTest` | Runs the standard ICU4J test suite (same as 'ant check').
+
 The JUnit-generated test result reports are in out/junit-results/checkTest. Go
 into the 'html/' subdirectory and load 'index.html' into a browser.
 
@@ -289,4 +227,4 @@ ICU4J plugin test - Note: This is currently broken
 
 ## Building ICU4J Release Files
 
-> See [Release Build](../../../processes/release/tasks/release-build.md)
+See [Release Build](../../../processes/release/tasks/release-build.md)

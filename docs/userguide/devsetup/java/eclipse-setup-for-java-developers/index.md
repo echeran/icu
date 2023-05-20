@@ -1,3 +1,10 @@
+---
+layout: default
+title: Eclipse Setup for Java Developers
+grand_parent: Setup for Contributors
+parent: Java Setup
+---
+
 # Eclipse Setup for Java Developers
 
 ICU4J source layout was changed after 4.2. There are several ways to set up the ICU4J development environment.

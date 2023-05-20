@@ -1,11 +1,12 @@
 ---
 layout: default
-title: Source Code Access
-parent: Contributors
+title: Source Code Setup
+parent: Setup for Contributors
+has_children: true
 ---
 
 
-# Source Code Access
+# Source Code Setup
 
 > Announcement 07/16/2018: The ICU source code repository has been migrated from
 > Subversion to Git, and is now hosted on GitHub.
@@ -86,8 +87,8 @@ There are many resources available to help you work with git, here are a few:
 *   <https://help.github.com/> - GitHub’s help page
 *   <https://try.github.io/> - Resources to learn Git
 
-Want to contribute back to ICU? See [How to
-contribute](../../processes/contribute.md).
+Want to contribute back to ICU? See
+[How to contribute](../../userguide/processes/contribute.md).
 
 ## Repository Layout
 
@@ -144,4 +145,3 @@ tools and much effort was involved in migration and testing. There is a
 topic (not an official ICU-TC document!) for those interested in the technical
 details of this move.
 
-[Legal Notice: Time Zone Database](tznotice.md)

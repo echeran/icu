@@ -1,4 +1,11 @@
-# Setup: Local tooling configs for git and Github
+---
+layout: default
+title: Local tooling configs for git and Github
+grand_parent: Setup for Contributors
+parent: Source Code Setup
+---
+
+# Local tooling configs for git and Github
 
 ## git difftool & mergetool
 
