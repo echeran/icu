@@ -1,11 +1,10 @@
 ---
 layout: default
-title: git for ICU Developers
-grand_parent: Setup for Contributors
-parent: Source Code Setup
+title: git and Github for ICU Developers
+parent: Contributors
 ---
 
-# git for ICU Developers
+# git and Github for ICU Developers
 
 For git & git lfs installation see the [Source Code Access](source.md)
 page.
