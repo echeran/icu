@@ -16,10 +16,10 @@ parent: Contributors
 ---
 
 
-For git & git lfs installation see the [Source Code Setup](../../devsetup/source/index.md)
+For git & git lfs installation see the [Source Code Setup](../../devsetup/source/)
 page.
 
-For setup with language compilers and IDEs, see the [Setup for Contributors](../../devsetup/source/index.md) page
+For setup with language compilers and IDEs, see the [Setup for Contributors](../../devsetup/source/) page
 and its subpages.
 
 ## Overview

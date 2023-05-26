@@ -43,7 +43,7 @@ This will check out a new directory `icu` which contains **icu4c** and
 **icu4j** subdirectories as detailed below.
 
 *For ICU development*, do *not* work directly with the Unicode ICU `main` branch!
-See the [git for ICU Developers](../index) page instead.
+See the [git for ICU Developers](../../userguide/dev/gitdev) page instead.
 
 For cloning from your own fork, replace `unicode-org` with your GitHub user
 name.
