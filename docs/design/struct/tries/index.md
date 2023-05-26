@@ -27,7 +27,7 @@ consider implementing an easily serialized hash map.
 
 See also [ICU Code Point Tries](../utrie.md).
 
-Subpages:
+Implementations:
 
 * [BytesTrie](./bytestrie/)
 * [UCharsTrie](./ucharstrie)

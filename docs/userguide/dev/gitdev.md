@@ -16,10 +16,10 @@ parent: Contributors
 ---
 
 
-For git & git lfs installation see the [Source Code Setup](../devsetup/source/index.md)
+For git & git lfs installation see the [Source Code Setup](../../devsetup/source/index.md)
 page.
 
-For setup with language compilers and IDEs, see the [Setup for Contributors](../devsetup/source/index.md) page
+For setup with language compilers and IDEs, see the [Setup for Contributors](../../devsetup/source/index.md) page
 and its subpages.
 
 ## Overview
@@ -76,7 +76,7 @@ Now you are in a new development branch in your local git repo. Confirm with
 shows as changed.
 
 For looking at changes, you should set up a visual diff program for use with
-`git difftool`. See the [Setup: git difftool & mergetool](../devsetup/source/gittooling.md) page.
+`git difftool`. See the [Setup: git difftool & mergetool](../../devsetup/source/gittooling.md) page.
 
 For new files: Remember to add the appropriate copyright lines. Copy from a file
 of the same type, and set the copyright year to the current year (that is, the

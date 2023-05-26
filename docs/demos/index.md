@@ -27,7 +27,7 @@ and JSP pages.
 
 #### To build the client side samples:
 
-1.  Download the ICU4J source code ( see [Source Code Access](../repository/gitdev/source) )
+1.  Download the ICU4J source code ( see [Source Code Setup](../devsetup/source) )
 2.  Run `ant jar` to build ICU4J jar
 3.  Run `ant jarDemos` to build the demos
 4.  Run `cp icu4j.jar demos/out/lib`
