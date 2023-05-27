@@ -5,7 +5,21 @@ parent: Data Structures
 grand_parent: Design Docs
 ---
 
+<!--
+Copyright (C) 2016 and later: Unicode, Inc. and others.	Copyright (C) 2016 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html	License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # ICU Code Point Tries
+{: .no_toc }
+
+## Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Fast lookup in arrays
 

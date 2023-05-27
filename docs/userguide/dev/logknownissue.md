@@ -4,6 +4,11 @@ title: Skipping Known Test Failures
 parent: Contributors
 ---
 
+<!--
+Copyright (C) 2016 and later: Unicode, Inc. and others.	Copyright (C) 2016 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html	License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # Skipping Known Test Failures (logKnownIssue)
 
 If you need a test to be disabled temporarily, call `logKnownIssue`. The method

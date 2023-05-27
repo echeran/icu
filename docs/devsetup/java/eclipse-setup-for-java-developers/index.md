@@ -5,6 +5,11 @@ grand_parent: Setup for Contributors
 parent: Java Setup
 ---
 
+<!--
+Copyright (C) 2016 and later: Unicode, Inc. and others.	Copyright (C) 2016 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html	License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # Eclipse Setup for Java Developers
 {: .no_toc }
 
@@ -266,7 +271,7 @@ the directories but all of the JAR files:
     depending on coverage level. Too remove the highlights, click "Remove All
     Sessions" icon below (which also delete the coverage results).
 
-![image](Capture.PNG)
+![image](Capture.png)
 
 *   If you want to run coverage again, you can just right click on icu4j-testall
     project and select "Coverage As" > "Java Application"

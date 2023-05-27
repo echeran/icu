@@ -5,6 +5,11 @@ grand_parent: Setup for Contributors
 parent: C++ Setup
 ---
 
+<!--
+Copyright (C) 2016 and later: Unicode, Inc. and others.	Copyright (C) 2016 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html	License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # Profiling ICU4C with callgrind
 {: .no_toc }
 

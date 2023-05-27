@@ -6,6 +6,11 @@ grand_parent: Contributors
 nav_order: 75
 ---
 
+<!--
+Copyright (C) 2016 and later: Unicode, Inc. and others.	Copyright (C) 2016 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html	License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # Maintenance Release Procedure
 
 When a critical problem is found in ICU libraries, we try to fix the problem in

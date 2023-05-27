@@ -5,6 +5,11 @@ grand_parent: Setup for Contributors
 parent: Source Code Setup
 ---
 
+<!--
+Copyright (C) 2016 and later: Unicode, Inc. and others.	Copyright (C) 2016 and later: Unicode, Inc. and others.
+License & terms of use: http://www.unicode.org/copyright.html	License & terms of use: http://www.unicode.org/copyright.html
+-->
+
 # Local tooling configs for git and Github
 {: .no_toc }
 
