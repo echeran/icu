@@ -10,25 +10,15 @@ License & terms of use: http://www.unicode.org/copyright.html
 
 * A CLDR release for supplying CLDR data and the CLDR API.
 * The Maven build tool
-* The Ant build tool
+* The Ant build tool (using JDK 11+)
 
 ## Important directories
 
-<dl>
-<dt><code>TOOLS_ROOT</code></dt>
-<dd>Path to root of ICU tools directory, below which are (e.g.) the
- cldr/ and unicodetools/ directories.</dd>
-
-<dt><code>CLDR_DIR</code></dt>
-<dd>This is the path to the to root of standard CLDR sources, below
-  which are the common/ and tools/ directories.</dd>
-
-<dt><code>CLDR_DATA_DIR</code></dt>
-<dd>The top-level directory for the CLDR production data (typically
- the "production" directory in the staging repository). Usually
- generated locally or obtained from:
- https://github.com/unicode-org/cldr-staging/tree/main/production</dd>
- </dl>
+| Directory       | Description                                                                                                                                                                                                                          |
+|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `TOOLS_ROOT`    | Path to root of ICU tools directory, below which are (e.g.) the `cldr/` and `unicodetools/` directories.                                                                                                                             |
+| `CLDR_DIR`      | This is the path to the to root of standard CLDR sources, below which are the `common/` and `tools/` directories.                                                                                                                    |
+| `CLDR_DATA_DIR` | The top-level directory for the CLDR production data (typically the "production" directory in the staging repository). Usually generated locally or obtained from:  https://github.com/unicode-org/cldr-staging/tree/main/production |
 
 In Posix systems, it's best to set these as exported shell variables, and any
 following instructions assume they have been set accordingly:
@@ -57,7 +47,7 @@ $ sudo apt-get install maven ant
 ```
 
 You must also install an additional CLDR JAR file the local Maven repository at
-`$TOOLS_ROOT/cldr/lib` (see the README.txt in that directory for more
+`$TOOLS_ROOT/cldr/lib` (see the `README.txt` in that directory for more
 information).
 
 ```
@@ -94,7 +84,7 @@ $ ant -f build-icu-data.xml
 
 * Using alternate CLDR values (ex: use `alt="ascii"` values from the CLDR XML):
 
-  First, edit the `build-icu-data.xml` file where it mentions "ALTERNATE VALUES"
+  First, edit the `build-icu-data.xml` file where it mentions `ALTERNATE VALUES`
   with the correctly annotated source path, target path, and locales list:
   ```diff
   @@ -384,6 +399,20 @@
