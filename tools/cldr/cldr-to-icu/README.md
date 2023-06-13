@@ -113,8 +113,8 @@ $ ant -f build-icu-data.xml
              <!-- <altPath target="//path/to/value[@attr='foo']"
                            source="//path/to/value[@attr='bar']"
                            locales="xx,yy_ZZ"/> -->
-  +            <altPath target="//ldml/dates/calendars/calendar[@type='all']/dateTimeFormats/availableFormats/dateFormatItem[@alt='ascii']"
-  +                     source="//ldml/dates/calendars/calendar[@type='all']/dateTimeFormats/availableFormats/dateFormatItem"
+  +            <altPath target="//ldml/dates/calendars/calendar[@type='all']/dateTimeFormats/availableFormats/dateFormatItem"
+  +                     source="//ldml/dates/calendars/calendar[@type='all']/dateTimeFormats/availableFormats/dateFormatItem[@alt='ascii']"
   +                     locales="en"/>
   ```
   Then run the generator:
