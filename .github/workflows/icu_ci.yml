@@ -53,6 +53,13 @@ jobs:
           lfs: true
       - name: Checkout lfs objects
         run: git lfs pull
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-java${{ matrix.java-version }}-
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -89,11 +96,17 @@ jobs:
           lfs: true
       - name: Checkout lfs objects
         run: git lfs pull
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-java${{ matrix.java-version }}-
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
-          cache: maven
       - name: Run Maven test
         run: |
           cd icu4j;
@@ -114,11 +127,17 @@ jobs:
           lfs: true
       - name: Checkout lfs objects
         run: git lfs pull
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-java${{ matrix.java-version }}-
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
-          cache: maven
       # The Maven `verify` phase causes the following to happen first, and in order:
       # build/compile (`compile`), unit tests (`test`), Jar building (`package`),
       # integration tests, if any (`integration-test`)
