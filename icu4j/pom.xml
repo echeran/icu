@@ -277,6 +277,18 @@
 
   <profiles>
 
+    <!-- Guarantee that the API is Java 8 compatible when executing -->
+    <!-- from: https://stackoverflow.com/a/65655542/2077918 -->
+    <profile>
+      <id>run-as-java-8</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.release>8</maven.compiler.release>
+      </properties>
+    </profile>
+
     <!-- This is used to create the *-sources.jar for individual modules -->
     <!-- TODO: the shaded equivalent. -->
     <profile>
