@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         java-version: [ '8', '11', '17' ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout and setup
         uses: actions/checkout@v3
@@ -53,6 +53,13 @@ jobs:
           lfs: true
       - name: Checkout lfs objects
         run: git lfs pull
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-java${{ matrix.java-version }}-
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -73,7 +80,7 @@ jobs:
   # dependencies as jar files
   icu4j-test-maven:
     name: Run unit tests with Maven for Java version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     # Make this unit test target job depend on a later phase target job to prevent race condition when
     # trying to persist the Maven cache to the Github cache, knowing that artifacts needed for
     # the later phase `verify` are a superset of the artifacts needed for the earlier phase `test`.
@@ -89,11 +96,17 @@ jobs:
           lfs: true
       - name: Checkout lfs objects
         run: git lfs pull
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-java${{ matrix.java-version }}-
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
-          cache: maven
       - name: Run Maven test
         run: |
           cd icu4j;
@@ -102,7 +115,7 @@ jobs:
   # Run `verify` to ensure that `package` (creating .jar files) and `integration-test` (special setup for localespi tests) work
   icu4j-verify-maven:
     name: Run integration tests with Maven for Java version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -114,11 +127,17 @@ jobs:
           lfs: true
       - name: Checkout lfs objects
         run: git lfs pull
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-java${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-java${{ matrix.java-version }}-
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java-version }}
-          cache: maven
       # The Maven `verify` phase causes the following to happen first, and in order:
       # build/compile (`compile`), unit tests (`test`), Jar building (`package`),
       # integration tests, if any (`integration-test`)
@@ -129,7 +148,7 @@ jobs:
 
   # ICU4J build and unit test under lstm
   lstm-icu4j-build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout and setup
         uses: actions/checkout@v3
