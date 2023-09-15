@@ -67,7 +67,7 @@ jobs:
       - name: ICU4J
         run: |
           cd icu4j;
-          mvn install
+          mvn verify
       - name: List failures (if any)
         run: |
           cd icu4j && cat `find . -name surefire-reports -type d -exec grep -l  -r --include="*.txt" FAILED {} \;`;
@@ -170,7 +170,7 @@ jobs:
       - name: ICU4J
         run: |
           cd icu4j;
-          mvn install
+          mvn verify
       - name: List failures (if any)
         run: |
           cd icu4j && cat `find . -name surefire-reports -type d -exec grep -l  -r --include="*.txt" FAILED {} \;`;

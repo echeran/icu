@@ -300,7 +300,7 @@ jobs:
           git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn install -DskipITs -DskipTests;
+          mvn verify -DskipITs -DskipTests;
           git status
           cd perf-tests;
           mkdir -p perf/results/j_unicodesetperf/${{ matrix.perf }};
@@ -353,7 +353,7 @@ jobs:
           git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn install -DskipITs -DskipTests;
+          mvn verify -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_ucharacterperf;
           java -cp ./target/*:../tools/misc/target/*:../main/core/target/* com.ibm.icu.dev.test.perf.UCharacterPerf -a -t 2 -p 4 0 ffff | tee perf/results/j_ucharacterperf/output.txt
@@ -408,7 +408,7 @@ jobs:
           git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn install -DskipITs -DskipTests;
+          mvn verify -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_decimalformatperf/${{ matrix.locale }}/${{ matrix.perf }};
           # Delay execution by random number of seconds. Spreading execution of multiple
@@ -470,7 +470,7 @@ jobs:
           git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn install -DskipITs -DskipTests;
+          mvn verify -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_normperf/${{ matrix.source_text }}/${{ matrix.perf }};
           # Delay execution by random number of seconds. Spreading execution of multiple
@@ -600,7 +600,7 @@ jobs:
           git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn install -DskipITs -DskipTests;
+          mvn verify -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_converterperf/${{ matrix.source_text }}/${{ matrix.test_enc }}/${{ matrix.perf }};
           # Delay execution by random number of seconds. Spreading execution of multiple
@@ -677,7 +677,7 @@ jobs:
           git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2
           git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2
           cd icu4j;
-          mvn install -DskipITs -DskipTests;
+          mvn verify -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_dateformatperf/${{ matrix.locale }}/${{ matrix.perf }}/${{ env.DDIR }};
           # Delay execution by random number of seconds. Spreading execution of multiple
