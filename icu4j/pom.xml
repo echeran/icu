@@ -89,6 +89,12 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.11.0</version>
+          <configuration>
+            <!-- Must currently hard code version rather use property. See: -->
+            <!-- https://issues.apache.org/jira/projects/MCOMPILER/issues/MCOMPILER-545 -->
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
