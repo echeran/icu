@@ -66,6 +66,11 @@ abstract public class TestFmwk extends AbstractTestLog {
         testParams = TestParams.create();
     }
 
+    private static final TimeZone originalJdkDefaultTimeZone;
+    static {
+        originalJdkDefaultTimeZone = TimeZone.getDefault();
+    }
+
     protected TestFmwk() {
     }
 
@@ -101,6 +106,8 @@ abstract public class TestFmwk extends AbstractTestLog {
     @After
     public final void testTeardown() {
         localTestTeardown();
+
+        TimeZone.setDefault(originalJdkDefaultTimeZone);
 
         if (getParams().testSecurityManager != null) {
             System.setSecurityManager(getParams().originalSecurityManager);
