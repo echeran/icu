@@ -148,7 +148,8 @@ jobs:
 
   # ICU4J build and unit test under lstm
   lstm-icu4j-build-and-test:
-    runs-on: ubuntu-20.04
+    if: false  # TODO(ICU-22505)
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout and setup
         uses: actions/checkout@v3

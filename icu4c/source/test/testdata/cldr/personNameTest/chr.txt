@@ -4,7 +4,7 @@
 #  SPDX-License-Identifier: Unicode-DFS-2016
 #  CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
 #
-# CLDR person name formatting test data for: pcm
+# CLDR person name formatting test data for: chr
 #
 # Test lines have the following structure:
 #
@@ -60,10 +60,10 @@ enum ; usage ; referring, addressing, monogram
 enum ; formality ; formal, informal
 
 # nativeG
-name ; given; Sinbad
-name ; locale; pcm_AQ
+name ; given; ᎨᏓᏯ
+name ; locale; chr_AQ
 
-expectedResult; Sinbad
+expectedResult; ᎨᏓᏯ
 
 parameters; givenFirst; long; referring; formal
 parameters; givenFirst; long; referring; informal
@@ -96,7 +96,7 @@ parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; formal
 parameters; sorting; short; referring; informal
 
-expectedResult; S
+expectedResult; Ꭸ
 
 parameters; givenFirst; long; monogram; formal
 parameters; givenFirst; long; monogram; informal
@@ -114,11 +114,11 @@ parameters; surnameFirst; short; monogram; informal
 endName
 
 # nativeGS
-name ; given; Irene
-name ; surname; Adler
-name ; locale; pcm_AQ
+name ; given; ᎠᏪᏁ
+name ; surname; ᎠᏕᎸ
+name ; locale; chr_AQ
 
-expectedResult; Adler, Irene
+expectedResult; ᎠᏕᎸ, ᎠᏪᏁ
 
 parameters; sorting; long; referring; formal
 parameters; sorting; long; referring; informal
@@ -126,47 +126,44 @@ parameters; sorting; medium; referring; formal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
-expectedResult; Adler Irene
+expectedResult; ᎠᏕᎸ ᎠᏪᏁ
 
 parameters; surnameFirst; long; referring; formal
 parameters; surnameFirst; long; referring; informal
 parameters; surnameFirst; medium; referring; formal
 parameters; surnameFirst; medium; referring; informal
-parameters; surnameFirst; medium; addressing; formal
-parameters; surnameFirst; short; addressing; formal
+parameters; surnameFirst; short; referring; formal
 
-expectedResult; Irene Adler
+expectedResult; ᎠᏕᎸ, Ꭰ.
+
+parameters; sorting; short; referring; formal
+
+expectedResult; ᎠᏪᏁ ᎠᏕᎸ
 
 parameters; givenFirst; long; referring; formal
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; formal
 parameters; givenFirst; medium; referring; informal
-parameters; givenFirst; medium; addressing; formal
-
-expectedResult; Adler, I.
-
-parameters; sorting; short; referring; formal
-
-expectedResult; Adler I.
-
-parameters; surnameFirst; short; referring; formal
-parameters; surnameFirst; short; referring; informal
-
-expectedResult; I. Adler
-
 parameters; givenFirst; short; referring; formal
 
-expectedResult; Irene A.
+expectedResult; ᎠᏕᎸ Ꭰ.
+
+parameters; surnameFirst; short; referring; informal
+
+expectedResult; ᎠᏪᏁ Ꭰ.
 
 parameters; givenFirst; short; referring; informal
 
-expectedResult; Adler
+expectedResult; ᎠᏕᎸ
 
 parameters; givenFirst; long; addressing; formal
+parameters; givenFirst; medium; addressing; formal
 parameters; givenFirst; short; addressing; formal
 parameters; surnameFirst; long; addressing; formal
+parameters; surnameFirst; medium; addressing; formal
+parameters; surnameFirst; short; addressing; formal
 
-expectedResult; Irene
+expectedResult; ᎠᏪᏁ
 
 parameters; givenFirst; long; addressing; informal
 parameters; givenFirst; medium; addressing; informal
@@ -175,99 +172,87 @@ parameters; surnameFirst; long; addressing; informal
 parameters; surnameFirst; medium; addressing; informal
 parameters; surnameFirst; short; addressing; informal
 
-expectedResult; AI
-
-parameters; surnameFirst; long; monogram; formal
-parameters; surnameFirst; long; monogram; informal
-
-expectedResult; IA
+expectedResult; ᎠᎠ
 
 parameters; givenFirst; long; monogram; formal
 parameters; givenFirst; long; monogram; informal
+parameters; surnameFirst; long; monogram; formal
+parameters; surnameFirst; long; monogram; informal
 
-expectedResult; A
+expectedResult; Ꭰ
 
 parameters; givenFirst; medium; monogram; formal
-parameters; givenFirst; short; monogram; formal
-parameters; surnameFirst; medium; monogram; formal
-parameters; surnameFirst; short; monogram; formal
-
-expectedResult; I
-
 parameters; givenFirst; medium; monogram; informal
+parameters; givenFirst; short; monogram; formal
 parameters; givenFirst; short; monogram; informal
+parameters; surnameFirst; medium; monogram; formal
 parameters; surnameFirst; medium; monogram; informal
+parameters; surnameFirst; short; monogram; formal
 parameters; surnameFirst; short; monogram; informal
 
 endName
 
 # nativeGGS
-name ; given; John
-name ; given2; Hámish
-name ; surname; Watson
-name ; locale; pcm_AQ
+name ; given; ᎺᎵ ᏑᎢ
+name ; given2; ᎭᎻᏏ
+name ; surname; ᏩᏔᏒᎢ
+name ; locale; chr_AQ
 
-expectedResult; Watson, John Hámish
+expectedResult; ᏩᏔᏒᎢ, ᎺᎵ ᏑᎢ ᎭᎻᏏ
 
 parameters; sorting; long; referring; formal
-parameters; sorting; medium; referring; formal
 
-expectedResult; John Hámish Watson
+expectedResult; ᎺᎵ ᏑᎢ ᎭᎻᏏ ᏩᏔᏒᎢ
 
 parameters; givenFirst; long; referring; formal
-parameters; givenFirst; medium; referring; formal
-parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; referring; formal
 
-expectedResult; Watson John Hámish
+expectedResult; ᏩᏔᏒᎢ ᎺᎵ ᏑᎢ ᎭᎻᏏ
 
 parameters; surnameFirst; long; referring; formal
-parameters; surnameFirst; medium; referring; formal
-parameters; surnameFirst; medium; addressing; formal
-parameters; surnameFirst; short; addressing; formal
+parameters; surnameFirst; short; referring; formal
 
-expectedResult; Watson, J. H.
+expectedResult; ᏩᏔᏒᎢ, Ꮊ. Ꮡ. Ꭽ.
 
 parameters; sorting; short; referring; formal
 
-expectedResult; J. H. Watson
+expectedResult; ᏩᏔᏒᎢ, ᎺᎵ ᏑᎢ Ꭽ.
 
-parameters; givenFirst; short; referring; formal
+parameters; sorting; medium; referring; formal
 
-expectedResult; Watson J. H.
+expectedResult; ᎺᎵ ᏑᎢ Ꭽ. ᏩᏔᏒᎢ
 
-parameters; surnameFirst; short; referring; formal
+parameters; givenFirst; medium; referring; formal
 
-expectedResult; Watson, John
+expectedResult; ᏩᏔᏒᎢ ᎺᎵ ᏑᎢ Ꭽ.
+
+parameters; surnameFirst; medium; referring; formal
+
+expectedResult; ᏩᏔᏒᎢ, ᎺᎵ ᏑᎢ
 
 parameters; sorting; long; referring; informal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
-expectedResult; John Watson
+expectedResult; ᎺᎵ ᏑᎢ ᏩᏔᏒᎢ
 
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
 
-expectedResult; Watson John
+expectedResult; ᏩᏔᏒᎢ Ꮊ. Ꮡ.
+
+parameters; surnameFirst; short; referring; informal
+
+expectedResult; ᏩᏔᏒᎢ ᎺᎵ ᏑᎢ
 
 parameters; surnameFirst; long; referring; informal
 parameters; surnameFirst; medium; referring; informal
 
-expectedResult; Watson J.
-
-parameters; surnameFirst; short; referring; informal
-
-expectedResult; John W.
+expectedResult; ᎺᎵ ᏑᎢ Ꮹ.
 
 parameters; givenFirst; short; referring; informal
 
-expectedResult; Watson
-
-parameters; givenFirst; long; addressing; formal
-parameters; givenFirst; short; addressing; formal
-parameters; surnameFirst; long; addressing; formal
-
-expectedResult; John
+expectedResult; ᎺᎵ ᏑᎢ
 
 parameters; givenFirst; long; addressing; informal
 parameters; givenFirst; medium; addressing; informal
@@ -276,30 +261,39 @@ parameters; surnameFirst; long; addressing; informal
 parameters; surnameFirst; medium; addressing; informal
 parameters; surnameFirst; short; addressing; informal
 
-expectedResult; JHW
+expectedResult; ᏩᏔᏒᎢ
+
+parameters; givenFirst; long; addressing; formal
+parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; addressing; formal
+parameters; surnameFirst; long; addressing; formal
+parameters; surnameFirst; medium; addressing; formal
+parameters; surnameFirst; short; addressing; formal
+
+expectedResult; ᎺᎭᏩ
 
 parameters; givenFirst; long; monogram; formal
 
-expectedResult; WJH
+expectedResult; ᏩᎺᎭ
 
 parameters; surnameFirst; long; monogram; formal
 
-expectedResult; JW
+expectedResult; ᎺᏩ
 
 parameters; givenFirst; long; monogram; informal
 
-expectedResult; WJ
+expectedResult; ᏩᎺ
 
 parameters; surnameFirst; long; monogram; informal
 
-expectedResult; J
+expectedResult; Ꮊ
 
 parameters; givenFirst; medium; monogram; informal
 parameters; givenFirst; short; monogram; informal
 parameters; surnameFirst; medium; monogram; informal
 parameters; surnameFirst; short; monogram; informal
 
-expectedResult; W
+expectedResult; Ꮹ
 
 parameters; givenFirst; medium; monogram; formal
 parameters; givenFirst; short; monogram; formal
@@ -309,78 +303,87 @@ parameters; surnameFirst; short; monogram; formal
 endName
 
 # nativeFull
-name ; title; Mr.
-name ; given; Elizabeth Windsor
-name ; given-informal; Lilibet
-name ; given2; Maria Teresa
-name ; surname-prefix; bin
-name ; surname-core; Stromae
-name ; surname2; Robert
-name ; generation; Jr.
-name ; credentials; MP
-name ; locale; pcm_AQ
+name ; title; ᎻᏍᏖᎢ
+name ; given; ᏇᏔᎻ ᏫᏇᏉᏏ
+name ; given-informal; ᏇᏘ
+name ; given2; ᎮᏂᏇ ᏆᏇᏘ
+name ; surname-core; ᏬᏍᏖᎢ
+name ; generation; ᏔᎵᏁ
+name ; credentials; ᎷᏢ
+name ; locale; chr_AQ
 
-expectedResult; bin Stromae, Elizabeth Windsor Maria Teresa MP
-
-parameters; sorting; long; referring; formal
-parameters; sorting; medium; referring; formal
-
-expectedResult; bin Stromae Elizabeth Windsor Maria Teresa MP
-
-parameters; surnameFirst; long; referring; formal
-parameters; surnameFirst; medium; referring; formal
-parameters; surnameFirst; medium; addressing; formal
-parameters; surnameFirst; short; addressing; formal
-
-expectedResult; Elizabeth Windsor Maria Teresa bin Stromae MP
+expectedResult; ᎻᏍᏖᎢ ᏇᏔᎻ ᏫᏇᏉᏏ ᎮᏂᏇ ᏆᏇᏘ ᏬᏍᏖᎢ ᏔᎵᏁ, ᎷᏢ
 
 parameters; givenFirst; long; referring; formal
-parameters; givenFirst; medium; referring; formal
-parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; referring; formal
 
-expectedResult; bin Stromae, E. W. M. T.
+expectedResult; ᏬᏍᏖᎢ ᎻᏍᏖᎢ ᏇᏔᎻ ᏫᏇᏉᏏ ᎮᏂᏇ ᏆᏇᏘ ᏔᎵᏁ, ᎷᏢ
+
+parameters; surnameFirst; long; referring; formal
+parameters; surnameFirst; short; referring; formal
+
+expectedResult; ᏇᏔᎻ ᏫᏇᏉᏏ Ꭾ. Ꮖ. ᏬᏍᏖᎢ ᏔᎵᏁ, ᎷᏢ
+
+parameters; givenFirst; medium; referring; formal
+
+expectedResult; ᏬᏍᏖᎢ ᏇᏔᎻ ᏫᏇᏉᏏ Ꭾ. Ꮖ. ᏔᎵᏁ, ᎷᏢ
+
+parameters; surnameFirst; medium; referring; formal
+
+expectedResult; ᏬᏍᏖᎢ, ᏇᏔᎻ ᏫᏇᏉᏏ ᎮᏂᏇ ᏆᏇᏘ
+
+parameters; sorting; long; referring; formal
+
+expectedResult; ᏬᏍᏖᎢ, ᏇᏔᎻ ᏫᏇᏉᏏ Ꭾ. Ꮖ.
+
+parameters; sorting; medium; referring; formal
+
+expectedResult; ᏬᏍᏖᎢ, Ꮗ. Ꮻ. Ꭾ. Ꮖ.
 
 parameters; sorting; short; referring; formal
 
-expectedResult; bin Stromae E. W. M. T.
+expectedResult; ᏬᏍᏖᎢ Ꮗ. Ꮻ.
 
-parameters; surnameFirst; short; referring; formal
+parameters; surnameFirst; short; referring; informal
 
-expectedResult; E. W. M. T. bin Stromae
+expectedResult; ᎻᏍᏖᎢ ᏬᏍᏖᎢ
 
-parameters; givenFirst; short; referring; formal
+parameters; givenFirst; long; addressing; formal
+parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; addressing; formal
+parameters; surnameFirst; long; addressing; formal
+parameters; surnameFirst; medium; addressing; formal
+parameters; surnameFirst; short; addressing; formal
 
-expectedResult; bin Stromae, Lilibet
+expectedResult; ᏬᏍᏖᎢ, ᏇᏘ
 
 parameters; sorting; long; referring; informal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
-expectedResult; bin Stromae Lilibet
-
-parameters; surnameFirst; long; referring; informal
-parameters; surnameFirst; medium; referring; informal
-
-expectedResult; Lilibet bin Stromae
+expectedResult; ᏇᏘ ᏬᏍᏖᎢ
 
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
 
-expectedResult; bin Stromae E. W.
+expectedResult; ᏬᏍᏖᎢ ᏇᏘ
 
-parameters; surnameFirst; short; referring; informal
+parameters; surnameFirst; long; referring; informal
+parameters; surnameFirst; medium; referring; informal
 
-expectedResult; Mr. bin Stromae
-
-parameters; givenFirst; long; addressing; formal
-parameters; givenFirst; short; addressing; formal
-parameters; surnameFirst; long; addressing; formal
-
-expectedResult; Lilibet b. S.
+expectedResult; ᏇᏘ Ꮼ.
 
 parameters; givenFirst; short; referring; informal
 
-expectedResult; Lilibet
+expectedResult; ᏇᎮᏬ
+
+parameters; givenFirst; long; monogram; formal
+
+expectedResult; ᏬᏇᎮ
+
+parameters; surnameFirst; long; monogram; formal
+
+expectedResult; ᏇᏘ
 
 parameters; givenFirst; long; addressing; informal
 parameters; givenFirst; medium; addressing; informal
@@ -389,43 +392,35 @@ parameters; surnameFirst; long; addressing; informal
 parameters; surnameFirst; medium; addressing; informal
 parameters; surnameFirst; short; addressing; informal
 
-expectedResult; BEM
-
-parameters; surnameFirst; long; monogram; formal
-
-expectedResult; EMB
-
-parameters; givenFirst; long; monogram; formal
-
-expectedResult; BL
-
-parameters; surnameFirst; long; monogram; informal
-
-expectedResult; LB
+expectedResult; ᏇᏬ
 
 parameters; givenFirst; long; monogram; informal
 
-expectedResult; B
+expectedResult; ᏬᏇ
 
-parameters; givenFirst; medium; monogram; formal
-parameters; givenFirst; short; monogram; formal
-parameters; surnameFirst; medium; monogram; formal
-parameters; surnameFirst; short; monogram; formal
+parameters; surnameFirst; long; monogram; informal
 
-expectedResult; L
+expectedResult; Ꮗ
 
 parameters; givenFirst; medium; monogram; informal
 parameters; givenFirst; short; monogram; informal
 parameters; surnameFirst; medium; monogram; informal
 parameters; surnameFirst; short; monogram; informal
 
+expectedResult; Ꮼ
+
+parameters; givenFirst; medium; monogram; formal
+parameters; givenFirst; short; monogram; formal
+parameters; surnameFirst; medium; monogram; formal
+parameters; surnameFirst; short; monogram; formal
+
 endName
 
 # foreignG
-name ; given; Miret
-name ; locale; ko_AQ
+name ; given; ᏏᎾᏆᏗ
+name ; locale; ja_AQ
 
-expectedResult; Miret
+expectedResult; ᏏᎾᏆᏗ
 
 parameters; givenFirst; long; referring; formal
 parameters; givenFirst; long; referring; informal
@@ -458,7 +453,7 @@ parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; formal
 parameters; sorting; short; referring; informal
 
-expectedResult; M
+expectedResult; Ꮟ
 
 parameters; givenFirst; long; monogram; formal
 parameters; givenFirst; long; monogram; informal
@@ -476,11 +471,15 @@ parameters; surnameFirst; short; monogram; informal
 endName
 
 # foreignGS
-name ; given; Katie
-name ; surname; Stefan
-name ; locale; ko_AQ
+name ; given; ᎧᏖ
+name ; surname; ᎽᎴ
+name ; locale; ja_AQ
 
-expectedResult; Stefan, Katie
+expectedResult; ᎽᎴ, Ꭷ.
+
+parameters; sorting; short; referring; formal
+
+expectedResult; ᎽᎴ, ᎧᏖ
 
 parameters; sorting; long; referring; formal
 parameters; sorting; long; referring; informal
@@ -488,47 +487,36 @@ parameters; sorting; medium; referring; formal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
-expectedResult; Katie Stefan
+expectedResult; ᎧᏖ Ꮍ.
+
+parameters; givenFirst; short; referring; informal
+
+expectedResult; ᎧᏖ ᎽᎴ
 
 parameters; givenFirst; long; referring; formal
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; formal
 parameters; givenFirst; medium; referring; informal
-parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; referring; formal
 
-expectedResult; Stefan Katie
+expectedResult; ᎽᎴ Ꭷ.
+
+parameters; surnameFirst; short; referring; informal
+
+expectedResult; ᎽᎴ ᎧᏖ
 
 parameters; surnameFirst; long; referring; formal
 parameters; surnameFirst; long; referring; informal
 parameters; surnameFirst; medium; referring; formal
 parameters; surnameFirst; medium; referring; informal
-parameters; surnameFirst; medium; addressing; formal
-parameters; surnameFirst; short; addressing; formal
-
-expectedResult; Stefan, K.
-
-parameters; sorting; short; referring; formal
-
-expectedResult; K. Stefan
-
-parameters; givenFirst; short; referring; formal
-
-expectedResult; Stefan K.
-
 parameters; surnameFirst; short; referring; formal
-parameters; surnameFirst; short; referring; informal
 
-expectedResult; Katie S.
+expectedResult; ᎧᎽ
 
-parameters; givenFirst; short; referring; informal
+parameters; givenFirst; long; monogram; formal
+parameters; givenFirst; long; monogram; informal
 
-expectedResult; Stefan
-
-parameters; givenFirst; long; addressing; formal
-parameters; givenFirst; short; addressing; formal
-parameters; surnameFirst; long; addressing; formal
-
-expectedResult; Katie
+expectedResult; ᎧᏖ
 
 parameters; givenFirst; long; addressing; informal
 parameters; givenFirst; medium; addressing; informal
@@ -537,24 +525,28 @@ parameters; surnameFirst; long; addressing; informal
 parameters; surnameFirst; medium; addressing; informal
 parameters; surnameFirst; short; addressing; informal
 
-expectedResult; KS
-
-parameters; givenFirst; long; monogram; formal
-parameters; givenFirst; long; monogram; informal
-
-expectedResult; SK
+expectedResult; ᎽᎧ
 
 parameters; surnameFirst; long; monogram; formal
 parameters; surnameFirst; long; monogram; informal
 
-expectedResult; K
+expectedResult; ᎽᎴ
+
+parameters; givenFirst; long; addressing; formal
+parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; addressing; formal
+parameters; surnameFirst; long; addressing; formal
+parameters; surnameFirst; medium; addressing; formal
+parameters; surnameFirst; short; addressing; formal
+
+expectedResult; Ꭷ
 
 parameters; givenFirst; medium; monogram; informal
 parameters; givenFirst; short; monogram; informal
 parameters; surnameFirst; medium; monogram; informal
 parameters; surnameFirst; short; monogram; informal
 
-expectedResult; S
+expectedResult; Ꮍ
 
 parameters; givenFirst; medium; monogram; formal
 parameters; givenFirst; short; monogram; formal
@@ -564,72 +556,79 @@ parameters; surnameFirst; short; monogram; formal
 endName
 
 # foreignGGS
-name ; given; Tunde
-name ; given2; Seun
-name ; surname; Okeke
-name ; locale; ko_AQ
+name ; given; ᏆᏏᎵ
+name ; given2; ᎭᎻᏍᎯ
+name ; surname; ᏍᏙᏇᎢ
+name ; locale; ja_AQ
 
-expectedResult; Okeke, Tunde Seun
+expectedResult; ᏍᏙᏇᎢ, ᏆᏏᎵ ᎭᎻᏍᎯ
 
 parameters; sorting; long; referring; formal
-parameters; sorting; medium; referring; formal
 
-expectedResult; Okeke Tunde Seun
-
-parameters; surnameFirst; long; referring; formal
-parameters; surnameFirst; medium; referring; formal
-parameters; surnameFirst; medium; addressing; formal
-parameters; surnameFirst; short; addressing; formal
-
-expectedResult; Tunde Seun Okeke
+expectedResult; ᏆᏏᎵ ᎭᎻᏍᎯ ᏍᏙᏇᎢ
 
 parameters; givenFirst; long; referring; formal
-parameters; givenFirst; medium; referring; formal
-parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; referring; formal
 
-expectedResult; Okeke, T. S.
+expectedResult; ᏍᏙᏇᎢ ᏆᏏᎵ ᎭᎻᏍᎯ
+
+parameters; surnameFirst; long; referring; formal
+parameters; surnameFirst; short; referring; formal
+
+expectedResult; ᏍᏙᏇᎢ, ᏆᏏᎵ Ꭽ.
+
+parameters; sorting; medium; referring; formal
+
+expectedResult; ᏆᏏᎵ Ꭽ. ᏍᏙᏇᎢ
+
+parameters; givenFirst; medium; referring; formal
+
+expectedResult; ᏍᏙᏇᎢ ᏆᏏᎵ Ꭽ.
+
+parameters; surnameFirst; medium; referring; formal
+
+expectedResult; ᏍᏙᏇᎢ, Ꮖ. Ꭽ.
 
 parameters; sorting; short; referring; formal
 
-expectedResult; Okeke, Tunde
+expectedResult; ᏍᏙᏇᎢ, ᏆᏏᎵ
 
 parameters; sorting; long; referring; informal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
-expectedResult; Okeke T. S.
-
-parameters; surnameFirst; short; referring; formal
-
-expectedResult; Okeke Tunde
-
-parameters; surnameFirst; long; referring; informal
-parameters; surnameFirst; medium; referring; informal
-
-expectedResult; T. S. Okeke
-
-parameters; givenFirst; short; referring; formal
-
-expectedResult; Tunde Okeke
+expectedResult; ᏆᏏᎵ ᏍᏙᏇᎢ
 
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
 
-expectedResult; Okeke T.
+expectedResult; ᏍᏙᏇᎢ ᏆᏏᎵ
+
+parameters; surnameFirst; long; referring; informal
+parameters; surnameFirst; medium; referring; informal
+
+expectedResult; ᏍᏙᏇᎢ Ꮖ.
 
 parameters; surnameFirst; short; referring; informal
 
-expectedResult; Tunde O.
+expectedResult; ᏆᏏᎵ Ꮝ.
 
 parameters; givenFirst; short; referring; informal
 
-expectedResult; Okeke
+expectedResult; ᏍᏙᏇᎢ
 
 parameters; givenFirst; long; addressing; formal
+parameters; givenFirst; medium; addressing; formal
 parameters; givenFirst; short; addressing; formal
 parameters; surnameFirst; long; addressing; formal
+parameters; surnameFirst; medium; addressing; formal
+parameters; surnameFirst; short; addressing; formal
 
-expectedResult; Tunde
+expectedResult; ᏆᎭᏍ
+
+parameters; givenFirst; long; monogram; formal
+
+expectedResult; ᏆᏏᎵ
 
 parameters; givenFirst; long; addressing; informal
 parameters; givenFirst; medium; addressing; informal
@@ -638,111 +637,117 @@ parameters; surnameFirst; long; addressing; informal
 parameters; surnameFirst; medium; addressing; informal
 parameters; surnameFirst; short; addressing; informal
 
-expectedResult; OTS
+expectedResult; ᏍᏆᎭ
 
 parameters; surnameFirst; long; monogram; formal
 
-expectedResult; TSO
-
-parameters; givenFirst; long; monogram; formal
-
-expectedResult; OT
-
-parameters; surnameFirst; long; monogram; informal
-
-expectedResult; TO
+expectedResult; ᏆᏍ
 
 parameters; givenFirst; long; monogram; informal
 
-expectedResult; O
+expectedResult; ᏍᏆ
+
+parameters; surnameFirst; long; monogram; informal
+
+expectedResult; Ꮖ
+
+parameters; givenFirst; medium; monogram; informal
+parameters; givenFirst; short; monogram; informal
+parameters; surnameFirst; medium; monogram; informal
+parameters; surnameFirst; short; monogram; informal
+
+expectedResult; Ꮝ
 
 parameters; givenFirst; medium; monogram; formal
 parameters; givenFirst; short; monogram; formal
 parameters; surnameFirst; medium; monogram; formal
 parameters; surnameFirst; short; monogram; formal
 
-expectedResult; T
-
-parameters; givenFirst; medium; monogram; informal
-parameters; givenFirst; short; monogram; informal
-parameters; surnameFirst; medium; monogram; informal
-parameters; surnameFirst; short; monogram; informal
-
 endName
 
 # foreignFull
-name ; title; Prọf. Dọk.
-name ; given; Adá Cornelia
-name ; given-informal; Néele
-name ; given2; Ẹ́va Sophia
-name ; surname-prefix; ván den
-name ; surname-core; Wólf
-name ; surname2; Bécker Schmidt
-name ; generation; jẹnereṣọn
-name ; credentials; M.D. PhD.
-name ; locale; ko_AQ
+name ; title; Ꮙ. ᏅᏬᏘ
+name ; given; ᎠᏓ ᎪᏁᎵᎠ
+name ; given-informal; ᏁᎴ
+name ; given2; ᏏᏌ ᎹᏘᏂ
+name ; surname-prefix; ᏉᏂ
+name ; surname-core; ᏇᎯ
+name ; generation; ᏔᎵᏁ
+name ; credentials; ᎷᎠ ᎠᎠᏚ
+name ; locale; ja_AQ
 
-expectedResult; ván den Wólf, Adá Cornelia Ẹ́va Sophia M.D. PhD.
-
-parameters; sorting; long; referring; formal
-parameters; sorting; medium; referring; formal
-
-expectedResult; Adá Cornelia Ẹ́va Sophia ván den Wólf M.D. PhD.
+expectedResult; Ꮙ. ᏅᏬᏘ ᎠᏓ ᎪᏁᎵᎠ ᏏᏌ ᎹᏘᏂ ᏉᏂ ᏇᎯ ᏔᎵᏁ, ᎷᎠ ᎠᎠᏚ
 
 parameters; givenFirst; long; referring; formal
-parameters; givenFirst; medium; referring; formal
-parameters; givenFirst; medium; addressing; formal
+parameters; givenFirst; short; referring; formal
 
-expectedResult; ván den Wólf Adá Cornelia Ẹ́va Sophia M.D. PhD.
+expectedResult; ᏉᏂ ᏇᎯ Ꮙ. ᏅᏬᏘ ᎠᏓ ᎪᏁᎵᎠ ᏏᏌ ᎹᏘᏂ ᏔᎵᏁ, ᎷᎠ ᎠᎠᏚ
 
 parameters; surnameFirst; long; referring; formal
-parameters; surnameFirst; medium; referring; formal
-parameters; surnameFirst; medium; addressing; formal
-parameters; surnameFirst; short; addressing; formal
+parameters; surnameFirst; short; referring; formal
 
-expectedResult; ván den Wólf, A. C. Ẹ́. S.
+expectedResult; ᎠᏓ ᎪᏁᎵᎠ Ꮟ. Ꮉ. ᏉᏂ ᏇᎯ ᏔᎵᏁ, ᎷᎠ ᎠᎠᏚ
+
+parameters; givenFirst; medium; referring; formal
+
+expectedResult; ᏉᏂ ᏇᎯ ᎠᏓ ᎪᏁᎵᎠ Ꮟ. Ꮉ. ᏔᎵᏁ, ᎷᎠ ᎠᎠᏚ
+
+parameters; surnameFirst; medium; referring; formal
+
+expectedResult; ᏇᎯ, ᎠᏓ ᎪᏁᎵᎠ ᏏᏌ ᎹᏘᏂ ᏉᏂ
+
+parameters; sorting; long; referring; formal
+
+expectedResult; ᏇᎯ, ᎠᏓ ᎪᏁᎵᎠ Ꮟ. Ꮉ. ᏉᏂ
+
+parameters; sorting; medium; referring; formal
+
+expectedResult; ᏇᎯ, Ꭰ. Ꭺ. Ꮟ. Ꮉ. ᏉᏂ
 
 parameters; sorting; short; referring; formal
 
-expectedResult; A. C. Ẹ́. S. ván den Wólf
-
-parameters; givenFirst; short; referring; formal
-
-expectedResult; ván den Wólf A. C. Ẹ́. S.
-
-parameters; surnameFirst; short; referring; formal
-
-expectedResult; Prọf. Dọk. ván den Wólf
+expectedResult; Ꮙ. ᏅᏬᏘ ᏉᏂ ᏇᎯ
 
 parameters; givenFirst; long; addressing; formal
+parameters; givenFirst; medium; addressing; formal
 parameters; givenFirst; short; addressing; formal
 parameters; surnameFirst; long; addressing; formal
+parameters; surnameFirst; medium; addressing; formal
+parameters; surnameFirst; short; addressing; formal
 
-expectedResult; ván den Wólf, Néele
+expectedResult; ᏉᏂ ᏇᎯ Ꭰ. Ꭺ.
+
+parameters; surnameFirst; short; referring; informal
+
+expectedResult; ᏉᏂ ᏇᎯ, ᏁᎴ
 
 parameters; sorting; long; referring; informal
 parameters; sorting; medium; referring; informal
 parameters; sorting; short; referring; informal
 
-expectedResult; Néele ván den Wólf
+expectedResult; ᏁᎴ Ꮙ. Ꮗ.
+
+parameters; givenFirst; short; referring; informal
+
+expectedResult; ᏁᎴ ᏉᏂ ᏇᎯ
 
 parameters; givenFirst; long; referring; informal
 parameters; givenFirst; medium; referring; informal
 
-expectedResult; ván den Wólf A. C.
-
-parameters; surnameFirst; short; referring; informal
-
-expectedResult; ván den Wólf Néele
+expectedResult; ᏉᏂ ᏇᎯ ᏁᎴ
 
 parameters; surnameFirst; long; referring; informal
 parameters; surnameFirst; medium; referring; informal
 
-expectedResult; Néele v. d. W.
+expectedResult; ᎠᏏᏉ
 
-parameters; givenFirst; short; referring; informal
+parameters; givenFirst; long; monogram; formal
 
-expectedResult; Néele
+expectedResult; ᏉᎠᏏ
+
+parameters; surnameFirst; long; monogram; formal
+
+expectedResult; ᏁᎴ
 
 parameters; givenFirst; long; addressing; informal
 parameters; givenFirst; medium; addressing; informal
@@ -751,30 +756,22 @@ parameters; surnameFirst; long; addressing; informal
 parameters; surnameFirst; medium; addressing; informal
 parameters; surnameFirst; short; addressing; informal
 
-expectedResult; AẸ́V
-
-parameters; givenFirst; long; monogram; formal
-
-expectedResult; VAẸ́
-
-parameters; surnameFirst; long; monogram; formal
-
-expectedResult; NV
+expectedResult; ᏁᏉ
 
 parameters; givenFirst; long; monogram; informal
 
-expectedResult; VN
+expectedResult; ᏉᏁ
 
 parameters; surnameFirst; long; monogram; informal
 
-expectedResult; N
+expectedResult; Ꮑ
 
 parameters; givenFirst; medium; monogram; informal
 parameters; givenFirst; short; monogram; informal
 parameters; surnameFirst; medium; monogram; informal
 parameters; surnameFirst; short; monogram; informal
 
-expectedResult; V
+expectedResult; Ꮙ
 
 parameters; givenFirst; medium; monogram; formal
 parameters; givenFirst; short; monogram; formal
