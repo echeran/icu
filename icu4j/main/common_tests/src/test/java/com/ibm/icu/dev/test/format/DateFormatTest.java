@@ -69,6 +69,11 @@ import com.ibm.icu.util.VersionInfo;
 
 @RunWith(JUnit4.class)
 public class DateFormatTest extends TestFmwk {
+    @Override
+    public void localTestInitialize() {
+        System.out.println("DateFormatTest: localTestInitialize: TZ: " + java.util.TimeZone.getDefault().getID());
+    }
+
     /**
      * Verify that patterns have the correct values and could produce the
      * the DateFormat instances that contain the correct localized patterns.
@@ -2257,9 +2262,11 @@ public class DateFormatTest extends TestFmwk {
             return;
         }
 
+        System.out.println("DateFormatTest.TestDateFormatCalendar: Default TZ: " + java.util.TimeZone.getDefault().getID());
+
         /* Check result */
         when = cal.getTime();
-        str = full.format(when);
+        str = full.testFormat(when, true);
         // Thursday, April 5, 2001 5:45:00 PM PDT 986517900000
         if (when.getTime() == 986517900000.0) {
             logln("Ok: Parsed result: " + str);
