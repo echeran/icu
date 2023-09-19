@@ -2235,6 +2235,16 @@ public class DateFormatTest extends TestFmwk {
             return;
         }
 
+        System.out.println("DateFormatTest: before ICU TimeZone.setDefault");
+        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
+
+        com.ibm.icu.util.TimeZone.setDefault(com.ibm.icu.util.TimeZone.getTimeZone("America/Los_Angeles"));
+
+        System.out.println("DateFormatTest: after ICU TimeZone.setDefault");
+        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
+
         /* Create a calendar */
         cal = Calendar.getInstance(Locale.US);
         if (cal == null) {
@@ -2262,16 +2272,6 @@ public class DateFormatTest extends TestFmwk {
                   pos.getIndex());
             return;
         }
-
-        System.out.println("DateFormatTest: before ICU TimeZone.setDefault");
-        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
-        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
-
-        com.ibm.icu.util.TimeZone.setDefault(com.ibm.icu.util.TimeZone.getTimeZone("America/Los_Angeles"));
-
-        System.out.println("DateFormatTest: after ICU TimeZone.setDefault");
-        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
-        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
 
         /* Check result */
         when = cal.getTime();
