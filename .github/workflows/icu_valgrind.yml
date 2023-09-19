@@ -9,10 +9,10 @@ name: GHA CI Valgrind
 on:
   push:
     branches:
-      - main
-      - 'maint/maint*'
+      # - main
+      # - 'maint/maint*'
   pull_request:
-    branches: '**'
+    # branches: '**'
 
 permissions:
   contents: read
