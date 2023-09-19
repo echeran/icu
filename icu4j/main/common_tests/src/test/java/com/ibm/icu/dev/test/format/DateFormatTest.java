@@ -69,10 +69,25 @@ import com.ibm.icu.util.VersionInfo;
 
 @RunWith(JUnit4.class)
 public class DateFormatTest extends TestFmwk {
+
+    java.util.TimeZone savedJdkTz;
+    com.ibm.icu.util.TimeZone savedIcuTz;
+
     @Override
     public void localTestInitialize() {
+        savedJdkTz = java.util.TimeZone.getDefault();
+        savedIcuTz = com.ibm.icu.util.TimeZone.getDefault();
         System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
         System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
+    }
+
+    @Override
+    public void localTestTeardown() {
+        java.util.TimeZone endingJdkTz = java.util.TimeZone.getDefault();
+        com.ibm.icu.util.TimeZone endingIcuTz = com.ibm.icu.util.TimeZone.getDefault();
+
+        assertEquals("Default JDK TZ unchanged", savedJdkTz, endingJdkTz);
+        assertEquals("Default ICU TZ unchanged", savedIcuTz, endingIcuTz);
     }
 
     /**
@@ -2239,11 +2254,11 @@ public class DateFormatTest extends TestFmwk {
         System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
         System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
 
-        com.ibm.icu.util.TimeZone.setDefault(com.ibm.icu.util.TimeZone.getTimeZone("America/Los_Angeles"));
-
-        System.out.println("DateFormatTest: after ICU TimeZone.setDefault");
-        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
-        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
+        // com.ibm.icu.util.TimeZone.setDefault(com.ibm.icu.util.TimeZone.getTimeZone("America/Los_Angeles"));
+        //
+        // System.out.println("DateFormatTest: after ICU TimeZone.setDefault");
+        // System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        // System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
 
         /* Create a calendar */
         cal = Calendar.getInstance(Locale.US);
