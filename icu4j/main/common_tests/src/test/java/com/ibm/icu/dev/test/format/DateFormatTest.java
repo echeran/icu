@@ -71,7 +71,8 @@ import com.ibm.icu.util.VersionInfo;
 public class DateFormatTest extends TestFmwk {
     @Override
     public void localTestInitialize() {
-        System.out.println("DateFormatTest: localTestInitialize: TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
     }
 
     /**
@@ -2262,7 +2263,8 @@ public class DateFormatTest extends TestFmwk {
             return;
         }
 
-        System.out.println("DateFormatTest.TestDateFormatCalendar: Default TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
 
         /* Check result */
         when = cal.getTime();

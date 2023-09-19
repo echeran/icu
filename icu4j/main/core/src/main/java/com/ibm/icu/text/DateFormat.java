@@ -697,7 +697,8 @@ public abstract class DateFormat extends UFormat {
 
     public final String testFormat(Date date, boolean isTest) {
         assert isTest;
-        System.out.println("DateFormat.testFormat: Default TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
         return format(date, new StringBuffer(64),new FieldPosition(0)).toString();
     }
 
