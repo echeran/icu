@@ -86,6 +86,12 @@ public class DateFormatTest extends TestFmwk {
         java.util.TimeZone endingJdkTz = java.util.TimeZone.getDefault();
         com.ibm.icu.util.TimeZone endingIcuTz = com.ibm.icu.util.TimeZone.getDefault();
 
+        if (!savedJdkTz.equals(endingJdkTz)) {
+            System.out.println("Default JDK TZ changed!!");
+        }
+        if (!savedIcuTz.equals(endingIcuTz)) {
+            System.out.println("Default ICU TZ changed!!");
+        }
         assertEquals("Default JDK TZ unchanged", savedJdkTz, endingJdkTz);
         assertEquals("Default ICU TZ unchanged", savedIcuTz, endingIcuTz);
     }
