@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,7 +58,6 @@ public class DataDrivenFormatTest extends TestFmwk {
     /* (non-Javadoc)
      * @see com.ibm.icu.dev.test.ModuleTest#processModules()
      */
-    @Ignore  // TODO(ICU-22505)
     @Test
     @Parameters(method="getTestData")
     public void formatTest(TestDataPair pair) {

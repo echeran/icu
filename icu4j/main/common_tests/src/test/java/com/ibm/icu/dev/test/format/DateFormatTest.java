@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -70,6 +69,33 @@ import com.ibm.icu.util.VersionInfo;
 
 @RunWith(JUnit4.class)
 public class DateFormatTest extends TestFmwk {
+
+    java.util.TimeZone savedJdkTz;
+    com.ibm.icu.util.TimeZone savedIcuTz;
+
+    @Override
+    public void localTestInitialize() {
+        savedJdkTz = java.util.TimeZone.getDefault();
+        savedIcuTz = com.ibm.icu.util.TimeZone.getDefault();
+        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
+    }
+
+    @Override
+    public void localTestTeardown() {
+        java.util.TimeZone endingJdkTz = java.util.TimeZone.getDefault();
+        com.ibm.icu.util.TimeZone endingIcuTz = com.ibm.icu.util.TimeZone.getDefault();
+
+        if (!savedJdkTz.equals(endingJdkTz)) {
+            System.out.println("Default JDK TZ changed!!");
+        }
+        if (!savedIcuTz.equals(endingIcuTz)) {
+            System.out.println("Default ICU TZ changed!!");
+        }
+        assertEquals("Default JDK TZ unchanged", savedJdkTz, endingJdkTz);
+        assertEquals("Default ICU TZ unchanged", savedIcuTz, endingIcuTz);
+    }
+
     /**
      * Verify that patterns have the correct values and could produce the
      * the DateFormat instances that contain the correct localized patterns.
@@ -614,7 +640,6 @@ public class DateFormatTest extends TestFmwk {
         expect(DATA, new Locale("en", "", ""));
     }
 
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void TestGenericTime() {
 
@@ -720,7 +745,6 @@ public class DateFormatTest extends TestFmwk {
 
     }
 
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void TestGenericTimeZoneOrder() {
         // generic times should parse the same no matter what the placement of the time zone string
@@ -2202,7 +2226,6 @@ public class DateFormatTest extends TestFmwk {
     /**
      * Test DateFormat(Calendar) API
      */
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void TestDateFormatCalendar() {
         DateFormat date=null, time=null, full=null;
@@ -2232,6 +2255,16 @@ public class DateFormatTest extends TestFmwk {
             errln("FAIL: getInstance failed");
             return;
         }
+
+        System.out.println("DateFormatTest: before ICU TimeZone.setDefault");
+        System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
+
+        // com.ibm.icu.util.TimeZone.setDefault(com.ibm.icu.util.TimeZone.getTimeZone("America/Los_Angeles"));
+        //
+        // System.out.println("DateFormatTest: after ICU TimeZone.setDefault");
+        // System.out.println("DateFormatTest: localTestInitialize: JDK TZ: " + java.util.TimeZone.getDefault().getID());
+        // System.out.println("DateFormatTest: localTestInitialize: ICU TZ: " + com.ibm.icu.util.TimeZone.getDefault().getID());
 
         /* Create a calendar */
         cal = Calendar.getInstance(Locale.US);
@@ -2263,7 +2296,7 @@ public class DateFormatTest extends TestFmwk {
 
         /* Check result */
         when = cal.getTime();
-        str = full.format(when);
+        str = full.testFormat(when, true);
         // Thursday, April 5, 2001 5:45:00 PM PDT 986517900000
         if (when.getTime() == 986517900000.0) {
             logln("Ok: Parsed result: " + str);

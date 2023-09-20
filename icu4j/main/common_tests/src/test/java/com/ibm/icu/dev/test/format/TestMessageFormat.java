@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -151,7 +150,6 @@ public class TestMessageFormat extends TestFmwk {
         }
     }
 
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void TestPattern() // aka PatternTest()
     {
@@ -270,7 +268,6 @@ public class TestMessageFormat extends TestFmwk {
                      form.format(testArgs1, buffer2, fieldpos).toString());
     }
 
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void TestStaticFormat()
     {
@@ -808,7 +805,6 @@ public class TestMessageFormat extends TestFmwk {
      * Verify that MessageFormat accommodates more than 10 arguments and
      * more than 10 subformats.
      */
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void TestUnlimitedArgsAndSubformats() {
         final String pattern =
@@ -1226,7 +1222,6 @@ public class TestMessageFormat extends TestFmwk {
         } catch (IllegalArgumentException e) {}
     }
 
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void testNumericFormatWithMap() {
         MessageFormat mf = new MessageFormat("X:{2} Y:{1}");
@@ -1603,7 +1598,6 @@ public class TestMessageFormat extends TestFmwk {
     }
 
     // Test case for formatToCharacterIterator
-    @Ignore  // TODO(ICU-22505)
     @Test
     public void TestFormatToCharacterIterator() {
         MessageFormat[] msgfmts = {
