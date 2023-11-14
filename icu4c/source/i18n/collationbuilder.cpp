@@ -13,6 +13,7 @@
 * created by: Markus W. Scherer
 */
 
+
 #ifdef DEBUG_COLLATION_BUILDER
 #include <stdio.h>
 #endif
