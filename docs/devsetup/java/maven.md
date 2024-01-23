@@ -41,12 +41,13 @@ which includes a minimum of JDK 8 as of ICU 74.
 
 ICU4J's codebase is structured as a "multi-module" Maven project.
 In other words, the Maven project is divided into submodules that have dependencies on each other.
-Mutli-module projects are not uncommon in Maven over the several years,
+Multi-module projects are not uncommon in Maven over the several years,
 yet the support for them by Maven is not complete.
 
 Commonly-found instructions to use Maven at the command line
 are usually designed for simple "single-module" Maven projects.
-In such cases, the command names correspond intuitively to their function: `mvn test` for running unit tests, `mvn package` for creating jar files, etc.
+In such cases, the command names correspond intuitively to their function:
+`mvn test` for running unit tests, `mvn package` for creating jar files, etc.
 However, multi-module projects have the tradeoff between time and complexity:
 running `mvn test` at the root recompiles all the sources
 even if a module's sources are all unchanged,
@@ -54,7 +55,11 @@ which takes longer than it otherwise could.
 The alternative is to always instruct Maven to compile and locally cache the artifact
 for each submodule,
 which speeds up tasks by avoiding duplicate compilation and testing effort,
-but also changes the distinct Maven commands `mvn {test, integration-test, ...}` all into `mvn install` that are instead differentiated by appropriate options.
+but also changes the distinct Maven commands
+`mvn {test, integration-test, ...}`
+all into
+`mvn install`
+that are instead differentiated by appropriate options.
 
 The instructions in this page for command line usage will choose,
 from the 2 alternatives above,
@@ -127,14 +132,11 @@ by adding this section to the settings:
     "command-runner.commands": {
         // The following commands assume your VS Code workspace is rooted at `<ICU_ROOT>/icu4j`. If not,
         // then adjust accordingly.
-        "core > all > compile": "cd ${workspaceFolder}; mvn -am -pl main/core install -DskipTests -DskipITs",
-        "core > all > test": "cd ${workspaceFolder}; mvn -am -pl main/core install -Dsurefire.failIfNoSpecifiedTests=false -DskipITs",
-        "core > number > test": "cd ${workspaceFolder}; mvn -am -pl main/core test -Dtest=\"com/ibm/icu/dev/test/number/*,com/ibm/icu/dev/impl/number/*\" -Dsurefire.failIfNoSpecifiedTests=false -DskipITs",
-        "core > text > test": "cd ${workspaceFolder}; mvn -am -pl main/core test -Dtest=\"com.ibm.icu.dev.test.text.*\" -Dsurefire.failIfNoSpecifiedTests=false -DskipITs",
-        "charset > compile": "cd ${workspaceFolder}; mvn -am -pl main/charset install -DskipTests -DskipITs",
-        "charset > test": "cd ${workspaceFolder}; mvn -am -pl main/charset test -Dsurefire.failIfNoSpecifiedTests=false -DskipITs",
-        "localespi > compile": "cd ${workspaceFolder}; mvn -am -pl main/localespi install -DskipTests -DskipITs",
-        "localespi > test": "cd ${workspaceFolder}; mvn -am -pl main/localespi test -Dsurefire.failIfNoSpecifiedTests=false -DskipITs",
+        "core > all > test": "cd ${workspaceFolder}; mvn -am -pl main/core install",
+        "core > number > test": "cd ${workspaceFolder}; mvn -am -pl main/core test -Dtest=\"com/ibm/icu/dev/test/number/*,com/ibm/icu/dev/impl/number/*\" -Dsurefire.failIfNoSpecifiedTests=false",
+        "core > text > test": "cd ${workspaceFolder}; mvn -am -pl main/core test -Dtest=\"com.ibm.icu.dev.test.text.*\" -Dsurefire.failIfNoSpecifiedTests=false",
+        "charset > test": "cd ${workspaceFolder}; mvn -am -pl main/charset test",
+        "common_tests > integration test": "cd ${workspaceFolder}; mvn -am -pl main/localespi test",
     }
     //...
 }
@@ -221,7 +223,9 @@ mvn install -Dtest="*Locale*,RBBI*" -Dsurefire.failIfNoSpecifiedTests=false
 
 If you want to run tests according to the package structure of the classes,
 then you should use the filesystem notation for the test files in the regular expression expansion.
-Therefore, this syntax will not work: `mvn install -Dtest="com.ibm.icu.dev.test.util.*" -Dsurefire.failIfNoSpecifiedTests=false`. Instead, you want to use this syntax:
+Therefore, this syntax will not work:
+`mvn install -Dtest="com.ibm.icu.dev.test.util.*" -Dsurefire.failIfNoSpecifiedTests=false`.
+Instead, you want to use this syntax:
 ```
 mvn install -Dtest="com/ibm/icu/dev/test/util/*" -Dsurefire.failIfNoSpecifiedTests=false
 ```
