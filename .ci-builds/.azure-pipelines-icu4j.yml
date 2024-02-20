@@ -8,7 +8,7 @@ trigger:
     - maint/maint-*
   paths:
     include:
-    - icu4j
+    - icu4j/*
 
 pr:
   branches:
@@ -17,7 +17,7 @@ pr:
     - maint/maint-*
   paths:
     include:
-    - icu4j
+    - icu4j/*
 
 variables:
   MAVEN_ARGS: '--show-version --no-transfer-progress'
