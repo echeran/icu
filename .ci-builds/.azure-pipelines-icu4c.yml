@@ -8,7 +8,7 @@ trigger:
     - maint/maint-*
   paths:
     include:
-    - icu4c/*
+    - icu4c
 
 pr:
   branches:
@@ -17,7 +17,7 @@ pr:
     - maint/maint-*
   paths:
     include:
-    - icu4c/*
+    - icu4c
 
 
 variables:
