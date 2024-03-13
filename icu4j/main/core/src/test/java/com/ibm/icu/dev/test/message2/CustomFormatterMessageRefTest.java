@@ -17,7 +17,7 @@ import com.ibm.icu.message2.FormattedPlaceholder;
 import com.ibm.icu.message2.Formatter;
 import com.ibm.icu.message2.FormatterFactory;
 import com.ibm.icu.message2.MessageFormatter;
-import com.ibm.icu.message2.Mf2FunctionRegistry;
+import com.ibm.icu.message2.MFFunctionRegistry;
 import com.ibm.icu.message2.PlainStringFormattedValue;
 
 /**
@@ -70,7 +70,7 @@ public class CustomFormatterMessageRefTest extends CoreTestFmwk {
         }
     }
 
-    static final Mf2FunctionRegistry REGISTRY = Mf2FunctionRegistry.builder()
+    static final MFFunctionRegistry REGISTRY = MFFunctionRegistry.builder()
             .setFormatter("msgRef", new ResourceManagerFactory())
             .build();
 
@@ -78,9 +78,9 @@ public class CustomFormatterMessageRefTest extends CoreTestFmwk {
 
     @BeforeClass
     static public void beforeClass() {
-        PROPERTIES.put("firefox", "match {$gcase :select} when genitive {Firefoxin} when * {Firefox}");
-        PROPERTIES.put("chrome", "match {$gcase :select} when genitive {Chromen} when * {Chrome}");
-        PROPERTIES.put("safari", "match {$gcase :select} when genitive {Safarin} when * {Safari}");
+        PROPERTIES.put("firefox", ".match {$gcase :string} genitive {{Firefoxin}} * {{Firefox}}");
+        PROPERTIES.put("chrome", ".match {$gcase :string} genitive {{Chromen}} * {{Chrome}}");
+        PROPERTIES.put("safari", ".match {$gcase :string} genitive {{Safarin}} * {{Safari}}");
     }
 
     @Test
@@ -107,11 +107,11 @@ public class CustomFormatterMessageRefTest extends CoreTestFmwk {
 
         MessageFormatter mf1 = MessageFormatter.builder()
                 .setFunctionRegistry(REGISTRY)
-                .setPattern("{Please start {$browser :msgRef gcase=genitive resbundle=$res}}")
+                .setPattern("Please start {$browser :msgRef gcase=genitive resbundle=$res}")
                 .build();
         MessageFormatter mf2 = MessageFormatter.builder()
                 .setFunctionRegistry(REGISTRY)
-                .setPattern("{Please start {$browser :msgRef resbundle=$res}}")
+                .setPattern("Please start {$browser :msgRef resbundle=$res}")
                 .build();
 
         browser.replace(0, browser.length(), "firefox");

@@ -16,7 +16,7 @@ import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.message2.FormattedPlaceholder;
 import com.ibm.icu.message2.Formatter;
 import com.ibm.icu.message2.FormatterFactory;
-import com.ibm.icu.message2.Mf2FunctionRegistry;
+import com.ibm.icu.message2.MFFunctionRegistry;
 import com.ibm.icu.message2.PlainStringFormattedValue;
 import com.ibm.icu.text.ListFormatter;
 import com.ibm.icu.text.ListFormatter.Type;
@@ -71,7 +71,7 @@ public class CustomFormatterListTest extends CoreTestFmwk {
         }
     }
 
-    static final Mf2FunctionRegistry REGISTRY = Mf2FunctionRegistry.builder()
+    static final MFFunctionRegistry REGISTRY = MFFunctionRegistry.builder()
             .setFormatter("listformat", new ListFormatterFactory())
             .build();
 
@@ -84,13 +84,13 @@ public class CustomFormatterListTest extends CoreTestFmwk {
         };
 
         TestUtils.runTestCase(REGISTRY, new TestCase.Builder()
-                .pattern("{I know {$languages :listformat type=AND}!}")
+                .pattern("I know {$languages :listformat type=AND}!")
                 .arguments(Args.of("languages", progLanguages))
                 .expected("I know C/C++, Java, and Python!")
                 .build());
 
         TestUtils.runTestCase(REGISTRY, new TestCase.Builder()
-                .pattern("{You are allowed to use {$languages :listformat type=OR}!}")
+                .pattern("You are allowed to use {$languages :listformat type=OR}!")
                 .arguments(Args.of("languages", Arrays.asList(progLanguages)))
                 .expected("You are allowed to use C/C++, Java, or Python!")
                 .build());

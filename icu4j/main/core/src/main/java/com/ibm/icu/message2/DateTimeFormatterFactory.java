@@ -1,31 +1,57 @@
 // © 2022 and later: Unicode, Inc. and others.
-// License & terms of use: http://www.unicode.org/copyright.html
+// License & terms of use: https://www.unicode.org/copyright.html
 
 package com.ibm.icu.message2;
 
+import com.ibm.icu.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-
-import com.ibm.icu.impl.locale.AsciiUtil;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * Creates a {@link Formatter} doing formatting of date / time, similar to
  * <code>{exp, date}</code> and <code>{exp, time}</code> in {@link com.ibm.icu.text.MessageFormat}.
  */
 class DateTimeFormatterFactory implements FormatterFactory {
+    private final String kind;
+
+    // "datetime", "date", "time"
+    DateTimeFormatterFactory(String kind) {
+        switch (kind) {
+            case "date":
+                break;
+            case "time":
+                break;
+            case "datetime":
+                break;
+            default:
+                kind = "datetime";
+        }
+        this.kind = kind;
+    }
 
     private static int stringToStyle(String option) {
-        switch (AsciiUtil.toUpperString(option)) {
-            case "FULL": return DateFormat.FULL;
-            case "LONG": return DateFormat.LONG;
-            case "MEDIUM": return DateFormat.MEDIUM;
-            case "SHORT": return DateFormat.SHORT;
-            case "": // intentional fall-through
-            case "DEFAULT": return DateFormat.DEFAULT;
-            default: throw new IllegalArgumentException("Invalid datetime style: " + option);
+        switch (option) {
+            case "full":
+                return DateFormat.FULL;
+            case "long":
+                return DateFormat.LONG;
+            case "medium":
+                return DateFormat.MEDIUM;
+            case "short":
+                return DateFormat.SHORT;
+            default:
+                throw new IllegalArgumentException("Invalid datetime style: " + option);
         }
     }
 
@@ -37,49 +63,279 @@ class DateTimeFormatterFactory implements FormatterFactory {
      */
     @Override
     public Formatter createFormatter(Locale locale, Map<String, Object> fixedOptions) {
-        DateFormat df;
+        int dateStyle = DateFormat.NONE;
+        int timeStyle = DateFormat.NONE;
+        switch (kind) {
+            case "date":
+                dateStyle = getDateTimeStyle(fixedOptions, "style");
+                break;
+            case "time":
+                timeStyle = getDateTimeStyle(fixedOptions, "style");
+                break;
+            case "datetime": // $FALL-THROUGH$
+            default:
+                dateStyle = getDateTimeStyle(fixedOptions, "dateStyle");
+                timeStyle = getDateTimeStyle(fixedOptions, "timeStyle");
+                break;
+        }
 
         // TODO: how to handle conflicts. What if we have both skeleton and style, or pattern?
-        Object opt = fixedOptions.get("skeleton");
-        if (opt != null) {
-            String skeleton = Objects.toString(opt);
-            df = DateFormat.getInstanceForSkeleton(skeleton, locale);
-            return new DateTimeFormatter(df);
-        }
-
-        opt = fixedOptions.get("pattern");
-        if (opt != null) {
-            String pattern = Objects.toString(opt);
-            SimpleDateFormat sf = new SimpleDateFormat(pattern, locale);
-            return new DateTimeFormatter(sf);
-        }
-
-        int dateStyle = DateFormat.NONE;
-        opt = fixedOptions.get("datestyle");
-        if (opt != null) {
-            dateStyle = stringToStyle(Objects.toString(opt, ""));
-        }
-
-        int timeStyle = DateFormat.NONE;
-        opt = fixedOptions.get("timestyle");
-        if (opt != null) {
-            timeStyle = stringToStyle(Objects.toString(opt, ""));
-        }
-
         if (dateStyle == DateFormat.NONE && timeStyle == DateFormat.NONE) {
-            // Match the MessageFormat behavior
-            dateStyle = DateFormat.SHORT;
-            timeStyle = DateFormat.SHORT;
-        }
-        df = DateFormat.getDateTimeInstance(dateStyle, timeStyle, locale);
+            String skeleton = "";
+            switch (kind) {
+                case "date":
+                    skeleton = getDateFieldOptions(fixedOptions);
+                    break;
+                case "time":
+                    skeleton = getTimeFieldOptions(fixedOptions);
+                    break;
+                case "datetime": // $FALL-THROUGH$
+                default:
+                    skeleton = getDateFieldOptions(fixedOptions);
+                    skeleton += getTimeFieldOptions(fixedOptions);
+                    break;
+            }
 
-        return new DateTimeFormatter(df);
+            if (skeleton.isEmpty()) {
+                // Custom option, icu namespace
+                skeleton = OptUtils.getString(fixedOptions, "icu:skeleton", "");
+            }
+            if (!skeleton.isEmpty()) {
+                DateFormat df = DateFormat.getInstanceForSkeleton(skeleton, locale);
+                return new DateTimeFormatter(locale, df);
+            }
+
+            // No skeletons, custom or otherwise, match fallback to short / short as per spec.
+            switch (kind) {
+                case "date":
+                    dateStyle = DateFormat.SHORT;
+                    timeStyle = DateFormat.NONE;
+                    break;
+                case "time":
+                    dateStyle = DateFormat.NONE;
+                    timeStyle = DateFormat.SHORT;
+                    break;
+                case "datetime": // $FALL-THROUGH$
+                default:
+                    dateStyle = DateFormat.SHORT;
+                    timeStyle = DateFormat.SHORT;
+            }
+        }
+
+        DateFormat df = DateFormat.getDateTimeInstance(dateStyle, timeStyle, locale);
+        return new DateTimeFormatter(locale, df);
+    }
+
+    private static int getDateTimeStyle(Map<String, Object> options, String key) {
+        String opt = OptUtils.getString(options, key);
+        if (opt != null) {
+            return stringToStyle(opt);
+        }
+        return DateFormat.NONE;
+    }
+
+    private static String getDateFieldOptions(Map<String, Object> options) {
+        StringBuilder skeleton = new StringBuilder();
+        String opt;
+
+        // In all the switches below we just ignore invalid options.
+        // Would be nice to report (log?), but ICU does not have a clear policy on how to do that.
+        // But we don't want to throw, that is too drastic.
+
+        opt = OptUtils.getString(options, "weekday", "");
+        switch (opt) {
+            case "long":
+                skeleton.append("EEEE");
+                break;
+            case "short":
+                skeleton.append("E");
+                break;
+            case "narrow":
+                skeleton.append("EEEEEE");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        opt = OptUtils.getString(options, "era", "");
+        switch (opt) {
+            case "long":
+                skeleton.append("GGGG");
+                break;
+            case "short":
+                skeleton.append("G");
+                break;
+            case "narrow":
+                skeleton.append("GGGGG");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        opt = OptUtils.getString(options, "year", "");
+        switch (opt) {
+            case "numeric":
+                skeleton.append("y");
+                break;
+            case "2-digit":
+                skeleton.append("yy");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        opt = OptUtils.getString(options, "month", "");
+        switch (opt) {
+            case "numeric":
+                skeleton.append("M");
+                break;
+            case "2-digit":
+                skeleton.append("MM");
+                break;
+            case "long":
+                skeleton.append("MMMM");
+                break;
+            case "short":
+                skeleton.append("MMM");
+                break;
+            case "narrow":
+                skeleton.append("MMMMM");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        opt = OptUtils.getString(options, "day", "");
+        switch (opt) {
+            case "numeric":
+                skeleton.append("d");
+                break;
+            case "2-digit":
+                skeleton.append("dd");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+        return skeleton.toString();
+    }
+
+    private static String getTimeFieldOptions(Map<String, Object> options) {
+        StringBuilder skeleton = new StringBuilder();
+        String opt;
+
+        // In all the switches below we just ignore invalid options.
+        // Would be nice to report (log?), but ICU does not have a clear policy on how to do that.
+        // But we don't want to throw, that is too drastic.
+
+        int showHour = 0;
+        opt = OptUtils.getString(options, "hour", "");
+        switch (opt) {
+            case "numeric":
+                showHour = 1;
+                break;
+            case "2-digit":
+                showHour = 2;
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+        if (showHour > 0) {
+            String hourCycle = "";
+            opt = OptUtils.getString(options, "hourCycle", "");
+            switch (opt) {
+                case "h11":
+                    hourCycle = "K";
+                    break;
+                case "h12":
+                    hourCycle = "h";
+                    break;
+                case "h23":
+                    hourCycle = "H";
+                    break;
+                case "h24":
+                    hourCycle = "k";
+                    break;
+                default:
+                    hourCycle = "j"; // default for the locale
+            }
+            skeleton.append(hourCycle);
+            if (showHour == 2) {
+                skeleton.append(hourCycle);
+            }
+        }
+
+        opt = OptUtils.getString(options, "minute", "");
+        switch (opt) {
+            case "numeric":
+                skeleton.append("m");
+                break;
+            case "2-digit":
+                skeleton.append("mm");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        opt = OptUtils.getString(options, "second", "");
+        switch (opt) {
+            case "numeric":
+                skeleton.append("s");
+                break;
+            case "2-digit":
+                skeleton.append("ss");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        opt = OptUtils.getString(options, "fractionalSecondDigits", "");
+        switch (opt) {
+            case "1":
+                skeleton.append("S");
+                break;
+            case "2":
+                skeleton.append("SS");
+                break;
+            case "3":
+                skeleton.append("SSS");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        opt = OptUtils.getString(options, "timeZoneName", "");
+        switch (opt) {
+            case "long":
+                skeleton.append("z");
+                break;
+            case "short":
+                skeleton.append("zzzz");
+                break;
+            case "shortOffset":
+                skeleton.append("O");
+                break;
+            case "longOffset":
+                skeleton.append("OOOO");
+                break;
+            case "shortGeneric":
+                skeleton.append("v");
+                break;
+            case "longGeneric":
+                skeleton.append("vvvv");
+                break;
+            default:
+                // invalid value, we just ignore it.
+        }
+
+        return skeleton.toString();
     }
 
     private static class DateTimeFormatter implements Formatter {
         private final DateFormat icuFormatter;
+        private final Locale locale;
 
-        private DateTimeFormatter(DateFormat df) {
+        private DateTimeFormatter(Locale locale, DateFormat df) {
+            this.locale = locale;
             this.icuFormatter = df;
         }
 
@@ -90,7 +346,24 @@ class DateTimeFormatterFactory implements FormatterFactory {
         public FormattedPlaceholder format(Object toFormat, Map<String, Object> variableOptions) {
             // TODO: use a special type to indicate function without input argument.
             if (toFormat == null) {
-                throw new IllegalArgumentException("The date to format can't be null");
+                return null;
+            }
+            if (toFormat instanceof CharSequence) {
+                toFormat = parseIso8601(toFormat.toString());
+                // We were unable to parse the input as iso date
+                if (toFormat instanceof CharSequence) {
+                    return new FormattedPlaceholder(
+                            toFormat, new PlainStringFormattedValue("{|" + toFormat + "|}"));
+                }
+            }
+            if (toFormat instanceof Calendar) {
+                TimeZone tz = ((Calendar) toFormat).getTimeZone();
+                long milis = ((Calendar) toFormat).getTimeInMillis();
+                com.ibm.icu.util.TimeZone icuTz = com.ibm.icu.util.TimeZone.getTimeZone(tz.getID());
+                com.ibm.icu.util.Calendar calendar =
+                        com.ibm.icu.util.Calendar.getInstance(icuTz, locale);
+                calendar.setTimeInMillis(milis);
+                toFormat = calendar;
             }
             String result = icuFormatter.format(toFormat);
             return new FormattedPlaceholder(toFormat, new PlainStringFormattedValue(result));
@@ -101,7 +374,79 @@ class DateTimeFormatterFactory implements FormatterFactory {
          */
         @Override
         public String formatToString(Object toFormat, Map<String, Object> variableOptions) {
-            return format(toFormat, variableOptions).toString();
+            FormattedPlaceholder result = format(toFormat, variableOptions);
+            return result != null ? result.toString() : null;
         }
+    }
+
+    // TODO: make this better with my own parsing
+    private static Object parseIso8601(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        try {
+            LocalDate ld = LocalDate.parse(text);
+            return new Date(ld.getYear() - 1900, ld.getMonthValue() - 1, ld.getDayOfMonth());
+        } catch (Exception e) {
+            // just ignore, we want to try more
+        }
+
+        try {
+            LocalDateTime ldt = LocalDateTime.parse(text);
+            return new Date(
+                    ldt.getYear() - 1900,
+                    ldt.getMonthValue() - 1,
+                    ldt.getDayOfMonth(),
+                    ldt.getHour(),
+                    ldt.getMinute(),
+                    ldt.getSecond());
+        } catch (Exception e) {
+            // just ignore, we want to try more
+        }
+
+        try {
+            LocalTime lt = LocalTime.parse(text);
+            LocalDateTime ldt = LocalDateTime.of(LocalDate.now(), lt);
+            return new Date(
+                    ldt.getYear() - 1900,
+                    ldt.getMonthValue() - 1,
+                    ldt.getDayOfMonth(),
+                    ldt.getHour(),
+                    ldt.getMinute(),
+                    ldt.getSecond());
+        } catch (Exception e) {
+            // just ignore, we want to try more
+        }
+
+        try {
+            Instant instant = Instant.parse(text);
+            return new Date(instant.toEpochMilli());
+        } catch (Exception e) {
+            // just ignore, we want to try more
+        }
+
+        try {
+            OffsetDateTime odt = OffsetDateTime.parse(text);
+            return GregorianCalendar.from(odt.toZonedDateTime());
+        } catch (Exception e) {
+            // just ignore, we want to try more
+        }
+
+        try {
+            OffsetTime ot = OffsetTime.parse(text);
+            return GregorianCalendar.from(OffsetDateTime.from(ot).toZonedDateTime());
+        } catch (Exception e) {
+            // just ignore, we want to try more
+        }
+
+        try {
+            ZonedDateTime zdt = ZonedDateTime.parse(text);
+            return GregorianCalendar.from(zdt);
+        } catch (Exception e) {
+            // just ignore, we want to try more
+        }
+
+        return text;
     }
 }

@@ -1,228 +1,209 @@
 // © 2022 and later: Unicode, Inc. and others.
-// License & terms of use: http://www.unicode.org/copyright.html
+// License & terms of use: https://www.unicode.org/copyright.html
 
 package com.ibm.icu.message2;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringJoiner;
 
 /**
  * This maps closely to the official specification.
  * Since it is not final, we will not add javadoc everywhere.
  *
- * <p>See <a target="github" href="https://github.com/unicode-org/message-format-wg/blob/main/spec/syntax.md">the
- * description of the syntax with examples and use cases</a> and the corresponding
- * <a target="github" href="https://github.com/unicode-org/message-format-wg/blob/main/spec/message.ebnf">EBNF</a>.</p>
+ * <p>See <a target="github" href="https://github.com/unicode-org/message-format-wg/blob/main/spec/data-model/README.md">the
+ * latest description</a>.</p>
  *
  * @internal ICU 72 technology preview
  * @deprecated This API is for technology preview only.
  */
 @Deprecated
 @SuppressWarnings("javadoc")
-public class Mf2DataModel {
+public class MFDataModel {
+
+    private MFDataModel() {
+        // Prevent instantiation
+    }
+
+    // Messages
 
     /**
      * @internal ICU 72 technology preview
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public static class SelectorKeys {
-        private final List<String> keys;
+    public interface Message {
+        // Provides a common type for PatternMessage and SelectMessage.
+    }
 
-        private SelectorKeys(Builder builder) {
-            keys = new ArrayList<>();
-            keys.addAll(builder.keys);
-        }
-
-        /**
-         * Creates a builder.
-         *
-         * @return the Builder.
-         *
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static Builder builder() {
-            return new Builder();
-        }
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class PatternMessage implements Message {
+        final List<Declaration> declarations;
+        final Pattern pattern;
 
         /**
          * @internal ICU 72 technology preview
          * @deprecated This API is for technology preview only.
          */
         @Deprecated
-        public List<String> getKeys() {
-            return Collections.unmodifiableList(keys);
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        @Override
-        public String toString() {
-            StringJoiner result = new StringJoiner(" ");
-            for (String key : keys) {
-                result.add(key);
-            }
-            return result.toString();
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static class Builder {
-            private final List<String> keys = new ArrayList<>();
-
-            // Prevent direct creation
-            private Builder() {
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder add(String key) {
-                keys.add(key);
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder addAll(Collection<String> otherKeys) {
-                this.keys.addAll(otherKeys);
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public SelectorKeys build() {
-                return new SelectorKeys(this);
-            }
+        public PatternMessage(List<Declaration> declarations, Pattern pattern) {
+            this.declarations = declarations;
+            this.pattern = pattern;
         }
     }
 
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class SelectMessage implements Message {
+        final List<Declaration> declarations;
+        final List<Expression> selectors;
+        final List<Variant> variants;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public SelectMessage(
+                List<Declaration> declarations,
+                List<Expression> selectors,
+                List<Variant> variants) {
+            this.declarations = declarations;
+            this.selectors = selectors;
+            this.variants = variants;
+        }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public interface Declaration {
+        // Provides a common type for InputDeclaration, LocalDeclaration, and UnsupportedStatement.
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class InputDeclaration implements Declaration {
+        final String name;
+        final VariableExpression value;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public InputDeclaration(String name, VariableExpression value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class LocalDeclaration implements Declaration {
+        final String name;
+        final Expression value;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public LocalDeclaration(String name, Expression value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class UnsupportedStatement implements Declaration {
+        final String keyword;
+        final String body;
+        final List<Expression> expressions;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public UnsupportedStatement(String keyword, String body, List<Expression> expressions) {
+            this.keyword = keyword;
+            this.body = body;
+            this.expressions = expressions;
+        }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public interface LiteralOrCatchallKey {
+        // Provides a common type for the selection keys: Variant, Literal, or CatchallKey.
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class Variant implements LiteralOrCatchallKey {
+        final List<LiteralOrCatchallKey> keys;
+        final Pattern value;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public Variant(List<LiteralOrCatchallKey> keys, Pattern value) {
+            this.keys = keys;
+            this.value = value;
+        }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class CatchallKey implements LiteralOrCatchallKey {
+        // String value; // Always '*' in MF2
+    }
+
+    // Patterns
+
+    // type Pattern = Array<string | Expression | Markup>;
     /**
      * @internal ICU 72 technology preview
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
     public static class Pattern {
-        private final List<Part> parts;
+        final List<PatternPart> parts;
 
-        private Pattern(Builder builder) {
-            parts = new ArrayList<>();
-            parts.addAll(builder.parts);
+        Pattern() {
+            this.parts = new ArrayList<>();
         }
-
-        /**
-         * Creates a builder.
-         *
-         * @return the Builder.
-         *
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public List<Part> getParts() {
-            return parts;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        @Override
-        public String toString() {
-            StringBuilder result = new StringBuilder();
-            result.append("{");
-            for (Part part : parts) {
-                result.append(part);
-            }
-            result.append("}");
-            return result.toString();
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static class Builder {
-            private final List<Part> parts = new ArrayList<>();
-
-            // Prevent direct creation
-            private Builder() {
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder add(Part part) {
-                parts.add(part);
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder addAll(Collection<Part> otherParts) {
-                parts.addAll(otherParts);
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Pattern build() {
-                return new Pattern(this);
-            }
-
-        }
-    }
-
-    /**
-     * No functional role, this is only to be able to say that a message is a sequence of Part(s),
-     * and that plain text {@link Text} and {@link Expression} are Part(s).
-     *
-     * @internal ICU 72 technology preview
-     * @deprecated This API is for technology preview only.
-     */
-    @Deprecated
-    public interface Part {
     }
 
     /**
@@ -230,89 +211,52 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public static class Text implements Part {
-        private final String value;
+    public interface PatternPart {
+        // Provides a common type for StringPart and Expression.
+    }
 
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        private Text(Builder builder) {
-            this(builder.value);
-        }
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class StringPart implements PatternPart {
+        final String value;
 
-        /**
-         * Creates a builder.
-         *
-         * @return the Builder.
-         *
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public Text(String value) {
+        StringPart(String value) {
             this.value = value;
         }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public interface Expression extends PatternPart {
+        // Provides a common type for all kind of expressions:
+        // LiteralExpression, VariableExpression, FunctionExpression, UnsupportedExpression, Markup
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class LiteralExpression implements Expression {
+        final Literal arg;
+        final Annotation annotation;
+        final List<Attribute> attributes;
 
         /**
          * @internal ICU 72 technology preview
          * @deprecated This API is for technology preview only.
          */
         @Deprecated
-        public String getValue() {
-            return value;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        @Override
-        public String toString() {
-            return value;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static class Builder {
-            private String value;
-
-            // Prevent direct creation
-            private Builder() {
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder setValue(String value) {
-                this.value = value;
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Text build() {
-                return new Text(this);
-            }
+        public LiteralExpression(Literal arg, Annotation annotation, List<Attribute> attributes) {
+            this.arg = arg;
+            this.annotation = annotation;
+            this.attributes = attributes;
         }
     }
 
@@ -321,270 +265,21 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public static class Expression implements Part {
-        private final Value operand; // Literal | Variable
-        private final String functionName;
-        private final Map<String, Value> options;
-        Formatter formatter = null;
-
-        private Expression(Builder builder) {
-            this.operand = builder.operand;
-            this.functionName = builder.functionName;
-            this.options = builder.options;
-        }
-
-        /**
-         * Creates a builder.
-         *
-         * @return the Builder.
-         *
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static Builder builder() {
-            return new Builder();
-        }
+    public static class VariableExpression implements Expression {
+        final VariableRef arg;
+        final Annotation annotation;
+        final List<Attribute> attributes;
 
         /**
          * @internal ICU 72 technology preview
          * @deprecated This API is for technology preview only.
          */
         @Deprecated
-        public Value getOperand() {
-            return operand;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public String getFunctionName() {
-            return functionName;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public Map<String, Value> getOptions() {
-            return options;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        @Override
-        public String toString() {
-            StringBuilder result = new StringBuilder();
-            result.append("{");
-            if (operand != null) {
-                result.append(operand);
-            }
-            if (functionName != null) {
-                result.append(" :").append(functionName);
-            }
-            for (Entry<String, Value> option : options.entrySet()) {
-                result.append(" ").append(option.getKey()).append("=").append(option.getValue());
-            }
-            result.append("}");
-            return result.toString();
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static class Builder {
-            private Value operand = null;
-            private String functionName = null;
-            private final OrderedMap<String, Value> options = new OrderedMap<>();
-
-            // Prevent direct creation
-            private Builder() {
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder setOperand(Value operand) {
-                this.operand = operand;
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder setFunctionName(String functionName) {
-                this.functionName = functionName;
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder addOption(String key, Value value) {
-                options.put(key, value);
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder addOptions(Map<String, Value> otherOptions) {
-                options.putAll(otherOptions);
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Expression build() {
-                return new Expression(this);
-            }
-        }
-    }
-
-//    public static class Placeholder extends Expression implements Part {
-//        public Placeholder(Builder builder) {
-//            super(builder);
-//        }
-//    }
-
-    /**
-     * A Value can be either a Literal, or a Variable, but not both.
-     *
-     * @internal ICU 72 technology preview
-     * @deprecated This API is for technology preview only.
-     */
-    @Deprecated
-    public static class Value {
-        private final String literal;
-        private final String variableName;
-
-        private Value(Builder builder) {
-            this.literal = builder.literal;
-            this.variableName = builder.variableName;
-//            this(builder.literal, builder.variableName);
-        }
-
-        /**
-         * Creates a builder.
-         *
-         * @return the Builder.
-         *
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public String getLiteral() {
-            return literal;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public String getVariableName() {
-            return variableName;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public boolean isLiteral() {
-            return literal != null;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public boolean isVariable() {
-            return variableName != null;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        @Override
-        public String toString() {
-            return isLiteral() ? "(" + literal + ")" : "$" + variableName;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static class Builder {
-            private String literal;
-            private String variableName;
-
-            // Prevent direct creation
-            private Builder() {
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder setLiteral(String literal) {
-                this.literal = literal;
-                this.variableName = null;
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder setVariableName(String variableName) {
-                this.variableName = variableName;
-                this.literal = null;
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Value build() {
-                return new Value(this);
-            }
+        public VariableExpression(
+                VariableRef arg, Annotation annotation, List<Attribute> attributes) {
+            this.arg = arg;
+            this.annotation = annotation;
+            this.attributes = attributes;
         }
     }
 
@@ -593,113 +288,8 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public static class Variable {
-        private final String name;
-
-        private Variable(Builder builder) {
-            this.name = builder.name;
-        }
-
-        /**
-         * Creates a builder.
-         *
-         * @return the Builder.
-         *
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public static class Builder {
-            private String name;
-
-            // Prevent direct creation
-            private Builder() {
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Builder setName(String name) {
-                this.name = name;
-                return this;
-            }
-
-            /**
-             * @internal ICU 72 technology preview
-             * @deprecated This API is for technology preview only.
-             */
-            @Deprecated
-            public Variable build() {
-                return new Variable(this);
-            }
-        }
-    }
-
-    /**
-     * This is only to not force LinkedHashMap on the public API.
-     *
-     * @internal ICU 72 technology preview
-     * @deprecated This API is for technology preview only.
-     */
-    @Deprecated
-    public static class OrderedMap<K, V> extends LinkedHashMap<K, V> {
-        private static final long serialVersionUID = -7049361727790825496L;
-
-        /**
-         * {@inheritDoc}
-         *
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public OrderedMap() {
-            super();
-        }
-    }
-
-    private final OrderedMap<String, Expression> localVariables;
-    private final List<Expression> selectors;
-    private final OrderedMap<SelectorKeys, Pattern> variants;
-    private final Pattern pattern;
-
-    private Mf2DataModel(Builder builder) {
-        this.localVariables = builder.localVariables;
-        this.selectors = builder.selectors;
-        this.variants = builder.variants;
-        this.pattern = builder.pattern;
-    }
-
-    /**
-     * Creates a builder.
-     *
-     * @return the Builder.
-     *
-     * @internal ICU 72 technology preview
-     * @deprecated This API is for technology preview only.
-     */
-    @Deprecated
-    public static Builder builder() {
-        return new Builder();
+    public interface Annotation {
+        // Provides a common type for FunctionAnnotation, UnsupportedAnnotation
     }
 
     /**
@@ -707,8 +297,19 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public OrderedMap<String, Expression> getLocalVariables() {
-        return localVariables;
+    public static class FunctionExpression implements Expression {
+        final FunctionAnnotation annotation;
+        final List<Attribute> attributes;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public FunctionExpression(FunctionAnnotation annotation, List<Attribute> attributes) {
+            this.annotation = annotation;
+            this.attributes = attributes;
+        }
     }
 
     /**
@@ -716,8 +317,19 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public List<Expression>  getSelectors() {
-        return selectors;
+    public static class UnsupportedExpression implements Expression {
+        final UnsupportedAnnotation annotation;
+        final List<Attribute> attributes;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public UnsupportedExpression(UnsupportedAnnotation annotation, List<Attribute> attributes) {
+            this.annotation = annotation;
+            this.attributes = attributes;
+        }
     }
 
     /**
@@ -725,8 +337,32 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public OrderedMap<SelectorKeys, Pattern>  getVariants() {
-        return variants;
+    public static class Attribute {
+        final String name;
+        final LiteralOrVariableRef value;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public Attribute(String name, LiteralOrVariableRef value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    // Expressions
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public interface LiteralOrVariableRef {
+        // Provides a common type for Literal and VariableRef,
+        // to represent things like `foo` / `|foo|` / `1234` (literals)
+        // and `$foo` (VariableRef), as argument for placeholders or value in options.
     }
 
     /**
@@ -734,8 +370,17 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public Pattern getPattern() {
-        return pattern;
+    public static class Literal implements LiteralOrVariableRef, LiteralOrCatchallKey {
+        final String value;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public Literal(String value) {
+            this.value = value;
+        }
     }
 
     /**
@@ -743,31 +388,17 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        for (Entry<String, Expression> lv : localVariables.entrySet()) {
-            result.append("let $").append(lv.getKey());
-            result.append(" = ");
-            result.append(lv.getValue());
-            result.append("\n");
+    public static class VariableRef implements LiteralOrVariableRef {
+        final String name;
+
+        /**
+         * @internal ICU 72 technology preview
+         * @deprecated This API is for technology preview only.
+         */
+        @Deprecated
+        public VariableRef(String name) {
+            this.name = name;
         }
-        if (!selectors.isEmpty()) {
-            result.append("match");
-            for (Expression e : this.selectors) {
-                result.append(" ").append(e);
-            }
-            result.append("\n");
-            for (Entry<SelectorKeys, Pattern> variant : variants.entrySet()) {
-                result.append("  when ").append(variant.getKey());
-                result.append(" ");
-                result.append(variant.getValue());
-                result.append("\n");
-            }
-        } else {
-            result.append(pattern);
-        }
-        return result.toString();
     }
 
     /**
@@ -775,93 +406,89 @@ public class Mf2DataModel {
      * @deprecated This API is for technology preview only.
      */
     @Deprecated
-    public static class Builder {
-        private final OrderedMap<String, Expression> localVariables = new OrderedMap<>(); // declaration*
-        private final List<Expression> selectors = new ArrayList<>();
-        private final OrderedMap<SelectorKeys, Pattern> variants = new OrderedMap<>();
-        private Pattern pattern = Pattern.builder().build();
-
-        // Prevent direct creation
-        private Builder() {
-        }
+    public static class FunctionAnnotation implements Annotation {
+        final String name;
+        final Map<String, Option> options;
 
         /**
          * @internal ICU 72 technology preview
          * @deprecated This API is for technology preview only.
          */
         @Deprecated
-        public Builder addLocalVariable(String variableName, Expression expression) {
-            this.localVariables.put(variableName, expression);
-            return this;
+        public FunctionAnnotation(String name, Map<String, Option> options) {
+            this.name = name;
+            this.options = options;
         }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class Option {
+        final String name;
+        final LiteralOrVariableRef value;
 
         /**
          * @internal ICU 72 technology preview
          * @deprecated This API is for technology preview only.
          */
         @Deprecated
-        public Builder addLocalVariables(OrderedMap<String, Expression> otherLocalVariables) {
-            this.localVariables.putAll(otherLocalVariables);
-            return this;
+        public Option(String name, LiteralOrVariableRef value) {
+            this.name = name;
+            this.value = value;
         }
+    }
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class UnsupportedAnnotation implements Annotation {
+        final String source;
 
         /**
          * @internal ICU 72 technology preview
          * @deprecated This API is for technology preview only.
          */
         @Deprecated
-        public Builder addSelector(Expression otherSelector) {
-            this.selectors.add(otherSelector);
-            return this;
+        public UnsupportedAnnotation(String source) {
+            this.source = source;
         }
+    }
+
+    // Markup
+
+    /**
+     * @internal ICU 72 technology preview
+     * @deprecated This API is for technology preview only.
+     */
+    @Deprecated
+    public static class Markup implements Expression {
+        enum Kind {
+            OPEN,
+            CLOSE,
+            STANDALONE
+        }
+
+        final Kind kind;
+        final String name;
+        final Map<String, Option> options;
+        final List<Attribute> attributes;
 
         /**
          * @internal ICU 72 technology preview
          * @deprecated This API is for technology preview only.
          */
         @Deprecated
-        public Builder addSelectors(List<Expression> otherSelectors) {
-            this.selectors.addAll(otherSelectors);
-            return this;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public Builder addVariant(SelectorKeys keys, Pattern newPattern) {
-            this.variants.put(keys, newPattern);
-            return this;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public Builder addVariants(OrderedMap<SelectorKeys, Pattern> otherVariants) {
-            this.variants.putAll(otherVariants);
-            return this;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public Builder setPattern(Pattern pattern) {
-            this.pattern = pattern;
-            return this;
-        }
-
-        /**
-         * @internal ICU 72 technology preview
-         * @deprecated This API is for technology preview only.
-         */
-        @Deprecated
-        public Mf2DataModel build() {
-            return new Mf2DataModel(this);
+        public Markup(
+                Kind kind, String name, Map<String, Option> options, List<Attribute> attributes) {
+            this.kind = kind;
+            this.name = name;
+            this.options = options;
+            this.attributes = attributes;
         }
     }
 }

@@ -15,7 +15,7 @@ import com.ibm.icu.message2.FormattedPlaceholder;
 import com.ibm.icu.message2.Formatter;
 import com.ibm.icu.message2.FormatterFactory;
 import com.ibm.icu.message2.MessageFormatter;
-import com.ibm.icu.message2.Mf2FunctionRegistry;
+import com.ibm.icu.message2.MFFunctionRegistry;
 import com.ibm.icu.message2.PlainStringFormattedValue;
 
 /**
@@ -83,7 +83,7 @@ public class CustomFormatterGrammarCaseTest extends CoreTestFmwk {
 
     }
 
-    static final Mf2FunctionRegistry REGISTRY = Mf2FunctionRegistry.builder()
+    static final MFFunctionRegistry REGISTRY = MFFunctionRegistry.builder()
             .setFormatter("grammarBB", new GrammarCasesFormatterFactory())
             .build();
 
@@ -92,7 +92,7 @@ public class CustomFormatterGrammarCaseTest extends CoreTestFmwk {
         MessageFormatter mf = MessageFormatter.builder()
                 .setFunctionRegistry(REGISTRY)
                 .setLocale(Locale.forLanguageTag("ro"))
-                .setPattern("{Cartea {$owner :grammarBB case=genitive}}")
+                .setPattern("Cartea {$owner :grammarBB case=genitive}")
                 .build();
 
         assertEquals("case - genitive", "Cartea Mariei", mf.formatToString(Args.of("owner", "Maria")));
@@ -103,7 +103,7 @@ public class CustomFormatterGrammarCaseTest extends CoreTestFmwk {
         mf = MessageFormatter.builder()
                 .setFunctionRegistry(REGISTRY)
                 .setLocale(Locale.forLanguageTag("ro"))
-                .setPattern("{M-a sunat {$owner :grammarBB case=nominative}}")
+                .setPattern("M-a sunat {$owner :grammarBB case=nominative}")
                 .build();
 
         assertEquals("case - nominative", "M-a sunat Maria", mf.formatToString(Args.of("owner", "Maria")));
