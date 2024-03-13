@@ -12,11 +12,14 @@
 #include "unicode/putil.h"
 #include "unicode/uscript.h"
 #include "unicode/uset.h"
+#include "charstr.h"
 #include "cstring.h"
 #include "hash.h"
 #include "patternprops.h"
+#include "ppucd.h"
 #include "normalizer2impl.h"
 #include "testutil.h"
+#include "uchar.h"
 #include "uparse.h"
 #include "ucdtest.h"
 
@@ -80,6 +83,7 @@ void UnicodeTest::runIndexedTest( int32_t index, UBool exec, const char* &name, 
     TESTCASE_AUTO(TestPropertyNames);
     TESTCASE_AUTO(TestIDSUnaryOperator);
     TESTCASE_AUTO(TestIDCompatMath);
+    TESTCASE_AUTO(TestBinaryPropertyUsingPpucd);
     TESTCASE_AUTO_END;
 }
 
@@ -1023,4 +1027,80 @@ void UnicodeTest::TestIDCompatMath() {
     assertTrue("idcmStart.contains(U+2202)", idcmStart.contains(0x2202));
     assertTrue("idcmStart.contains(U+1D7C3)", idcmStart.contains(0x1D7C3));
     assertFalse("idcmStart.contains(U+1D7C4)", idcmStart.contains(0x1D7C4));
+}
+
+void UnicodeTest::TestBinaryPropertyUsingPpucd() {
+    IcuTestErrorCode errorCode(*this, "TestIDCompatMathStartPpucd()");
+
+    // Iniitalize PPUCD parsing object using file in repo and using
+    // property names present in built-in data in ICU
+    CharString ppucdPath("../../data/unidata/ppucd.txt", errorCode);
+    PreparsedUCD ppucd(ppucdPath.data(), errorCode);
+    if(errorCode.isFailure()) {
+        fprintf(stderr, "Test...Ppucd: unable to open %s - %s\n",
+                ppucdPath.data(), errorCode.errorName());
+    }
+    BuiltInPropertyNames builtInPropNames;
+    ppucd.setPropertyNames(&builtInPropNames);
+
+    // Define which binary properties we want to compare
+    UProperty propsUnderTest[] = {
+        UCHAR_ID_COMPAT_MATH_START,
+        UCHAR_ID_COMPAT_MATH_CONTINUE,
+    };
+    uint32_t numProps = 2;
+
+    // Allocate & initialize UnicodeSets per binary property from PPUCD data
+    UnicodeSet *ppucdPropSets = new UnicodeSet[numProps];
+
+    PreparsedUCD::LineType lineType;
+    UnicodeSet newValues;
+
+    while((lineType=ppucd.readLine(errorCode))!=PreparsedUCD::NO_LINE) {
+        if(ppucd.lineHasPropertyValues()) {
+            const UniProps *lineProps=ppucd.getProps(newValues, errorCode);
+
+            for(uint32_t i = 0; i < numProps; i++) {
+                UProperty prop = propsUnderTest[i];
+                int32_t propEnumVal = (int) prop;
+                // TODO: add or remove ranges according to value
+                if (lineProps->binProps[(propEnumVal)]) {
+                    ppucdPropSets[i].add(lineProps->start, lineProps->end);
+                } else {
+                    ppucdPropSets[i].remove(lineProps->start, lineProps->end);
+                }
+            }
+        }
+        if(errorCode.isFailure()) {
+            break;
+        }
+    }
+
+    if(errorCode.isFailure()) {
+        fprintf(stderr,
+                "genprops: error parsing or setting values from ppucd.txt"
+                " line %ld - %s\n",
+                (long)ppucd.getLineNumber(), errorCode.errorName());
+        errln("exiting early due to parsing error");
+    }
+
+    // Allocate & initialize UnicodeSets per binary property from ICU data
+    UnicodeSet *icuPropSets = new UnicodeSet[numProps];
+    for(uint32_t i = 0; i < numProps; i++) {
+        icuPropSets[i].applyIntPropertyValue(propsUnderTest[i], 1, errorCode);
+    }
+
+    // Assert that the PPUCD data and the ICU data are equivalent for all properties
+    for(uint32_t i = 0; i < numProps; i++) {
+        char msg[50];
+        sprintf(msg, "ICU & PPUCD versions of property (enum = %d)",
+            (int) propsUnderTest[i]);
+        assertTrue(msg, ppucdPropSets[i] == icuPropSets[i]);
+    }
+
+    // Free memory for array of ICU data UnicodeSets
+    delete[] icuPropSets;
+
+    // Free memory for array of PPUCD data UnicodeSets
+    delete[] ppucdPropSets;
 }
