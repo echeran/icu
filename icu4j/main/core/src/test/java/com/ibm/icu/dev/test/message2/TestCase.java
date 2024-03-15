@@ -42,7 +42,7 @@ class TestCase {
                     : Locale.forLanguageTag(builder.localeId);
             this.arguments = builder.arguments == null ? Args.NONE : builder.arguments;
             this.expected = builder.expected == null ? "" : builder.expected;
-            this.errors = builder.errors == null ? new ArrayList<String>() : builder.errors;
+            this.errors = builder.errors == null ? new ArrayList<>() : builder.errors;
             this.ignoreReason = builder.ignoreReason == null ? "" : builder.ignoreReason;
         }
 
@@ -64,6 +64,7 @@ class TestCase {
                 return this;
             }
 
+            @SuppressWarnings("unused")
             public TestCase.Builder patternJs(String patternJs) {
                 // Ignore the JavaScript stuff
                 return this;

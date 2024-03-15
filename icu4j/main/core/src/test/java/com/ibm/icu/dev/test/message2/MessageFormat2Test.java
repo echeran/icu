@@ -34,7 +34,7 @@ import com.ibm.icu.util.MeasureUnit;
  * <p>It does not include all the tests for edge cases and error handling, only the ones that show real functionality.</p>
  */
 @RunWith(JUnit4.class)
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"static-method", "javadoc"})
 public class MessageFormat2Test extends CoreTestFmwk {
 
     @Test
@@ -439,7 +439,7 @@ public class MessageFormat2Test extends CoreTestFmwk {
                 + "{{The message uses {$baz} and works}}\n";
         // Circular references on variables is now detected.
         // So we check that this throws (see expected in the @Test above)
-        MessageFormatter mf2 = MessageFormatter.builder()
+        MessageFormatter.builder()
                 .setPattern(message)
                 .build();
     }
