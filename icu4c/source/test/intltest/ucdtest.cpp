@@ -19,7 +19,6 @@
 #include "ppucd.h"
 #include "normalizer2impl.h"
 #include "testutil.h"
-#include "uchar.h"
 #include "uparse.h"
 #include "ucdtest.h"
 
