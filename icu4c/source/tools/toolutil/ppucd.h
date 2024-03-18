@@ -46,7 +46,7 @@ public:
 
     int32_t getPropertyEnum(const char *name) const override {
       return (int32_t) u_getPropertyEnum(name);
-    };
+    }
 
     int32_t getPropertyValueEnum(int32_t property, const char *name) const override {
         return (int32_t) u_getPropertyValueEnum((UProperty) property, name);
