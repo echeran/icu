@@ -1028,6 +1028,24 @@ void UnicodeTest::TestIDCompatMath() {
     assertFalse("idcmStart.contains(U+1D7C4)", idcmStart.contains(0x1D7C4));
 }
 
+
+U_NAMESPACE_BEGIN
+
+class BuiltInPropertyNames : public PropertyNames {
+public:
+    ~BuiltInPropertyNames() {}
+
+    int32_t getPropertyEnum(const char *name) const override {
+      return (int32_t) u_getPropertyEnum(name);
+    }
+
+    int32_t getPropertyValueEnum(int32_t property, const char *name) const override {
+        return (int32_t) u_getPropertyValueEnum((UProperty) property, name);
+    }
+};
+
+U_NAMESPACE_END
+
 void UnicodeTest::TestBinaryPropertyUsingPpucd() {
     IcuTestErrorCode errorCode(*this, "TestIDCompatMathStartPpucd()");
 

@@ -40,19 +40,6 @@ public:
     virtual int32_t getPropertyValueEnum(int32_t property, const char *name) const = 0;
 };
 
-class U_TOOLUTIL_API BuiltInPropertyNames : public PropertyNames {
-public:
-    ~BuiltInPropertyNames() {}
-
-    int32_t getPropertyEnum(const char *name) const override {
-      return (int32_t) u_getPropertyEnum(name);
-    }
-
-    int32_t getPropertyValueEnum(int32_t property, const char *name) const override {
-        return (int32_t) u_getPropertyValueEnum((UProperty) property, name);
-    }
-};
-
 struct U_TOOLUTIL_API UniProps {
     UniProps();
     ~UniProps();
