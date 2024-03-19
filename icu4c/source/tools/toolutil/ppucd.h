@@ -40,7 +40,7 @@ public:
     virtual int32_t getPropertyValueEnum(int32_t property, const char *name) const = 0;
 };
 
-class U_TOOLUTIL_API BuiltInPropertyNames : public U_TOOLUTIL_API PropertyNames {
+class U_TOOLUTIL_API BuiltInPropertyNames : public PropertyNames {
 public:
     ~BuiltInPropertyNames() {}
 
