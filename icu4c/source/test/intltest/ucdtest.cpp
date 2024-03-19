@@ -1051,7 +1051,12 @@ void UnicodeTest::TestBinaryPropertyUsingPpucd() {
 
     // Iniitalize PPUCD parsing object using file in repo and using
     // property names present in built-in data in ICU
-    CharString ppucdPath("../../data/unidata/ppucd.txt", errorCode);
+    char path[500];
+    // get path to `source/data/unidata/`with trailing `/`
+    char *unidataPath = getUnidataPath(path);
+    char *unidataPathEnd = strchr(path, 0);
+    strcpy(unidataPathEnd, "ppucd.txt");
+    CharString ppucdPath(path, errorCode);
     PreparsedUCD ppucd(ppucdPath.data(), errorCode);
     if(errorCode.isFailure()) {
         fprintf(stderr, "Test...Ppucd: unable to open %s - %s\n",
