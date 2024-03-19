@@ -1052,14 +1052,17 @@ void UnicodeTest::TestBinaryPropertyUsingPpucd() {
     // Iniitalize PPUCD parsing object using file in repo and using
     // property names present in built-in data in ICU
     char path[500];
-    // get path to `source/data/unidata/`with trailing `/`
+    // get path to `source/data/unidata/` including trailing `/`
     char *unidataPath = getUnidataPath(path);
+    if(unidataPath == nullptr) {
+        fprintf(stderr, "TestBinaryPropertyUsingPpucd: unable to open ppucd.txt from ICU source tree\n");
+    }
     char *unidataPathEnd = strchr(path, 0);
     strcpy(unidataPathEnd, "ppucd.txt");
     CharString ppucdPath(path, errorCode);
     PreparsedUCD ppucd(ppucdPath.data(), errorCode);
     if(errorCode.isFailure()) {
-        fprintf(stderr, "Test...Ppucd: unable to open %s - %s\n",
+        fprintf(stderr, "TestBinaryPropertyUsingPpucd: unable to open %s - %s\n",
                 ppucdPath.data(), errorCode.errorName());
     }
     BuiltInPropertyNames builtInPropNames;
@@ -1075,9 +1078,9 @@ void UnicodeTest::TestBinaryPropertyUsingPpucd() {
     // Allocate & initialize UnicodeSets per binary property from PPUCD data
     UnicodeSet *ppucdPropSets = new UnicodeSet[numProps];
 
+    // Iterate through PPUCD file, accumulating each line's data into each UnicodeSet per property
     PreparsedUCD::LineType lineType;
     UnicodeSet newValues;
-
     while((lineType=ppucd.readLine(errorCode))!=PreparsedUCD::NO_LINE) {
         if(ppucd.lineHasPropertyValues()) {
             const UniProps *lineProps=ppucd.getProps(newValues, errorCode);
@@ -1122,7 +1125,6 @@ void UnicodeTest::TestBinaryPropertyUsingPpucd() {
 
     // Free memory for array of ICU data UnicodeSets
     delete[] icuPropSets;
-
     // Free memory for array of PPUCD data UnicodeSets
     delete[] ppucdPropSets;
 }
