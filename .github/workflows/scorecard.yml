@@ -11,9 +11,8 @@ on:
   # https://github.com/ossf/scorecard/blob/main/docs/checks.md#maintained
   schedule:
     - cron: "23 15 * * 6"
-  push:
-    # Re-enable this once Scorecard job is fixed to pass again
-    # branches: ["main"]
+  # push:
+  #   branches: ["main"]
 
 # Declare default permissions as read only.
 permissions: read-all
