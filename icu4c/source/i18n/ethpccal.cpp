@@ -56,8 +56,11 @@ EthiopicCalendar::getType() const
 //-------------------------------------------------------------------------
 
 int32_t
-EthiopicCalendar::handleGetExtendedYear()
+EthiopicCalendar::handleGetExtendedYear(UErrorCode& status)
 {
+    if (U_FAILURE(status)) {
+        return 0;
+    }
     // Ethiopic calendar uses EXTENDED_YEAR aligned to
     // Amelete Hihret year always.
     if (newerField(UCAL_EXTENDED_YEAR, UCAL_YEAR) == UCAL_EXTENDED_YEAR) {
@@ -67,7 +70,12 @@ EthiopicCalendar::handleGetExtendedYear()
     if (internalGet(UCAL_ERA, AMETE_MIHRET) == AMETE_MIHRET) {
         return internalGet(UCAL_YEAR, 1); // Default to year 1
     }
-    return internalGet(UCAL_YEAR, 1) - AMETE_MIHRET_DELTA;
+    int32_t year = internalGet(UCAL_YEAR, 1);
+    if (uprv_add32_overflow(year, -AMETE_MIHRET_DELTA, &year)) {
+        status = U_ILLEGAL_ARGUMENT_ERROR;
+        return 0;
+    }
+    return year;
 }
 
 void
@@ -150,21 +158,6 @@ EthiopicCalendar::getJDEpochOffset() const
 }
 
 
-#if 0
-// We do not want to introduce this API in ICU4C.
-// It was accidentally introduced in ICU4J as a public API.
-
-//-------------------------------------------------------------------------
-// Calendar system Conversion methods...
-//-------------------------------------------------------------------------
-
-int32_t
-EthiopicCalendar::ethiopicToJD(int32_t year, int32_t month, int32_t date)
-{
-    return ceToJD(year, month, date, JD_EPOCH_OFFSET_AMETE_MIHRET);
-}
-#endif
-
 //-------------------------------------------------------------------------
 // Constructors...
 //-------------------------------------------------------------------------
@@ -196,15 +189,23 @@ EthiopicAmeteAlemCalendar::getType() const
 }
 
 int32_t
-EthiopicAmeteAlemCalendar::handleGetExtendedYear()
+EthiopicAmeteAlemCalendar::handleGetExtendedYear(UErrorCode& status)
 {
+    if (U_FAILURE(status)) {
+        return 0;
+    }
     // Ethiopic calendar uses EXTENDED_YEAR aligned to
     // Amelete Hihret year always.
     if (newerField(UCAL_EXTENDED_YEAR, UCAL_YEAR) == UCAL_EXTENDED_YEAR) {
         return internalGet(UCAL_EXTENDED_YEAR, 1); // Default to year 1
     }
-    return internalGet(UCAL_YEAR, 1 + AMETE_MIHRET_DELTA)
-            - AMETE_MIHRET_DELTA; // Default to year 1 of Amelete Mihret
+    // Default to year 1 of Amelete Mihret
+    int32_t year = internalGet(UCAL_YEAR, 1 + AMETE_MIHRET_DELTA);
+    if (uprv_add32_overflow(year, -AMETE_MIHRET_DELTA, &year)) {
+        status = U_ILLEGAL_ARGUMENT_ERROR;
+        return 0;
+    }
+    return year;
 }
 
 void

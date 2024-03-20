@@ -123,7 +123,7 @@ public:
      * Japanese calendar case, this is equal to the equivalent extended Gregorian year.
      * @internal
      */
-    virtual int32_t handleGetExtendedYear() override;
+    virtual int32_t handleGetExtendedYear(UErrorCode& status) override;
 
     /**
      * Return the maximum value that this field could have, given the current date.
@@ -212,7 +212,7 @@ protected:
      * @param eyear the extended year
      * @internal
      */
-    virtual int32_t getDefaultMonthInYear(int32_t eyear) override;
+    virtual int32_t getDefaultMonthInYear(int32_t eyear, UErrorCode& status) override;
 
     /***
      * Called by computeJulianDay.  Returns the default day (1-based) for the month,
@@ -223,6 +223,8 @@ protected:
      * @internal
      */
     virtual int32_t getDefaultDayInMonth(int32_t eyear, int32_t month) override;
+
+    virtual bool isEra0CountingBackward() const override { return false; }
 };
 
 U_NAMESPACE_END

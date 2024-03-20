@@ -25,8 +25,7 @@ using namespace icu::number::impl;
 
 
 U_NAMESPACE_BEGIN
-namespace number {
-namespace impl {
+namespace number::impl {
 
 /**
  * Implementation class for UNumberFormatter. Wraps a LocalizedNumberFormatter.
@@ -84,8 +83,7 @@ void UFormattedNumberImpl::setTo(FormattedNumber value) {
     fData = std::move(*value.fData);
 }
 
-}
-}
+} // namespace number::impl
 U_NAMESPACE_END
 
 
@@ -98,7 +96,7 @@ UPRV_FORMATTED_VALUE_CAPI_NO_IMPLTYPE_AUTO_IMPL(
 
 const DecimalQuantity* icu::number::impl::validateUFormattedNumberToDecimalQuantity(
         const UFormattedNumber* uresult, UErrorCode& status) {
-    auto* result = UFormattedNumberApiHelper::validate(uresult, status);
+    const auto* result = UFormattedNumberApiHelper::validate(uresult, status);
     if (U_FAILURE(status)) {
         return nullptr;
     }
@@ -357,7 +355,7 @@ usnumf_format(
         USimpleNumber* unumber,
         UFormattedNumber* uresult,
         UErrorCode* ec) {
-    auto* formatter = USimpleNumberFormatterData::validate(uformatter, *ec);
+    const auto* formatter = USimpleNumberFormatterData::validate(uformatter, *ec);
     auto* number = USimpleNumberData::validate(unumber, *ec);
     auto* result = UFormattedNumberApiHelper::validate(uresult, *ec);
     if (U_FAILURE(*ec)) {
@@ -376,7 +374,7 @@ usnumf_formatInt64(
         int64_t value,
         UFormattedNumber* uresult,
         UErrorCode* ec) {
-    auto* formatter = USimpleNumberFormatterData::validate(uformatter, *ec);
+    const auto* formatter = USimpleNumberFormatterData::validate(uformatter, *ec);
     auto* result = UFormattedNumberApiHelper::validate(uresult, *ec);
     if (U_FAILURE(*ec)) {
         return;

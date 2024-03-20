@@ -22,7 +22,7 @@ SimpleNumber::forInt64(int64_t value, UErrorCode& status) {
     if (U_FAILURE(status)) {
         return SimpleNumber();
     }
-    auto results = new UFormattedNumberData();
+    auto* results = new UFormattedNumberData();
     if (results == nullptr) {
         status = U_MEMORY_ALLOCATION_ERROR;
         return SimpleNumber();
@@ -176,7 +176,7 @@ void SimpleNumberFormatter::initialize(
     }
     fMicros->symbols = &symbols;
 
-    auto pattern = utils::getPatternForStyle(
+    const auto* pattern = utils::getPatternForStyle(
         locale,
         symbols.getNumberingSystemName(),
         CLDR_PATTERN_STYLE_DECIMAL,
@@ -203,7 +203,6 @@ void SimpleNumberFormatter::initialize(
     fPatternModifier = new AdoptingSignumModifierStore(patternModifier.createImmutableForPlural(StandardPlural::COUNT, status));
 
     fGroupingStrategy = groupingStrategy;
-    return;
 }
 
 FormattedNumber SimpleNumberFormatter::format(SimpleNumber value, UErrorCode &status) const {
@@ -211,7 +210,7 @@ FormattedNumber SimpleNumberFormatter::format(SimpleNumber value, UErrorCode &st
 
     // Do not save the results object if we encountered a failure.
     if (U_SUCCESS(status)) {
-        auto temp = value.fData;
+        auto* temp = value.fData;
         value.fData = nullptr;
         return FormattedNumber(temp);
     } else {

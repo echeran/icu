@@ -122,8 +122,8 @@ DateFmtBestPatternKey::~DateFmtBestPatternKey() { }
 
 
 DateFormat::DateFormat()
-:   fCalendar(0),
-    fNumberFormat(0),
+:   fCalendar(nullptr),
+    fNumberFormat(nullptr),
     fCapitalizationContext(UDISPCTX_CAPITALIZATION_NONE)
 {
 }
@@ -132,8 +132,8 @@ DateFormat::DateFormat()
 
 DateFormat::DateFormat(const DateFormat& other)
 :   Format(other),
-    fCalendar(0),
-    fNumberFormat(0),
+    fCalendar(nullptr),
+    fNumberFormat(nullptr),
     fCapitalizationContext(UDISPCTX_CAPITALIZATION_NONE)
 {
     *this = other;
@@ -279,7 +279,7 @@ UnicodeString&
 DateFormat::format(UDate date, UnicodeString& appendTo, FieldPosition& fieldPosition) const {
     if (fCalendar != nullptr) {
         UErrorCode ec = U_ZERO_ERROR;
-        auto calType = fCalendar->getType();
+        const auto* calType = fCalendar->getType();
         // Avoid a heap allocation and corresponding free for the common case
         if (uprv_strcmp(calType, "gregorian") == 0) {
             GregorianCalendar cal(*static_cast<GregorianCalendar*>(fCalendar));
@@ -309,7 +309,7 @@ DateFormat::format(UDate date, UnicodeString& appendTo, FieldPositionIterator* p
                    UErrorCode& status) const {
     if (fCalendar != nullptr) {
         UErrorCode ec = U_ZERO_ERROR;
-        auto calType = fCalendar->getType();
+        const auto* calType = fCalendar->getType();
         // Avoid a heap allocation and corresponding free for the common case
         if (uprv_strcmp(calType, "gregorian") == 0) {
             GregorianCalendar cal(*static_cast<GregorianCalendar*>(fCalendar));
@@ -561,7 +561,7 @@ DateFormat::create(EStyle timeStyle, EStyle dateStyle, const Locale& locale)
     // This should never really happen, because the preceding constructor
     // should always succeed.  If the resource data is unavailable, a last
     // resort object should be returned.
-    return 0;
+    return nullptr;
 }
 
 //----------------------------------------------------------------------

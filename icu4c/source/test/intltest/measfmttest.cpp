@@ -43,7 +43,8 @@ public:
     MeasureFormatTest() {
     }
 
-    void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par=0) override;
+    void runIndexedTest(int32_t index, UBool exec, const char*& name, char* par = nullptr) override;
+
 private:
     void TestBasic();
     void TestCompatible53();
@@ -5802,8 +5803,7 @@ void MeasureFormatTest::TestParseBuiltIns() {
 
         // Prove that all built-in units are parseable, except "generic" temperature:
         MeasureUnit parsed = MeasureUnit::forIdentifier(unit.getIdentifier(), status);
-        if (unit == MeasureUnit::getGenericTemperature() ||
-                (unit == MeasureUnit::getBeaufort() && logKnownIssue("CLDR-16327", "beaufort currently not convertible"))) {
+        if (unit == MeasureUnit::getGenericTemperature()) {
             status.expectErrorAndReset(U_ILLEGAL_ARGUMENT_ERROR);
         } else {
             status.assertSuccess();
@@ -5836,7 +5836,7 @@ void MeasureFormatTest::TestParseToBuiltIn() {
         {"square-yard-yard", MeasureUnit::getCubicYard()},
     };
 
-    for (auto &cas : cases) {
+    for (const auto& cas : cases) {
         MeasureUnit fromIdent = MeasureUnit::forIdentifier(cas.identifier, status);
         status.assertSuccess();
         assertEquals("forIdentifier returns a normal built-in unit when it exists",

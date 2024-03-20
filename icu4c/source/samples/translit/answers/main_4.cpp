@@ -18,6 +18,8 @@
 #include "util.h"
 #include "unaccent.h"
 
+using icu::Transliterator;
+
 // RuleBasedTransliterator rules to remove accents from characters
 // so they can be displayed as ASCIIx
 UnicodeString UNACCENT_RULES(
@@ -55,7 +57,7 @@ int main(int argc, char **argv) {
 
     // Create a Greek-Latin Transliterator
     greek_latin = Transliterator::createInstance("Greek-Latin");
-    if (greek_latin == 0) {
+    if (greek_latin == nullptr) {
         printf("ERROR: Transliterator::createInstance() failed\n");
         exit(1);
     }

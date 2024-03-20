@@ -670,7 +670,7 @@ static const Value VALUES_nt[4] = {
     Value(U_NT_NUMERIC, "Nu Numeric"),
 };
 
-static const Value VALUES_sc[200] = {
+static const Value VALUES_sc[201] = {
     Value(USCRIPT_COMMON, "Zyyy Common"),
     Value(USCRIPT_INHERITED, "Zinh Inherited Qaai"),
     Value(USCRIPT_ARABIC, "Arab Arabic"),
@@ -871,6 +871,7 @@ static const Value VALUES_sc[200] = {
     Value(USCRIPT_VITHKUQI, "Vith Vithkuqi"),
     Value(USCRIPT_KAWI, "Kawi Kawi"),
     Value(USCRIPT_NAG_MUNDARI, "Nagm Nag_Mundari"),
+    Value(USCRIPT_ARABIC_NASTALIQ, "Aran Aran"),
 };
 
 static const Value VALUES_hst[6] = {
@@ -1162,6 +1163,11 @@ static const Value VALUES_vo[4] = {
     Value(U_VO_UPRIGHT, "U Upright"),
 };
 
+static const Value VALUES_Identifier_Status[2] = {
+    Value(U_ID_STATUS_RESTRICTED, "Restricted Restricted"),
+    Value(U_ID_STATUS_ALLOWED, "Allowed Allowed"),
+};
+
 static const Value VALUES_gcm[38] = {
     Value((int32_t)U_GC_C_MASK, "C Other"),
     Value((int32_t)U_GC_CC_MASK, "Cc Control cntrl"),
@@ -1203,7 +1209,22 @@ static const Value VALUES_gcm[38] = {
     Value((int32_t)U_GC_ZS_MASK, "Zs Space_Separator"),
 };
 
-static const Property PROPERTIES[117] = {
+static const Value VALUES_Identifier_Type[12] = {
+    Value(U_ID_TYPE_NOT_CHARACTER, "Not_Character Not_Character"),
+    Value(U_ID_TYPE_DEPRECATED, "Deprecated Deprecated"),
+    Value(U_ID_TYPE_DEFAULT_IGNORABLE, "Default_Ignorable Default_Ignorable"),
+    Value(U_ID_TYPE_NOT_NFKC, "Not_NFKC Not_NFKC"),
+    Value(U_ID_TYPE_NOT_XID, "Not_XID Not_XID"),
+    Value(U_ID_TYPE_EXCLUSION, "Exclusion Exclusion"),
+    Value(U_ID_TYPE_OBSOLETE, "Obsolete Obsolete"),
+    Value(U_ID_TYPE_TECHNICAL, "Technical Technical"),
+    Value(U_ID_TYPE_UNCOMMON_USE, "Uncommon_Use Uncommon_Use"),
+    Value(U_ID_TYPE_LIMITED_USE, "Limited_Use Limited_Use"),
+    Value(U_ID_TYPE_INCLUSION, "Inclusion Inclusion"),
+    Value(U_ID_TYPE_RECOMMENDED, "Recommended Recommended"),
+};
+
+static const Property PROPERTIES[119] = {
     Property(UCHAR_ALPHABETIC, "Alpha Alphabetic"),
     Property(UCHAR_ASCII_HEX_DIGIT, "AHex ASCII_Hex_Digit"),
     Property(UCHAR_BIDI_CONTROL, "Bidi_C Bidi_Control"),
@@ -1289,7 +1310,7 @@ static const Property PROPERTIES[117] = {
     Property(UCHAR_JOINING_TYPE, "jt Joining_Type", VALUES_jt, 6),
     Property(UCHAR_LINE_BREAK, "lb Line_Break", VALUES_lb, 48),
     Property(UCHAR_NUMERIC_TYPE, "nt Numeric_Type", VALUES_nt, 4),
-    Property(UCHAR_SCRIPT, "sc Script", VALUES_sc, 200),
+    Property(UCHAR_SCRIPT, "sc Script", VALUES_sc, 201),
     Property(UCHAR_HANGUL_SYLLABLE_TYPE, "hst Hangul_Syllable_Type", VALUES_hst, 6),
     Property(UCHAR_NFD_QUICK_CHECK, "NFD_QC NFD_Quick_Check", VALUES_NFD_QC, 2),
     Property(UCHAR_NFKD_QUICK_CHECK, "NFKD_QC NFKD_Quick_Check", VALUES_NFKD_QC, 2),
@@ -1304,6 +1325,7 @@ static const Property PROPERTIES[117] = {
     Property(UCHAR_INDIC_POSITIONAL_CATEGORY, "InPC Indic_Positional_Category", VALUES_InPC, 16),
     Property(UCHAR_INDIC_SYLLABIC_CATEGORY, "InSC Indic_Syllabic_Category", VALUES_InSC, 36),
     Property(UCHAR_VERTICAL_ORIENTATION, "vo Vertical_Orientation", VALUES_vo, 4),
+    Property(UCHAR_IDENTIFIER_STATUS, "Identifier_Status Identifier_Status", VALUES_Identifier_Status, 2),
     Property(UCHAR_GENERAL_CATEGORY_MASK, "gcm General_Category_Mask", VALUES_gcm, 38),
     Property(UCHAR_NUMERIC_VALUE, "nv Numeric_Value"),
     Property(UCHAR_AGE, "age Age"),
@@ -1321,6 +1343,7 @@ static const Property PROPERTIES[117] = {
     Property(UCHAR_UPPERCASE_MAPPING, "uc Uppercase_Mapping"),
     Property(UCHAR_BIDI_PAIRED_BRACKET, "bpb Bidi_Paired_Bracket"),
     Property(UCHAR_SCRIPT_EXTENSIONS, "scx Script_Extensions"),
+    Property(UCHAR_IDENTIFIER_TYPE, "Identifier_Type Identifier_Type", VALUES_Identifier_Type, 12),
 };
 
 const int32_t MAX_ALIASES = 4;

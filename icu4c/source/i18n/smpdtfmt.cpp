@@ -332,9 +332,7 @@ SimpleDateFormat::~SimpleDateFormat()
     if (fSharedNumberFormatters) {
         freeSharedNumberFormatters(fSharedNumberFormatters);
     }
-    if (fTimeZoneFormat) {
-        delete fTimeZoneFormat;
-    }
+    delete fTimeZoneFormat;
     delete fSimpleNumberFormatter;
 
 #if !UCONFIG_NO_BREAK_ITERATION
@@ -507,7 +505,7 @@ SimpleDateFormat::SimpleDateFormat(const Locale& locale,
         // This constructor doesn't fail; it uses last resort data
         fSymbols = new DateFormatSymbols(status);
         /* test for nullptr */
-        if (fSymbols == 0) {
+        if (fSymbols == nullptr) {
             status = U_MEMORY_ALLOCATION_ERROR;
             return;
         }
@@ -709,7 +707,7 @@ void SimpleDateFormat::construct(EStyle timeStyle,
     fSymbols = DateFormatSymbols::createForLocale(locale, status);
     if (U_FAILURE(status)) return;
     /* test for nullptr */
-    if (fSymbols == 0) {
+    if (fSymbols == nullptr) {
         status = U_MEMORY_ALLOCATION_ERROR;
         return;
     }
@@ -728,16 +726,17 @@ void SimpleDateFormat::construct(EStyle timeStyle,
         if (locale.getKeywordValue("rg", nullptr, 0, dummyErr1) > 0 || locale.getKeywordValue("hours", nullptr, 0, dummyErr2) > 0) {
             hasRgOrHcSubtag = true;
         }
-            
+
         const char* baseLocID = locale.getBaseName();
-        if (baseLocID[0]!=0 && uprv_strcmp(baseLocID,"und")!=0) {
+        if (baseLocID != nullptr && uprv_strcmp(baseLocID,"und")!=0) {
             UErrorCode useStatus = U_ZERO_ERROR;
             Locale baseLoc(baseLocID);
             Locale validLoc(getLocale(ULOC_VALID_LOCALE, useStatus));
             if (hasRgOrHcSubtag || (U_SUCCESS(useStatus) && validLoc!=baseLoc)) {
                 bool useDTPG = hasRgOrHcSubtag;
                 const char* baseReg = baseLoc.getCountry(); // empty string if no region
-                if ((baseReg[0]!=0 && uprv_strncmp(baseReg,validLoc.getCountry(),ULOC_COUNTRY_CAPACITY)!=0)
+                if ((baseReg != nullptr && baseReg[0] != 0 &&
+                     uprv_strncmp(baseReg,validLoc.getCountry(),ULOC_COUNTRY_CAPACITY)!=0)
                         || uprv_strncmp(baseLoc.getLanguage(),validLoc.getLanguage(),ULOC_LANG_CAPACITY)!=0) {
                     // use DTPG if
                     // * baseLoc has a region and validLoc does not have the same one (or has none), OR
@@ -1113,9 +1112,7 @@ SimpleDateFormat::_format(Calendar& cal, UnicodeString& appendTo,
                   prevCh, handler, *workCal, status);
     }
 
-    if (calClone != nullptr) {
-        delete calClone;
-    }
+    delete calClone;
 
     return appendTo;
 }
@@ -1311,7 +1308,7 @@ SimpleDateFormat::initSimpleNumberFormatter(UErrorCode &status) {
     if (U_FAILURE(status)) {
         return;
     }
-    auto* df = dynamic_cast<const DecimalFormat*>(fNumberFormat);
+    const auto* df = dynamic_cast<const DecimalFormat*>(fNumberFormat);
     if (df == nullptr) {
         return;
     }
@@ -1526,7 +1523,7 @@ SimpleDateFormat::subFormat(UnicodeString &appendTo,
     // "GGGG" is wide era name, "GGGGG" is narrow era name, anything else is abbreviated name
     case UDAT_ERA_FIELD:
         {
-            auto calType = cal.getType();
+            const auto* calType = cal.getType();
             if (uprv_strcmp(calType,"chinese") == 0 || uprv_strcmp(calType,"dangi") == 0) {
                 zeroPaddingNumber(currentNumberFormat,appendTo, value, 1, 9); // as in ICU4J
             } else {
@@ -2181,7 +2178,7 @@ SimpleDateFormat::zeroPaddingNumber(
     }
 
     // Check for RBNF (no clone necessary)
-    auto* rbnf = dynamic_cast<const RuleBasedNumberFormat*>(currentNumberFormat);
+    const auto* rbnf = dynamic_cast<const RuleBasedNumberFormat*>(currentNumberFormat);
     if (rbnf != nullptr) {
         FieldPosition pos(FieldPosition::DONT_CARE);
         rbnf->format(value, appendTo, pos);  // 3rd arg is there to speed up processing
@@ -2655,12 +2652,8 @@ ExitParse:
         cal.setTime(workCal->getTime(status), status);
     }
 
-    if (numericLeapMonthFormatter != nullptr) {
-        delete numericLeapMonthFormatter;
-    }
-    if (calClone != nullptr) {
-        delete calClone;
-    }
+    delete numericLeapMonthFormatter;
+    delete calClone;
 
     // If any Calendar calls failed, we pretend that we
     // couldn't parse the string, when in reality this isn't quite accurate--
@@ -3921,7 +3914,7 @@ void SimpleDateFormat::parseInt(const UnicodeString& text,
                                 UBool allowNegative,
                                 const NumberFormat *fmt) const {
     UnicodeString oldPrefix;
-    auto* fmtAsDF = dynamic_cast<const DecimalFormat*>(fmt);
+    const auto* fmtAsDF = dynamic_cast<const DecimalFormat*>(fmt);
     LocalPointer<DecimalFormat> df;
     if (!allowNegative && fmtAsDF != nullptr) {
         df.adoptInstead(fmtAsDF->clone());

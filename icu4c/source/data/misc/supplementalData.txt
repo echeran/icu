@@ -2176,7 +2176,7 @@ supplementalData:table(nofallback){
             "islamic-tbla",
         }
     }
-    cldrVersion{"44"}
+    cldrVersion{"45"}
     codeMappings{
         {
             "AA",
@@ -4434,6 +4434,7 @@ supplementalData:table(nofallback){
                 "ADP",
                 "AFA",
                 "ALK",
+                "ANG",
                 "AOK",
                 "AON",
                 "AOR",
@@ -4468,6 +4469,7 @@ supplementalData:table(nofallback){
                 "COU",
                 "CSD",
                 "CSK",
+                "CUC",
                 "CYP",
                 "DDM",
                 "DEM",
@@ -4578,7 +4580,6 @@ supplementalData:table(nofallback){
                 "AFN",
                 "ALL",
                 "AMD",
-                "ANG",
                 "AOA",
                 "ARS",
                 "AUD",
@@ -4606,7 +4607,6 @@ supplementalData:table(nofallback){
                 "CNY",
                 "COP",
                 "CRC",
-                "CUC",
                 "CUP",
                 "CVE",
                 "CZK",
@@ -4723,6 +4723,7 @@ supplementalData:table(nofallback){
                 "WST",
                 "XAF",
                 "XCD",
+                "XCG",
                 "XOF",
                 "XPF",
                 "YER",
@@ -7829,6 +7830,7 @@ supplementalData:table(nofallback){
                 "Aghb",
                 "Ahom",
                 "Arab",
+                "Aran",
                 "Armi",
                 "Armn",
                 "Avst",
@@ -7852,6 +7854,7 @@ supplementalData:table(nofallback){
                 "Cpmn",
                 "Cprt",
                 "Cyrl",
+                "Cyrs",
                 "Deva",
                 "Diak",
                 "Dogr",
@@ -7899,6 +7902,7 @@ supplementalData:table(nofallback){
                 "Kthi",
                 "Lana",
                 "Laoo",
+                "Latf~g",
                 "Latn",
                 "Lepc",
                 "Limb",
@@ -7964,6 +7968,9 @@ supplementalData:table(nofallback){
                 "Sund",
                 "Sylo",
                 "Syrc",
+                "Syre",
+                "Syrj",
+                "Syrn",
                 "Tagb",
                 "Takr",
                 "Tale",
@@ -7997,7 +8004,6 @@ supplementalData:table(nofallback){
                 "Qaaj~p",
             }
             special{
-                "Aran",
                 "Qaag",
                 "Zinh",
                 "Zmth",
@@ -27933,9 +27939,6 @@ supplementalData:table(nofallback){
                 49990000,
                 57376941,
             }
-            tok{
-                populationShareF:int{40100000}
-            }
             tr{
                 populationShareF:int{47100000}
             }
@@ -28582,9 +28585,6 @@ supplementalData:table(nofallback){
             }
             vmf{
                 populationShareF:int{48600000}
-            }
-            vo{
-                populationShareF:int{0}
             }
         }
         DG{

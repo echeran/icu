@@ -716,7 +716,7 @@ void IntlTestDateTimePatternGeneratorAPI::testAPI(/*char *par*/)
             resultDate.remove();
             resultDate = sdf.format(testDate, resultDate);
             if ( resultDate != patternResults[localeIndex][resultIndex] ) {
-                auto* calendar = sdf.getCalendar();
+                const auto* calendar = sdf.getCalendar();
                 errln(UnicodeString("\nERROR: Test various skeletons[") + (dataIndex-1) + UnicodeString("], localeIndex ") + localeIndex +
                       u". Got: \"" + resultDate +
                       u"\" with calendar " + calendar->getType() +
@@ -1168,9 +1168,9 @@ void IntlTestDateTimePatternGeneratorAPI::testC() {
             {"zh-TW",  "CCCCm",   "BBBBhh:mm"},
             {"zh-TW",  "CCCCCm",  "BBBBBh:mm"},
             {"zh-TW",  "CCCCCCm", "BBBBBhh:mm"},
-            {"de",     "Cm",      "H:mm"},
+            {"de",     "Cm",      "HH:mm"},
             {"de",     "CCm",     "HH:mm"},
-            {"de",     "CCCm",    "H:mm"},
+            {"de",     "CCCm",    "HH:mm"},
             {"de",     "CCCCm",   "HH:mm"},
             {"en",     "Cm",      "h:mm\\u202Fa"},
             {"en",     "CCm",     "hh:mm\\u202Fa"},
@@ -1434,7 +1434,7 @@ void IntlTestDateTimePatternGeneratorAPI::test20640_HourCyclArsEnNH() {
         {"ja_TRADITIONAL", u"H時", u"H:mm", UDAT_HOUR_CYCLE_23},
     };
 
-    for (auto& cas : cases) {
+    for (const auto& cas : cases) {
         status.setScope(cas.localeName);
 
         Locale loc(cas.localeName);
@@ -1602,6 +1602,8 @@ void IntlTestDateTimePatternGeneratorAPI::testBestPattern() {
         { "en_GB@calendar=coptic",   "yMd", u"dd/MM/y GGGGG"    },
         { "en_GB@calendar=japanese", "yMd", u"dd/MM/y GGGGG"    },
         { "en_GB@calendar=buddhist", "yMd", u"dd/MM/y GGGGG"    },
+        // ICU-22757: Not inheriting availableFormats patterns from root
+        { "sv_SE",                   "yMd", u"y-MM-dd"          },
         // ICU-20992: Bad patterns for missing fields
         { "ckb_IR",     "mmSSS",       u"mm:ss\u066bSSS"     },
         { "ckb_IR",     "BSSS",        u"SSS \u251c'Dayperiod': B\u2524" },
@@ -1657,7 +1659,7 @@ void IntlTestDateTimePatternGeneratorAPI::testDateTimePatterns() {
         { "ha", { UnicodeString(u"EEEE d MMMM, y 'da' HH:mm"),
                   UnicodeString(u"d MMMM, y 'da' HH:mm"),
                   UnicodeString(u"d MMM, y, HH:mm"),
-                  UnicodeString(u"d/M/y, HH:mm") } },
+                  UnicodeString(u"y-MM-dd, HH:mm") } },
         { nullptr, { UnicodeString(""), UnicodeString(""), // terminator
                     UnicodeString(""), UnicodeString("") } },
     };

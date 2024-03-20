@@ -63,17 +63,23 @@ const char *BuddhistCalendar::getType() const
     return "buddhist";
 }
 
-int32_t BuddhistCalendar::handleGetExtendedYear()
+int32_t BuddhistCalendar::handleGetExtendedYear(UErrorCode& status)
 {
+    if (U_FAILURE(status)) {
+        return 0;
+    }
     // EXTENDED_YEAR in BuddhistCalendar is a Gregorian year.
     // The default value of EXTENDED_YEAR is 1970 (Buddhist 2513)
     int32_t year;
     if (newerField(UCAL_EXTENDED_YEAR, UCAL_YEAR) == UCAL_EXTENDED_YEAR) {
         year = internalGet(UCAL_EXTENDED_YEAR, kGregorianEpoch);
     } else {
-        // extended year is a gregorian year, where 1 = 1AD,  0 = 1BC, -1 = 2BC, etc 
-        year = internalGet(UCAL_YEAR, kGregorianEpoch - kBuddhistEraStart)
-                + kBuddhistEraStart;
+        // extended year is a gregorian year, where 1 = 1AD,  0 = 1BC, -1 = 2BC, etc
+        year = internalGet(UCAL_YEAR, kGregorianEpoch - kBuddhistEraStart);
+        if (uprv_add32_overflow(year, kBuddhistEraStart, &year)) {
+            status = U_ILLEGAL_ARGUMENT_ERROR;
+            return 0;
+        }
     }
     return year;
 }

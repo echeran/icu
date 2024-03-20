@@ -21,6 +21,8 @@
 #include "GUISupport.h"
 #include "UnicodeReader.h"
 
+using icu::UnicodeString;
+
 #define BYTE(b) (((int) b) & 0xFF)
 
 /*
@@ -44,7 +46,7 @@ const char16_t *UnicodeReader::readFile(const char *fileName, GUISupport *guiSup
     if( f == nullptr ) {
         sprintf(errorMessage,"Couldn't open %s: %s \n", fileName, strerror(errno));
         guiSupport->postErrorMessage(errorMessage, "Text File Error");
-        return 0;
+        return nullptr;
     }
     
     fseek(f, 0, SEEK_END);
@@ -79,18 +81,18 @@ const char16_t *UnicodeReader::readFile(const char *fileName, GUISupport *guiSup
                     BYTE(startBytes[0]), BYTE(startBytes[1]), BYTE(startBytes[2]), BYTE(startBytes[3]));
         guiSupport->postErrorMessage(errorMessage, "Text File Error");
         fclose(f);
-        return 0;
+        return nullptr;
     }
         
     fileSize -= signatureLength;
     fseek(f, signatureLength, SEEK_SET);
     byteBuffer = new char[fileSize];
-    
-    if(byteBuffer == 0) {
+
+    if (byteBuffer == nullptr) {
         sprintf(errorMessage,"Couldn't get memory for reading %s: %s \n", fileName, strerror(errno));
         guiSupport->postErrorMessage(errorMessage, "Text File Error");
         fclose(f);
-        return 0;
+        return nullptr;
     }
     
     fread(byteBuffer, sizeof(char), fileSize, f);
@@ -99,7 +101,7 @@ const char16_t *UnicodeReader::readFile(const char *fileName, GUISupport *guiSup
         guiSupport->postErrorMessage(errorMessage, "Text File Error");
         fclose(f);
         delete[] byteBuffer;
-        return 0;
+        return nullptr;
     }
     fclose(f);
     
@@ -109,10 +111,10 @@ const char16_t *UnicodeReader::readFile(const char *fileName, GUISupport *guiSup
     
     charCount = myText.length();
     charBuffer = LE_NEW_ARRAY(char16_t, charCount + 1);
-    if(charBuffer == 0) {
+    if (charBuffer == nullptr) {
         sprintf(errorMessage,"Couldn't get memory for reading %s: %s \n", fileName, strerror(errno));
         guiSupport->postErrorMessage(errorMessage, "Text File Error");
-        return 0;
+        return nullptr;
     }
     
     myText.extract(0, myText.length(), charBuffer);

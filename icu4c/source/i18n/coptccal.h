@@ -177,7 +177,7 @@ protected:
      * Return the extended year defined by the current fields.
      * @internal
      */
-    virtual int32_t handleGetExtendedYear() override;
+    virtual int32_t handleGetExtendedYear(UErrorCode& status) override;
 
     /**
      * Compute fields from the JD
@@ -204,7 +204,7 @@ protected:
      */
     virtual int32_t getJDEpochOffset() const override;
 
-
+    virtual bool isEra0CountingBackward() const override { return true; }
 public:
     /**
      * Override Calendar Returns a unique class ID POLYMORPHICALLY. Pure virtual
