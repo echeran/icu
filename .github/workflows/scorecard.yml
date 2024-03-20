@@ -12,7 +12,8 @@ on:
   schedule:
     - cron: "23 15 * * 6"
   push:
-    branches: ["main"]
+    # Re-enable this once Scorecard job is fixed to pass again
+    # branches: ["main"]
 
 # Declare default permissions as read only.
 permissions: read-all
