@@ -4370,6 +4370,10 @@ void RBBITest::RunMonkey(BreakIterator *bi, RBBIMonkeyKind &mk, const char *name
             //   we can tell that it is making progress.
             constexpr std::array<std::string_view, 5> monkeys{"🙈", "🙉", "🙊", "🐵", "🐒"};
             fprintf(stderr, monkeys[m_seed % monkeys.size()].data());
+            if (loopCount % 1'000'000 == 0) {
+                fprintf(stderr, "\nTested %d million random strings with %d errors…\n",
+                        loopCount / 1'000'000, getErrors());
+            }
         }
         // Save current random number seed, so that we can recreate the random numbers
         //   for this loop iteration in event of an error.
