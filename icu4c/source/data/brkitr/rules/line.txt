@@ -336,9 +336,9 @@ $BB $CM* [^$CB];                                  #  $BB  x
 $BB $CM* $LB20NonBreaks;
 
 # LB 21a Don't break after Hebrew + Hyphen
-#   HL (HY | BA) x
+#   HL (HY | BA) x [^HL]
 #
-$HL $CM* ($HY | $BA) $CM* [^$CB]?;
+$HL $CM* ($HY | $BA) $CM* [^$CB $HL]?;
 
 # LB 21b (forward) Don't break between SY and HL
 # (break between HL and SY already disallowed by LB 13 above)
