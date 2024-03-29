@@ -961,6 +961,19 @@ namespace message2 {
             OptionMap(const UVector&, UErrorCode&);
             OptionMap(Option*, int32_t);
             virtual ~OptionMap();
+
+            class Builder : public UObject {
+                private:
+                    UVector* options;
+                    bool checkDuplicates = true;
+                public:
+                    Builder& add(Option&& opt, UErrorCode&);
+                    Builder(UErrorCode&);
+                    static Builder attributes(UErrorCode&);
+                    // As this class is private, build() is destructive
+                    OptionMap build(UErrorCode&);
+                    virtual ~Builder();
+            }; // class OptionMap::Builder
         private:
             friend class message2::Serializer;
 
@@ -1094,13 +1107,7 @@ namespace message2 {
                 bool hasOptions = false;
                 Reserved asReserved;
                 FunctionName functionName;
-                // The next field is used internally to construct Operators
-                // and overrides the `options` vector.
-                // This is because it's easiest to share the code
-                // for parsing options between Operator::Builder and Markup::Builder.
-                OptionMap optionMap;
-                UVector* options; // Not a LocalPointer for the same reason as in `SelectorKeys::Builder`
-                Builder& setOptionMap(OptionMap&&);
+                OptionMap::Builder options;
             public:
                 /**
                  * Sets this operator to be a reserved sequence.
@@ -1224,7 +1231,6 @@ namespace message2 {
             friend class Builder;
             friend class message2::Checker;
             friend class message2::MessageFormatter;
-            friend class message2::Parser;
             friend class message2::Serializer;
 
             // Function call constructor
@@ -1358,24 +1364,11 @@ namespace message2 {
             class U_I18N_API Builder : public UMemory {
             private:
                 friend class Markup;
-                friend class message2::Parser;
 
                 UnicodeString name;
-                UVector* options; // Not a LocalPointer for the same reason as in `SelectorKeys::Builder`
-                UVector* attributes;
-                // The next two fields are used internally by the parser
-                // and override the `options` and `attributes` vectors.
-                // This is because it's easiest to share the code
-                // for parsing options between Operator::Builder and Markup::Builder.
-                OptionMap optionMap;
-                OptionMap attributeMap;
+                OptionMap::Builder options;
+                OptionMap::Builder attributes;
                 UMarkupType type = UMARKUP_COUNT;
-                Builder& setOptionMap(OptionMap&&);
-
-                // TODO: Would probably be best to make this method public (same for Markup)
-                // and not make the parser a friend class.
-                // Same for options on Operator and Markup. (addAll())
-                Builder& setAttributeMap(OptionMap&& m);
             public:
                 /**
                  * Sets the name of this markup.
@@ -1425,7 +1418,7 @@ namespace message2 {
                  * @internal ICU 75.0 technology preview
                  * @deprecated This API is for technology preview only.
                  */
-                Builder& addOption(const UnicodeString &key, Operand&& value, UErrorCode& status) noexcept;
+                Builder& addOption(const UnicodeString &key, Operand&& value, UErrorCode& status);
                 /**
                  * Adds a single attribute.
                  *
@@ -1437,7 +1430,7 @@ namespace message2 {
                  * @internal ICU 75.0 technology preview
                  * @deprecated This API is for technology preview only.
                  */
-                Builder& addAttribute(const UnicodeString &key, Operand&& value, UErrorCode& status) noexcept;
+                Builder& addAttribute(const UnicodeString &key, Operand&& value, UErrorCode& status);
                 /**
                  * Constructs a new immutable `Markup` using the name and type
                  * and (optionally) options and attributes that were previously set.
@@ -1582,21 +1575,12 @@ namespace message2 {
             class U_I18N_API Builder : public UMemory {
             private:
                 friend class Expression;
-                friend class message2::Parser;
 
                 bool hasOperand = false;
                 bool hasOperator = false;
                 Operand rand;
                 Operator rator;
-                UVector* attributes; // Not a LocalPointer for the same reason as in `SelectorKeys::builder`
-                // The next field is used internally by the parser
-                // and overrides `attributes` vector.
-                // This is because it's easiest to share the code
-                // for parsing options between Expression::Builder and Markup::Builder.
-                OptionMap attributeMap;
-                // Provided as a private method so that the parser
-                // can use the same attribute-parsing code for Expression and Markup
-                Builder& setAttributeMap(OptionMap&& m);
+                OptionMap::Builder attributes;
             public:
                 /**
                  * Sets the operand of this expression.
