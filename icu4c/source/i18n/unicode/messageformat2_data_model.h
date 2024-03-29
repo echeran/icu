@@ -962,7 +962,7 @@ namespace message2 {
             OptionMap(Option*, int32_t);
             virtual ~OptionMap();
 
-            class Builder : public UObject {
+            class U_I18N_API Builder : public UObject {
                 private:
                     UVector* options;
                     bool checkDuplicates = true;
