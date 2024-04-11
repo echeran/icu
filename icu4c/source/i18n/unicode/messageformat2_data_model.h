@@ -169,6 +169,10 @@ namespace message2 {
                  * @deprecated This API is for technology preview only.
                  */
                 virtual ~Builder();
+                Builder(const Builder&) = delete;
+                Builder& operator=(const Builder&) = delete;
+                Builder(Builder&&) = delete;
+                Builder& operator=(Builder&&) = delete;
             }; // class Reserved::Builder
             /**
              * Non-member swap function.
@@ -751,6 +755,10 @@ namespace message2 {
                  * @deprecated This API is for technology preview only.
                  */
                 virtual ~Builder();
+                Builder(const Builder&) = delete;
+                Builder& operator=(const Builder&) = delete;
+                Builder(Builder&&) = delete;
+                Builder& operator=(Builder&&) = delete;
             }; // class SelectorKeys::Builder
             /**
              * Less than operator. Compares the two key lists lexicographically.
@@ -810,7 +818,6 @@ namespace message2 {
              * @deprecated This API is for technology preview only.
              */
             virtual ~SelectorKeys();
-
         private:
             friend class Builder;
             friend class message2::Checker;
@@ -978,7 +985,16 @@ namespace message2 {
                     static Builder attributes(UErrorCode&);
                     // As this class is private, build() is destructive
                     OptionMap build(UErrorCode&);
-                    virtual ~Builder();
+		    friend inline void swap(Builder& m1, Builder& m2) noexcept {
+		      using std::swap;
+
+		      swap(m1.options, m2.options);
+		      swap(m1.checkDuplicates, m2.checkDuplicates);
+		    }
+		    Builder(Builder&&);
+		    Builder(const Builder&) = delete;
+		    Builder& operator=(Builder) noexcept;
+		    virtual ~Builder();
             }; // class OptionMap::Builder
         private:
             friend class message2::Serializer;
@@ -1189,6 +1205,10 @@ namespace message2 {
                  * @deprecated This API is for technology preview only.
                  */
                 virtual ~Builder();
+                Builder(const Builder&) = delete;
+                Builder& operator=(const Builder&) = delete;
+                Builder(Builder&&) = delete;
+                Builder& operator=(Builder&&) = delete;
             }; // class Operator::Builder
             /**
              * Copy constructor.
@@ -1472,6 +1492,10 @@ namespace message2 {
                  * @deprecated This API is for technology preview only.
                  */
                 virtual ~Builder();
+                Builder(const Builder&) = delete;
+                Builder& operator=(const Builder&) = delete;
+                Builder(Builder&&) = delete;
+                Builder& operator=(Builder&&) = delete;
             }; // class Markup::Builder
 
         private:
@@ -1655,6 +1679,10 @@ namespace message2 {
                  * @deprecated This API is for technology preview only.
                  */
                 virtual ~Builder();
+                Builder(const Builder&) = delete;
+                Builder& operator=(const Builder&) = delete;
+                Builder(Builder&&) = delete;
+                Builder& operator=(Builder&&) = delete;
             }; // class Expression::Builder
             /**
              * Non-member swap function.
@@ -1885,6 +1913,10 @@ namespace message2 {
                  * @deprecated This API is for technology preview only.
                  */
                 virtual ~Builder();
+                Builder(const Builder&) = delete;
+                Builder& operator=(const Builder&) = delete;
+                Builder(Builder&&) = delete;
+                Builder& operator=(Builder&&) = delete;
             }; // class UnsupportedStatement::Builder
             /**
              * Non-member swap function.
@@ -2239,6 +2271,10 @@ namespace message2 {
                  * @deprecated This API is for technology preview only.
                  */
                 virtual ~Builder();
+                Builder(const Builder&) = delete;
+                Builder& operator=(const Builder&) = delete;
+                Builder(Builder&&) = delete;
+                Builder& operator=(Builder&&) = delete;
             }; // class Pattern::Builder
 
             /**
@@ -3028,6 +3064,10 @@ namespace message2 {
              * @deprecated This API is for technology preview only.
              */
             virtual ~Builder();
+            Builder(const Builder&) = delete;
+            Builder& operator=(const Builder&) = delete;
+            Builder(Builder&&) = delete;
+            Builder& operator=(Builder&&) = delete;
         }; // class Builder
 
     private:

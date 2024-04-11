@@ -323,6 +323,17 @@ OptionMap::Builder::Builder(UErrorCode& status) {
     options = createStringUVector(status);
 }
 
+OptionMap::Builder::Builder(OptionMap::Builder&& other) {
+    checkDuplicates = other.checkDuplicates;
+    options = other.options;
+    other.options = nullptr;
+}
+
+OptionMap::Builder& OptionMap::Builder::operator=(OptionMap::Builder other) noexcept {
+    swap(*this, other);
+    return *this;
+}
+
 /* static */ OptionMap::Builder OptionMap::Builder::attributes(UErrorCode& status) {
     Builder b(status);
     // The same code is re-used for representing attributes and options.
