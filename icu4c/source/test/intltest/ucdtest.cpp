@@ -22,6 +22,8 @@
 #include "uparse.h"
 #include "ucdtest.h"
 
+#include <iostream>
+
 static const char *ignorePropNames[]={
     "FC_NFKC",
     "NFD_QC",
@@ -1092,6 +1094,10 @@ void UnicodeTest::TestPropertiesUsingPpucd() {
         { UCHAR_NFC_QUICK_CHECK, UNORM_MAYBE },
         { UCHAR_NFKC_QUICK_CHECK, UNORM_MAYBE },
 #endif  // !UCONFIG_NO_NORMALIZATION
+        { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_NONE },
+        { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_CONSONANT },
+        { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_EXTEND },
+        { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_LINKER },
     };
 
     // Iterate through PPUCD file, accumulating each line's data into each UnicodeSet per property
@@ -1132,6 +1138,15 @@ void UnicodeTest::TestPropertiesUsingPpucd() {
             + u_getPropertyName(tp.prop, U_LONG_PROPERTY_NAME);
         if (!tp.isBinary()) {
             msg = msg + "=" + u_getPropertyValueName(tp.prop, tp.value, U_LONG_PROPERTY_NAME);
+        }
+        if (tp.prop == UCHAR_INDIC_CONJUNCT_BREAK) {
+            UnicodeString setStr;
+            icuPropSet.toPattern(setStr, true);
+            char cbuf[10000];
+            std::cout << "Looking at InCB" << std::endl;
+            const UChar *ustrBuf = static_cast<const UChar*>(setStr.getTerminatedBuffer());
+            u_UCharsToChars(ustrBuf, cbuf, 10000);
+            std::cout << "Contents = " << cbuf << std::endl;
         }
         assertTrue(msg.c_str(), tp.set == icuPropSet);
     }
