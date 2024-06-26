@@ -627,7 +627,7 @@ def ParsePropertyAliases(in_file):
   # Indic_Conjunct Break. See UAX #29 and
   # https://www.unicode.org/reports/tr44/tr44-33.html#Indic_Conjunct_Break
   name = "Indic_Conjunct_Break"
-  _null_values[name] = "??"  # Must be specified in an @missing line.
+  _null_values[name] = "None"  # Must be specified in an @missing line.
   prop = ("Enumerated", [name, name], set(), {})
   _properties[name] = prop
   _properties[NormPropName(name)] = prop  
