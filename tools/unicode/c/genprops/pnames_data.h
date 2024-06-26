@@ -1174,6 +1174,13 @@ static const Value VALUES_InSC[37] = {
     Value(U_INSC_REORDERING_KILLER, "Reordering_Killer Reordering_Killer"),
 };
 
+static const Value VALUES_InCB[4] = {
+    Value(U_INCB_NONE, "None None"),
+    Value(U_INCB_CONSONANT, "Consonant Consonant"),
+    Value(U_INCB_EXTEND, "Extend Extend"),
+    Value(U_INCB_LINKER, "Linker Linker"),
+};
+
 static const Value VALUES_vo[4] = {
     Value(U_VO_ROTATED, "R Rotated"),
     Value(U_VO_TRANSFORMED_ROTATED, "Tr Transformed_Rotated"),
@@ -1370,6 +1377,7 @@ static const Property PROPERTIES[120] = {
     Property(UCHAR_BIDI_PAIRED_BRACKET, "bpb Bidi_Paired_Bracket"),
     Property(UCHAR_SCRIPT_EXTENSIONS, "scx Script_Extensions"),
     Property(UCHAR_IDENTIFIER_TYPE, "ID_Type Identifier_Type", VALUES_ID_Type, 12),
+    Property(UCHAR_INDIC_CONJUNCT_BREAK, "InCB Indic_Conjunct_Break", VALUES_InCB, 4),
 };
 
 const int32_t MAX_ALIASES = 4;
