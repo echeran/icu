@@ -618,6 +618,17 @@ def ParsePropertyAliases(in_file):
   AddEnumeratedValue(prop, "Limited_Use")
   AddEnumeratedValue(prop, "Inclusion")
   AddEnumeratedValue(prop, "Recommended")
+  # Indic_Conjunct Break. See UAX #29 and
+  # https://www.unicode.org/reports/tr44/tr44-33.html#Indic_Conjunct_Break
+  name = "Indic_Conjunct_Break"
+  _null_values[name] = "??"  # Must be specified in an @missing line.
+  prop = ("Enumerated", [name, name], set(), {})
+  _properties[name] = prop
+  _properties[NormPropName(name)] = prop  
+  AddEnumeratedValue(prop, "None")
+  AddEnumeratedValue(prop, "Consonant")
+  AddEnumeratedValue(prop, "Extend")
+  AddEnumeratedValue(prop, "Linker")
 
 
 def ParsePropertyValueAliases(in_file):
