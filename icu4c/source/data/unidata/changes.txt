@@ -104,6 +104,7 @@ export UNICODE_TOOLS=~/oss/unicodetools/mine/src
   cd $ICU_OUT/icu4c
   ICU_DATA_BUILDTOOL_OPTS=--include_uni_core_data CXXFLAGS="-DU_USING_ICU_NAMESPACE=0 -Wimplicit-fallthrough" CPPFLAGS="-DU_NO_DEFAULT_INCLUDE_UTF_HEADERS=1 -fsanitize=bounds" LDFLAGS=-fsanitize=bounds ../../src/icu4c/source/runConfigureICU --enable-debug --disable-release Linux/clang --prefix=/usr/local/google/home/mscherer/icu/mine/inst/icu4c > config.out 2>&1 ; tail config.out
   + Elango's version (diff default C++ compiler & in-source build paths):
+    cd $ICU_OUT/icu4c
     ICU_DATA_BUILDTOOL_OPTS=--include_uni_core_data CXXFLAGS="-DU_USING_ICU_NAMESPACE=0 -Wimplicit-fallthrough" CPPFLAGS="-DU_NO_DEFAULT_INCLUDE_UTF_HEADERS=1 -fsanitize=bounds" LDFLAGS=-fsanitize=bounds ./source/runConfigureICU --enable-debug --disable-release Linux/gcc --prefix=/usr/local/google/home/elango/oss/icu/icu4c > config.out 2>&1 ; tail config.out
 
 *** data files & enums & parser code
