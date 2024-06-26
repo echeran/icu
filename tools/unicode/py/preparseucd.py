@@ -620,9 +620,9 @@ def ParsePropertyAliases(in_file):
   AddEnumeratedValue(prop, "Recommended")
   # Indic_Conjunct Break. See UAX #29 and
   # https://www.unicode.org/reports/tr44/tr44-33.html#Indic_Conjunct_Break
-  name = "Indic_Conjunct_Break"
+  name = "InCB"
   _null_values[name] = "None"  # Must be specified in an @missing line.
-  prop = ("Enumerated", [name, name], set(), {})
+  prop = ("Enumerated", ["InCB", "Indic_Conjunct_Break"], set(), {})
   _properties[name] = prop
   _properties[NormPropName(name)] = prop  
   AddEnumeratedValue(prop, "None")
@@ -2017,7 +2017,7 @@ _ublock_re = re.compile(" *(UBLOCK_[0-9A-Z_]+) *= *[0-9]+,")
 # Sample line to match:
 #    U_EA_AMBIGUOUS,
 _prop_and_value_re = re.compile(
-    " *(U_(BPT|DT|EA|GCB|HST|ID_STATUS|ID_TYPE|INPC|INSC|LB|JG|JT|NT|SB|VO|WB)_([0-9A-Z_]+))")
+    " *(U_(BPT|DT|EA|GCB|HST|ID_STATUS|ID_TYPE|INPC|INSC|INCB|LB|JG|JT|NT|SB|VO|WB)_([0-9A-Z_]+))")
 
 # Sample line to match if it has matched _prop_and_value_re
 # (we want to exclude aliases):
