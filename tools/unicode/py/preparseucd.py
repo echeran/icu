@@ -635,6 +635,9 @@ def ParsePropertyAliases(in_file):
   AddEnumeratedValue(prop, "Consonant")
   AddEnumeratedValue(prop, "Extend")
   AddEnumeratedValue(prop, "Linker")
+  # Modifier Combining Mark. See UAX #29 and
+  # https://www.unicode.org/reports/tr44/tr44-33.html#Modifier_Combining_Mark
+  AddBinaryProperty("MCM", "Modifier_Combining_Mark")
 
 
 def ParsePropertyValueAliases(in_file):
