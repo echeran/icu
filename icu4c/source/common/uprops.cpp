@@ -459,6 +459,7 @@ static const BinaryProperty binProps[UCHAR_BINARY_LIMIT]={
     { UPROPS_SRC_IDSU, 0, isIDSUnaryOperator }, // UCHAR_IDS_UNARY_OPERATOR
     { UPROPS_SRC_ID_COMPAT_MATH, 0, isIDCompatMathStart }, // UCHAR_ID_COMPAT_MATH_START
     { UPROPS_SRC_ID_COMPAT_MATH, 0, isIDCompatMathContinue }, // UCHAR_ID_COMPAT_MATH_CONTINUE
+    { 0, UPROPS_MCM_MASK , defaultContains }, // UCHAR_MODIFIER_COMBINING_MARK
 };
 
 U_CAPI UBool U_EXPORT2
