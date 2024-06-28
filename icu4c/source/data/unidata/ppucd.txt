@@ -1320,7 +1320,7 @@ value;WB;WSegSpace;WSegSpace
 value;WB;XX;Other
 value;WB;ZWJ;ZWJ
 
-defaults;0000..10FFFF;age=NA;bc=L;blk=NB;bpt=n;cf=<code point>;dm=<code point>;dt=None;ea=N;FC_NFKC=<code point>;gc=Cn;GCB=XX;gcm=Cn;hst=NA;Identifier_Status=Restricted;Identifier_Type=Not_Character;InPC=NA;InSC=Other;jg=No_Joining_Group;jt=U;lb=XX;lc=<code point>;NFC_QC=Y;NFD_QC=Y;NFKC_CF=<code point>;NFKC_QC=Y;NFKC_SCF=<code point>;NFKD_QC=Y;nt=None;SB=XX;sc=Zzzz;scf=<code point>;scx=<script>;slc=<code point>;stc=<code point>;suc=<code point>;tc=<code point>;uc=<code point>;vo=R;WB=XX
+defaults;0000..10FFFF;age=NA;bc=L;blk=NB;bpt=n;cf=<code point>;dm=<code point>;dt=None;ea=N;FC_NFKC=<code point>;gc=Cn;GCB=XX;gcm=Cn;hst=NA;Identifier_Status=Restricted;Identifier_Type=Not_Character;InCB=None;InPC=NA;InSC=Other;jg=No_Joining_Group;jt=U;lb=XX;lc=<code point>;NFC_QC=Y;NFD_QC=Y;NFKC_CF=<code point>;NFKC_QC=Y;NFKC_SCF=<code point>;NFKD_QC=Y;nt=None;SB=XX;sc=Zzzz;scf=<code point>;scx=<script>;slc=<code point>;stc=<code point>;suc=<code point>;tc=<code point>;uc=<code point>;vo=R;WB=XX
 
 block;0000..007F;age=1.1;blk=ASCII;ea=Na;gc=Cc;Gr_Base;Identifier_Type=Recommended;lb=AL;sc=Zyyy
 # 0000..007F C0 Controls and Basic Latin (Basic Latin)
