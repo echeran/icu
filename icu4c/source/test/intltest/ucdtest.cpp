@@ -21,6 +21,7 @@
 #include "testutil.h"
 #include "uparse.h"
 #include "ucdtest.h"
+#include "usettest.h"
 
 #include <iostream>
 
@@ -1139,16 +1140,7 @@ void UnicodeTest::TestPropertiesUsingPpucd() {
         if (!tp.isBinary()) {
             msg = msg + "=" + u_getPropertyValueName(tp.prop, tp.value, U_LONG_PROPERTY_NAME);
         }
-        if (tp.prop == UCHAR_INDIC_CONJUNCT_BREAK) {
-            UnicodeString setStr;
-            icuPropSet.toPattern(setStr, true);
-            char cbuf[10000];
-            std::cout << "Looking at InCB" << std::endl;
-            const UChar *ustrBuf = static_cast<const UChar*>(setStr.getTerminatedBuffer());
-            u_UCharsToChars(ustrBuf, cbuf, 10000);
-            std::cout << "Contents = " << cbuf << std::endl;
-        }
-        assertTrue(msg.c_str(), tp.set == icuPropSet);
+        UnicodeSetTest::checkEqual(*this, tp.set, icuPropSet, msg.c_str());
     }
 }
 
