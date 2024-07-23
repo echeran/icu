@@ -864,7 +864,7 @@ public interface UProperty
      * Used in the grapheme cluster break algorithm in UAX #29.
      * @draft ICU 76
      */
-    public static final int UCHAR_INDIC_CONJUNCT_BREAK = 0x101A;
+    public static final int INDIC_CONJUNCT_BREAK = 0x101A;
 
     /**
      * One more than the last constant for enumerated/integer Unicode properties.
