@@ -363,8 +363,6 @@ copying that version number into the $ICU_SRC/.bazeliskrc config file.
 
 * run & fix ICU4J tests
 
-TODO
-
 *** API additions
 - send notice to icu-design about new born-@stable API (enum constants etc.)
 
