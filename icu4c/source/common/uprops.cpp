@@ -393,7 +393,7 @@ static UBool isModifierCombiningMark(const BinaryProperty &prop, UChar32 c, UPro
         if (c < MODIFIER_COMBINING_MARK[i]) { return false; }  // below range start
         if (c < MODIFIER_COMBINING_MARK[i + 1]) { return true; }  // below range limit
     }
-    return isIDCompatMathStart(prop, c, UCHAR_ID_COMPAT_MATH_START);
+    return false;
 }
 
 static const BinaryProperty binProps[UCHAR_BINARY_LIMIT]={
