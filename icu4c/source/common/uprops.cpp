@@ -480,7 +480,7 @@ static const BinaryProperty binProps[UCHAR_BINARY_LIMIT]={
     { UPROPS_SRC_IDSU, 0, isIDSUnaryOperator }, // UCHAR_IDS_UNARY_OPERATOR
     { UPROPS_SRC_ID_COMPAT_MATH, 0, isIDCompatMathStart }, // UCHAR_ID_COMPAT_MATH_START
     { UPROPS_SRC_ID_COMPAT_MATH, 0, isIDCompatMathContinue }, // UCHAR_ID_COMPAT_MATH_CONTINUE
-    { 0, 0 , isModifierCombiningMark }, // UCHAR_MODIFIER_COMBINING_MARK
+    { UPROPS_SRC_MCM, 0 , isModifierCombiningMark }, // UCHAR_MODIFIER_COMBINING_MARK
 };
 
 U_CAPI UBool U_EXPORT2
@@ -865,6 +865,13 @@ uprops_addPropertyStarts(UPropertySource src, const USetAdder *sa, UErrorCode *p
         for (UChar32 c : ID_COMPAT_MATH_START) {
             sa->add(sa->set, c);
             sa->add(sa->set, c + 1);
+        }
+        return;
+    }
+    if (src == UPROPS_SRC_MCM) {
+        // range limits
+        for (UChar32 c : MODIFIER_COMBINING_MARK) {
+            sa->add(sa->set, c);
         }
         return;
     }

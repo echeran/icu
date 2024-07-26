@@ -159,7 +159,6 @@ inline constexpr uint8_t UPROPS_AGE_MINOR_MAX = 3;
 inline constexpr uint32_t UPROPS_EA_MASK = 0x00007000;
 inline constexpr int32_t UPROPS_EA_SHIFT = 12;
 
-
 inline constexpr uint32_t UPROPS_INCB_MASK = 0x00018000;
 inline constexpr int32_t UPROPS_INCB_SHIFT = 15;
 
@@ -450,6 +449,7 @@ enum UPropertySource {
     UPROPS_SRC_IDSU,
     UPROPS_SRC_ID_COMPAT_MATH,
     UPROPS_SRC_BLOCK,
+    UPROPS_SRC_MCM,
     /** One more than the highest UPropertySource (UPROPS_SRC_) constant. */
     UPROPS_SRC_COUNT
 };
