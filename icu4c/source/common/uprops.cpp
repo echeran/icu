@@ -388,7 +388,7 @@ static UBool isIDCompatMathContinue(const BinaryProperty &prop, UChar32 c, UProp
     return isIDCompatMathStart(prop, c, UCHAR_ID_COMPAT_MATH_START);
 }
 
-static UBool isModifierCombiningMark(const BinaryProperty &prop, UChar32 c, UProperty /*which*/) {
+static UBool isModifierCombiningMark(const BinaryProperty &/*prop*/, UChar32 c, UProperty /*which*/) {
     for (int32_t i = 0; i < UPRV_LENGTHOF(MODIFIER_COMBINING_MARK); i += 2) {
         if (c < MODIFIER_COMBINING_MARK[i]) { return false; }  // below range start
         if (c < MODIFIER_COMBINING_MARK[i + 1]) { return true; }  // below range limit

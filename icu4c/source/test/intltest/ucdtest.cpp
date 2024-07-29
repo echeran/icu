@@ -1095,11 +1095,11 @@ void UnicodeTest::TestPropertiesUsingPpucd() {
         { UCHAR_NFC_QUICK_CHECK, UNORM_MAYBE },
         { UCHAR_NFKC_QUICK_CHECK, UNORM_MAYBE },
 #endif  // !UCONFIG_NO_NORMALIZATION
-        { UCHAR_MODIFIER_COMBINING_MARK },
         { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_NONE },
         { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_CONSONANT },
         { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_EXTEND },
         { UCHAR_INDIC_CONJUNCT_BREAK, U_INCB_LINKER },
+        { UCHAR_MODIFIER_COMBINING_MARK },
     };
 
     // Iterate through PPUCD file, accumulating each line's data into each UnicodeSet per property
