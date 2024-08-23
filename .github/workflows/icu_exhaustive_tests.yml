@@ -1,0 +1,155 @@
+# Copyright (C) 2016 and later: Unicode, Inc. and others.
+# License & terms of use: http://www.unicode.org/copyright.html
+#
+# GitHub Actions configuration for Exhaustive Tests for ICU.
+# 
+# Note: The exhaustive test configuration is in a separate file
+# so that it can be run independently from the regular builds.
+#
+# To run these tests, comment on a PR with "run exhaustive tests" 
+# or manually trigger the workflow. If triggered from a PR comment,
+# it adds checks to the PR and updates them with the results.
+
+name: Exhaustive Tests for ICU
+
+on:
+  workflow_dispatch:
+  issue_comment:
+    types: [created]
+
+permissions:
+  checks: write
+  pull-requests: write
+
+jobs:
+
+  # Runs exhaustive tests for ICU4J on Linux
+  icu4j-linux:
+    if: github.event.issue.pull_request != null &&
+        (contains(github.event_name, 'workflow_dispatch') ||
+         contains(github.event.comment.body, 'run exhaustive tests'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Fetch PR Details
+        id: pr-details
+        if: contains(github.event.comment.body, 'run exhaustive tests')
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          gh api "${{ github.event.issue.pull_request.url }}" > pr.json
+          PR_NUMBER=$(jq -r '.number' pr.json)
+          SHA=$(jq -r '.head.sha' pr.json)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "SHA=$SHA" >> $GITHUB_ENV
+      - name: Add a check to the PR
+        id: add-check
+        if: contains(github.event.comment.body, 'run exhaustive tests')
+        run: |
+          WORKFLOW_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo $WORKFLOW_URL
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          CHECK_ID=$(gh api \
+            -X POST \
+            -F name='Exhaustive Tests / ICU4J' \
+            -F head_sha="${{ env.SHA }}" \
+            -F status='in_progress' \
+            -F details_url=$WORKFLOW_URL \
+            -F output[title]='Exhaustive Tests' \
+            -F output[summary]='Running exhaustive tests for ICU4J' \
+            -F output[text]=$WORKFLOW_URL \
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/check-runs \
+            -q .id)
+          echo "CHECK_ID=$CHECK_ID" >> $GITHUB_ENV
+      - name: Build and Exhaustive Tests
+        run: |
+          echo "Building ICU4J" && cd icu4j && mvn install -DICU.exhaustive=10
+        env:
+          BUILD: ICU4J
+      - name: List failures (if any)
+        if: failure()
+        run: |
+          cd icu4j && cat `find . -name surefire-reports -type d -exec grep -l  -r --include="*.txt" FAILED {} \;`
+        timeout-minutes: 2
+      - name: Complete the check
+        if: always() && contains(github.event.comment.body, 'run exhaustive tests')
+        run: |
+          WORKFLOW_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          STATUS="completed"
+          CONCLUSION="success"
+          if [ "${{ job.status }}" != "success" ]; then
+            CONCLUSION="failure"
+          fi
+          gh api \
+            -X PATCH \
+            -F status="$STATUS" \
+            -F conclusion="$CONCLUSION" \
+            -F details_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            -F output[title]='Exhaustive Tests' \
+            -F output[summary]='Completed exhaustive tests for ICU4J' \
+            -F output[text]=$WORKFLOW_URL \
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/check-runs/${{ env.CHECK_ID }}
+
+
+  icu4c-linux-clang:
+    if: contains(github.event_name, 'workflow_dispatch') || contains(github.event.comment.body, 'run exhaustive tests')
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Fetch PR Details
+        id: pr-details
+        if: contains(github.event.comment.body, 'run exhaustive tests')
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          gh api "${{ github.event.issue.pull_request.url }}" > pr.json
+          PR_NUMBER=$(jq -r '.number' pr.json)
+          SHA=$(jq -r '.head.sha' pr.json)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "SHA=$SHA" >> $GITHUB_ENV
+      - name: Add a check to the PR
+        id: add-check
+        if: contains(github.event.comment.body, 'run exhaustive tests')
+        run: |
+          WORKFLOW_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo $WORKFLOW_URL
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          CHECK_ID=$(gh api \
+            -X POST \
+            -F name='Exhaustive Tests / ICU4C' \
+            -F head_sha="${{ env.SHA }}" \
+            -F status='in_progress' \
+            -F details_url=$WORKFLOW_URL \
+            -F output[title]='Exhaustive Tests' \
+            -F output[summary]='Running exhaustive tests for ICU4C' \
+            -F output[text]=$WORKFLOW_URL \
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/check-runs \
+            -q .id)
+          echo "CHECK_ID=$CHECK_ID" >> $GITHUB_ENV
+      - name: Build
+        run: |
+          cd icu4c/source && ./runConfigureICU Linux/clang && make -j -l4.5
+      - name: Exhaustive Tests
+        run: |
+          cd icu4c/source && make check-exhaustive
+        env:
+          CC: clang
+          CXX: clang++
+      - name: Complete the check
+        if: always() && contains(github.event.comment.body, 'run exhaustive tests')
+        run: |
+          WORKFLOW_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          STATUS="completed"
+          CONCLUSION="success"
+          if [ "${{ job.status }}" != "success" ]; then
+            CONCLUSION="failure"
+          fi
+          gh api \
+            -X PATCH \
+            -F status="$STATUS" \
+            -F conclusion="$CONCLUSION" \
+            -F details_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            -F output[title]='Exhaustive Tests' \
+            -F output[summary]='Completed exhaustive tests for ICU4C' \
+            -F output[text]=$WORKFLOW_URL \
+            /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/check-runs/${{ env.CHECK_ID }}
