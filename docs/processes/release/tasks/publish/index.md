@@ -309,7 +309,7 @@ run \`make dist\`.
     *   Click on the green check mark (✔) on the most recent/last commit. (It
         might be a red X if the builds failed, hopefully not).
         *   This will open up a pop-up with links to various CI builds.
-    *   Click on one of the various links that says "Details" any of the GHA
+    *   Click on one of the various links that says "Details" for any of the GHA
         builds and click on "Summary".
         *   This will open up the GitHub overview of the build status.<br>
             ![image](gha-ci-summary.png)<br>
