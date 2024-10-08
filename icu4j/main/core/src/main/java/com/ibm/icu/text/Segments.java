@@ -2,26 +2,17 @@ package com.ibm.icu.text;
 
 import java.util.stream.Stream;
 
-public class Segments {
+public interface Segments {
 
-  private String sourceString;
+  String getSourceString();
 
-  private Segmenter segmenter;
-
-  public Segments(String sourceString, Segmenter segmenter) {
-    this.sourceString = sourceString;
-    this.segmenter = segmenter;
+  default Stream<CharSequence> subSequences() {
+    return ranges().map((range) -> getSourceString().subSequence(range.getStart(), range.getLimit()));
   }
 
-  public Stream<CharSequence> subSequences() {
-    return ranges().map((range) -> sourceString.subSequence(range.getStart(), range.getLimit()));
-  }
+  Stream<SegmentRange> ranges();
 
-  public Stream<SegmentRange> ranges() {
-    return null;
-  }
-
-  public static class SegmentRange {
+  class SegmentRange {
     int start;
     int limit;
 
