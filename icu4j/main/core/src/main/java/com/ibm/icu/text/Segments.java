@@ -9,12 +9,15 @@ public interface Segments {
   @Deprecated
   Segmenter getSegmenter();
 
+  @Deprecated
+  BreakIterator getInstanceBreakIterator();
+
   default Stream<CharSequence> subSequences() {
     return ranges().map((range) -> getSourceString().subSequence(range.getStart(), range.getLimit()));
   }
 
   default Stream<SegmentRange> ranges() {
-    BreakIterator breakIter = getSegmenter().getNewBreakIterator();
+    BreakIterator breakIter = getInstanceBreakIterator();
     breakIter.setText(getSourceString());
 
     int start = breakIter.first();

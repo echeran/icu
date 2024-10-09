@@ -91,9 +91,12 @@ public class LocalizedSegmenter implements Segmenter {
 
     private LocalizedSegmenter segmenter;
 
+    private BreakIterator breakIter;
+
     private LocalizedSegments(String source, LocalizedSegmenter segmenter) {
       this.source = source;
       this.segmenter = segmenter;
+      this.breakIter = this.segmenter.getNewBreakIterator();
     }
 
     @Override
@@ -104,6 +107,11 @@ public class LocalizedSegmenter implements Segmenter {
     @Override
     public Segmenter getSegmenter() {
       return segmenter;
+    }
+
+    @Override
+    public BreakIterator getInstanceBreakIterator() {
+      return this.breakIter;
     }
   }
 

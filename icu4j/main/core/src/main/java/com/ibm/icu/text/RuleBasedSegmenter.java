@@ -50,9 +50,12 @@ public class RuleBasedSegmenter implements Segmenter {
 
     private RuleBasedSegmenter segmenter;
 
+    private BreakIterator breakIter;
+
     RuleBasedSegments(String source, RuleBasedSegmenter segmenter) {
       this.source = source;
       this.segmenter = segmenter;
+      this.breakIter = this.segmenter.getNewBreakIterator();
     }
 
     @Override
@@ -63,6 +66,11 @@ public class RuleBasedSegmenter implements Segmenter {
     @Override
     public Segmenter getSegmenter() {
       return segmenter;
+    }
+
+    @Override
+    public BreakIterator getInstanceBreakIterator() {
+      return this.breakIter;
     }
   }
 }
