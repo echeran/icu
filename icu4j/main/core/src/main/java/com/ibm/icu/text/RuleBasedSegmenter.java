@@ -24,7 +24,8 @@ public class RuleBasedSegmenter implements Segmenter {
     this.rules = rules;
   }
 
-  RuleBasedBreakIterator getBreakIterator() {
+  @Override
+  public RuleBasedBreakIterator getNewBreakIterator() {
     return new RuleBasedBreakIterator(this.rules);
   }
 
@@ -49,27 +50,6 @@ public class RuleBasedSegmenter implements Segmenter {
 
     private RuleBasedSegmenter segmenter;
 
-    @Override
-    public Stream<SegmentRange> ranges() {
-      RuleBasedBreakIterator breakIter = this.segmenter.getBreakIterator();
-      breakIter.setText(this.source);
-
-      int start = breakIter.first();
-      int limit = breakIter.next();
-      if (limit == BreakIterator.DONE) {
-        return Stream.empty();
-      } else {
-        Stream.Builder<SegmentRange> streamBuilder = Stream.builder();
-        while (limit != BreakIterator.DONE) {
-          SegmentRange range = new SegmentRange(start, limit);
-          streamBuilder.add(range);
-          start = limit;
-          limit = breakIter.next();
-        }
-        return streamBuilder.build();
-      }
-    }
-
     RuleBasedSegments(String source, RuleBasedSegmenter segmenter) {
       this.source = source;
       this.segmenter = segmenter;
@@ -78,6 +58,11 @@ public class RuleBasedSegmenter implements Segmenter {
     @Override
     public String getSourceString() {
       return this.source;
+    }
+
+    @Override
+    public Segmenter getSegmenter() {
+      return segmenter;
     }
   }
 }

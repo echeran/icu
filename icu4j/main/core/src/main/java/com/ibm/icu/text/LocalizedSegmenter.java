@@ -40,7 +40,8 @@ public class LocalizedSegmenter implements Segmenter {
     this.segmentationType = segmentationType;
   }
 
-  BreakIterator getBreakIterator() {
+  @Override
+  public BreakIterator getNewBreakIterator() {
     BreakIterator breakIter;
     switch (this.segmentationType) {
       case LINE:
@@ -101,24 +102,8 @@ public class LocalizedSegmenter implements Segmenter {
     }
 
     @Override
-    public Stream<SegmentRange> ranges() {
-      BreakIterator breakIter = this.segmenter.getBreakIterator();
-      breakIter.setText(this.source);
-
-      int start = breakIter.first();
-      int limit = breakIter.next();
-      if (limit == BreakIterator.DONE) {
-        return Stream.empty();
-      } else {
-        Stream.Builder<SegmentRange> streamBuilder = Stream.builder();
-        while (limit != BreakIterator.DONE) {
-          SegmentRange range = new SegmentRange(start, limit);
-          streamBuilder.add(range);
-          start = limit;
-          limit = breakIter.next();
-        }
-        return streamBuilder.build();
-      }
+    public Segmenter getSegmenter() {
+      return segmenter;
     }
   }
 
