@@ -7,17 +7,39 @@ import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.LocalizedSegmenter;
 import com.ibm.icu.text.LocalizedSegmenter.SegmentationType;
 import com.ibm.icu.text.Segments;
+import com.ibm.icu.text.Segments.SegmentRange;
 import com.ibm.icu.util.ULocale;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class SegmentsTest extends CoreTestFmwk {
+
+  @Test
+  public void testRangesFromSegmenter() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source1 = "The quick brown fox jumped over the lazy dog.";
+
+    // Create new Segments for source1
+    Segments segments1 = enWordSegmenter.segment(source1);
+
+    List<SegmentRange> ranges = segments1.ranges().collect(Collectors.toList());
+
+    assertEquals("first range start", 0, ranges.get(0).getStart());
+    assertEquals("first range limit", 3, ranges.get(0).getLimit());
+
+    assertEquals("second range start", 3, ranges.get(1).getStart());
+    assertEquals("second range limit", 4, ranges.get(1).getLimit());
+  }
 
   @Test
   public void testMultipleSegmentsFromSegmenter() {
