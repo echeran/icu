@@ -22,15 +22,6 @@ public class LocalizedSegmenter implements Segmenter {
     return this.segmentationType;
   }
 
-  public enum SegmentationType {
-    CHARACTER,
-    WORD,
-    LINE,
-    SENTENCE,
-    // TITLE,
-    // COUNT
-  }
-
   public static Builder builder() {
     return new Builder();
   }

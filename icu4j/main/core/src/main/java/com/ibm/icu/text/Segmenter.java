@@ -5,4 +5,13 @@ public interface Segmenter {
 
   @Deprecated
   BreakIterator getNewBreakIterator();
+
+  public enum SegmentationType {
+    CHARACTER,
+    WORD,
+    LINE,
+    SENTENCE,
+    // TITLE,
+    // COUNT
+  }
 }
