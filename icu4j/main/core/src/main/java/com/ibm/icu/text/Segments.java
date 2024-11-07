@@ -40,7 +40,7 @@ public interface Segments {
       return start;
     }
 
-    public int getLimit(){
+    public int getLimit() {
       return limit;
     }
   }
