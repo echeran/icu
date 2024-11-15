@@ -1,7 +1,6 @@
 package com.ibm.icu.text;
 
 import com.ibm.icu.util.ULocale;
-import java.util.stream.Stream;
 
 public class LocalizedSegmenter implements Segmenter {
 
@@ -44,7 +43,7 @@ public class LocalizedSegmenter implements Segmenter {
       case WORD:
         breakIter = BreakIterator.getWordInstance(this.locale);
         break;
-      case CHARACTER:
+      case GRAPHEME_CLUSTER:
       default:
         breakIter = BreakIterator.getCharacterInstance(this.locale);
         break;
@@ -56,7 +55,7 @@ public class LocalizedSegmenter implements Segmenter {
 
     private ULocale locale = ULocale.ROOT;
 
-    private SegmentationType segmentationType = SegmentationType.CHARACTER;
+    private SegmentationType segmentationType = SegmentationType.GRAPHEME_CLUSTER;
 
     Builder() { }
 

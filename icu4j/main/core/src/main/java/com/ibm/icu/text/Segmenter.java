@@ -7,11 +7,9 @@ public interface Segmenter {
   BreakIterator getNewBreakIterator();
 
   public enum SegmentationType {
-    CHARACTER,
+    GRAPHEME_CLUSTER,
     WORD,
     LINE,
     SENTENCE,
-    // TITLE,
-    // COUNT
   }
 }
