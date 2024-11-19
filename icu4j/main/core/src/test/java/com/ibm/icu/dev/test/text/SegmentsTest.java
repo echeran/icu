@@ -7,7 +7,7 @@ import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.LocalizedSegmenter;
 import com.ibm.icu.text.Segmenter.SegmentationType;
 import com.ibm.icu.text.Segments;
-import com.ibm.icu.text.Segments.SegmentRange;
+import com.ibm.icu.text.Segments.Range;
 import com.ibm.icu.util.ULocale;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +32,7 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<SegmentRange> ranges = segments1.ranges().collect(Collectors.toList());
+    List<Range> ranges = segments1.ranges().collect(Collectors.toList());
 
     assertEquals("first range start", 0, ranges.get(0).getStart());
     assertEquals("first range limit", 3, ranges.get(0).getLimit());

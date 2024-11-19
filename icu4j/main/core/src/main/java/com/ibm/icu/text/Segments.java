@@ -18,20 +18,20 @@ public interface Segments {
     return ranges().map((range) -> getSourceString().subSequence(range.getStart(), range.getLimit()));
   }
 
-  default Stream<SegmentRange> ranges() {
+  default Stream<Range> ranges() {
     BreakIterator breakIter = getInstanceBreakIterator();
     breakIter.setText(getSourceString());
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    SegmentRangeIterable iterable = new SegmentRangeIterable(breakIter);
+    RangeIterable iterable = new RangeIterable(breakIter);
     return StreamSupport.stream(iterable.spliterator(), false);
   };
 
-  class SegmentRange {
+  class Range {
     int start;
     int limit;
 
-    public SegmentRange(int start, int limit) {
+    public Range(int start, int limit) {
       this.start = start;
       this.limit = limit;
     }
@@ -49,24 +49,24 @@ public interface Segments {
    * This {@code Iterable} exists to enable the creation of a {@code Spliterator} that in turn
    * enables the creation of a lazy {@code Stream}.
    */
-  class SegmentRangeIterable implements Iterable<SegmentRange> {
+  class RangeIterable implements Iterable<Range> {
     BreakIterator breakIter;
 
-    SegmentRangeIterable(BreakIterator breakIter) {
+    RangeIterable(BreakIterator breakIter) {
       this.breakIter = breakIter;
     }
     @Override
-    public Iterator<SegmentRange> iterator() {
-      return new SegmentRangeIterator(this.breakIter);
+    public Iterator<Range> iterator() {
+      return new RangeIterator(this.breakIter);
     }
   }
 
-  class SegmentRangeIterator implements Iterator<SegmentRange> {
+  class RangeIterator implements Iterator<Range> {
     BreakIterator breakIter;
     int start;
     int limit;
 
-    SegmentRangeIterator(BreakIterator breakIter) {
+    RangeIterator(BreakIterator breakIter) {
       this.breakIter = breakIter;
       this.start = breakIter.first();
       this.limit = breakIter.next();
@@ -78,8 +78,8 @@ public interface Segments {
     }
 
     @Override
-    public SegmentRange next() {
-      SegmentRange result = new SegmentRange(this.start, this.limit);
+    public Range next() {
+      Range result = new Range(this.start, this.limit);
       this.start = this.limit;
       this.limit = this.breakIter.next();
 
