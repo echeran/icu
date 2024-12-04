@@ -1,12 +1,12 @@
-package com.ibm.icu.dev.test.text;
+package com.ibm.icu.dev.test.text.segmenter;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.ibm.icu.dev.test.CoreTestFmwk;
-import com.ibm.icu.text.RuleBasedSegmenter;
-import com.ibm.icu.text.Segmenter;
-import com.ibm.icu.text.Segments;
+import com.ibm.icu.text.segmenter.RuleBasedSegmenter;
+import com.ibm.icu.text.segmenter.Segmenter;
+import com.ibm.icu.text.segmenter.Segments;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

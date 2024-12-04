@@ -1,5 +1,6 @@
-package com.ibm.icu.text;
+package com.ibm.icu.text.segmenter;
 
+import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.util.ULocale;
 
 public class LocalizedSegmenter implements Segmenter {

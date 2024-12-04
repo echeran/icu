@@ -1,6 +1,7 @@
-package com.ibm.icu.text;
+package com.ibm.icu.text.segmenter;
 
-import java.util.stream.Stream;
+import com.ibm.icu.text.BreakIterator;
+import com.ibm.icu.text.RuleBasedBreakIterator;
 
 public class RuleBasedSegmenter implements Segmenter {
 
