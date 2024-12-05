@@ -20,7 +20,7 @@ import org.junit.runners.JUnit4;
 public class SegmentsTest extends CoreTestFmwk {
 
   @Test
-  public void testRangesFromSegmenter() {
+  public void testRanges() {
     LocalizedSegmenter enWordSegmenter =
         LocalizedSegmenter.builder()
             .setLocale(ULocale.ENGLISH)
@@ -42,7 +42,7 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
-  public void testMultipleSegmentsFromSegmenter() {
+  public void testMultipleSegmentObjectsFromSegmenter() {
     LocalizedSegmenter enWordSegmenter =
         LocalizedSegmenter.builder()
             .setLocale(ULocale.ENGLISH)
@@ -86,6 +86,29 @@ public class SegmentsTest extends CoreTestFmwk {
     // Check that Segments for source2 is unaffected
     act2 = segments2.subSequences().collect(Collectors.toList());
     assertThat(act2, is(exp2));
+  }
+
+  @Test
+  public void testRangesAfterIndex() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source1 = "The quick brown fox jumped over the lazy dog.";
+    int startIdx = 1;
+
+    // Create new Segments for source1
+    Segments segments1 = enWordSegmenter.segment(source1);
+
+    List<Range> ranges = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
+
+    assertEquals("first range start", 3, ranges.get(0).getStart());
+    assertEquals("first range limit", 4, ranges.get(0).getLimit());
+
+    assertEquals("second range start", 4, ranges.get(1).getStart());
+    assertEquals("second range limit", 9, ranges.get(1).getLimit());
   }
 
 }
