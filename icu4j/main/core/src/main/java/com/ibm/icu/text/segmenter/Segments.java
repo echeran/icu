@@ -2,6 +2,7 @@ package com.ibm.icu.text.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -16,7 +17,7 @@ public interface Segments {
   BreakIterator getInstanceBreakIterator();
 
   default Stream<CharSequence> subSequences() {
-    return ranges().map((range) -> getSourceString().subSequence(range.getStart(), range.getLimit()));
+    return ranges().map(rangeToSequenceFn());
   }
 
   default Stream<Range> ranges() {
@@ -30,6 +31,10 @@ public interface Segments {
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
     RangeIterable iterable = new RangeIterable(breakIter, IterationDirection.FORWARDS, i);
     return StreamSupport.stream(iterable.spliterator(), false);
+  }
+
+  default Function<Range, CharSequence> rangeToSequenceFn() {
+    return range -> getSourceString().subSequence(range.getStart(), range.getLimit());
   }
 
   class Range {
