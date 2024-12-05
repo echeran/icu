@@ -111,4 +111,50 @@ public class SegmentsTest extends CoreTestFmwk {
     assertEquals("second range limit", 9, ranges.get(1).getLimit());
   }
 
+  @Test
+  public void testRangesBeforeIndex() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source1 = "The quick brown fox jumped over the lazy dog.";
+    int startIdx = 9;
+
+    // Create new Segments for source1
+    Segments segments1 = enWordSegmenter.segment(source1);
+
+    List<Range> ranges = segments1.rangesBeforeIndex(startIdx).collect(Collectors.toList());
+
+    assertEquals("first range start", 4, ranges.get(0).getStart());
+    assertEquals("first range limit", 9, ranges.get(0).getLimit());
+
+    assertEquals("second range start", 3, ranges.get(1).getStart());
+    assertEquals("second range limit", 4, ranges.get(1).getLimit());
+  }
+
+  @Test
+  public void testRangeToSequenceFn() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source1 = "The quick brown fox jumped over the lazy dog.";
+    int startIdx = 9;
+
+    // Create new Segments for source1
+    Segments segments1 = enWordSegmenter.segment(source1);
+
+    List<CharSequence> exp1 = Arrays.asList("quick", " ", "The");
+
+    List<CharSequence> act1 = segments1.rangesBeforeIndex(startIdx)
+        .map(segments1.rangeToSequenceFn())
+        .collect(Collectors.toList());
+
+    assertThat(act1, is(exp1));
+  }
+
 }

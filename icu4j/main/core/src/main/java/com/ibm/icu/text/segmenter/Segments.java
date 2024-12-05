@@ -33,6 +33,15 @@ public interface Segments {
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
+  default Stream<Range> rangesBeforeIndex(int i) {
+    BreakIterator breakIter = getInstanceBreakIterator();
+    breakIter.setText(getSourceString());
+
+    // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
+    RangeIterable iterable = new RangeIterable(breakIter, IterationDirection.BACKWARDS, i);
+    return StreamSupport.stream(iterable.spliterator(), false);
+  }
+
   default Function<Range, CharSequence> rangeToSequenceFn() {
     return range -> getSourceString().subSequence(range.getStart(), range.getLimit());
   }
@@ -101,10 +110,10 @@ public interface Segments {
         this.start = breakIter.preceding(startIdx);
       }
 
-      this.limit = getDirectionBasedNext();
+      this.limit = getDirectionBasedNextIdx();
     }
 
-    int getDirectionBasedNext() {
+    int getDirectionBasedNextIdx() {
       if (direction == IterationDirection.FORWARDS) {
         return breakIter.next();
       } else {
@@ -128,7 +137,7 @@ public interface Segments {
       }
 
       this.start = this.limit;
-      this.limit = getDirectionBasedNext();
+      this.limit = getDirectionBasedNextIdx();
 
       return result;
     }
