@@ -120,7 +120,7 @@ public class SegmentsTest extends CoreTestFmwk {
             .build();
 
     String source1 = "The quick brown fox jumped over the lazy dog.";
-    int startIdx = 9;
+    int startIdx = 10;
 
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
@@ -143,7 +143,7 @@ public class SegmentsTest extends CoreTestFmwk {
             .build();
 
     String source1 = "The quick brown fox jumped over the lazy dog.";
-    int startIdx = 9;
+    int startIdx = 10;
 
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);

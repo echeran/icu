@@ -21,7 +21,7 @@ public interface Segments {
   }
 
   default Stream<Range> ranges() {
-    return rangesAfterIndex(0);
+    return rangesAfterIndex(-1);
   };
 
   default Stream<Range> rangesAfterIndex(int i) {
@@ -100,10 +100,7 @@ public interface Segments {
       this.breakIter = breakIter;
       this.direction = direction;
 
-      if (breakIter.isBoundary(startIdx)) {
-        this.start = breakIter.following(startIdx-1);
-        assert this.start == startIdx;
-      } else if (direction == IterationDirection.FORWARDS) {
+      if (direction == IterationDirection.FORWARDS) {
         this.start = breakIter.following(startIdx);
       } else {
         assert direction == IterationDirection.BACKWARDS;
