@@ -42,6 +42,43 @@ public interface Segments {
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
+  default Range rangeAfterIndex(int i) {
+    BreakIterator breakIter = getInstanceBreakIterator();
+    breakIter.setText(getSourceString());
+
+    int start = breakIter.following(i);
+    if (start == BreakIterator.DONE) {
+      return null;
+    }
+
+    int limit = breakIter.next();
+
+    return new Range(start, limit);
+  }
+
+  default Range rangeBeforeIndex(int i) {
+    BreakIterator breakIter = getInstanceBreakIterator();
+    breakIter.setText(getSourceString());
+
+
+    // TODO(ICU-22987): Remove after fixing preceding(int) to return `DONE` for negative inputs
+    if (i < 0) {
+      // return the same thing as we would if preceding() returned DONE
+      return null;
+    }
+
+    int start = breakIter.preceding(i);
+    int limit = breakIter.previous();
+
+    if (start == BreakIterator.DONE || limit == BreakIterator.DONE) {
+      return null;
+    }
+
+    assert limit <= start;
+
+    return new Range(limit, start);
+  }
+
   default Function<Range, CharSequence> rangeToSequenceFn() {
     return range -> getSourceString().subSequence(range.getStart(), range.getLimit());
   }

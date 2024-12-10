@@ -157,4 +157,88 @@ public class SegmentsTest extends CoreTestFmwk {
     assertThat(act1, is(exp1));
   }
 
+  @Test
+  public void testRangeAfterIndex() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source = "The quick brown fox jumped over the lazy dog.";
+
+    // Create new Segments for source1
+    Segments segments = enWordSegmenter.segment(source);
+
+    Object[][] casesData = {
+        {"index before beginning", -2,                    0, 3},
+        {"index at beginning",     0,                     3, 4},
+        {"index in the middle (end of first segment)",    3,                  4, 9},
+        {"index at the end",       source.length()-1,     source.length(), -1},
+        {"index after the end",    source.length()+1,     null, null},
+    };
+
+    for (Object[] caseDatum : casesData) {
+      String desc = (String) caseDatum[0];
+      int startIdx = (int) caseDatum[1];
+      Integer expStart = (Integer) caseDatum[2];
+      Integer expLimit = (Integer) caseDatum[3];
+
+      Range range = segments.rangeAfterIndex(startIdx);
+
+      if (expStart == null) {
+        assert expLimit == null;
+        assertThat("Out of bounds range should be null", range == null);
+      } else {
+        assertEquals(desc + ", start", expStart.intValue(), range.getStart());
+        assertEquals(desc + ", limit", expLimit.intValue(), range.getLimit());
+      }
+    }
+  }
+
+
+  @Test
+  public void testRangeBeforeIndex() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source = "The quick brown fox jumped over the lazy dog.";
+
+    // Create new Segments for source1
+    Segments segments = enWordSegmenter.segment(source);
+
+    Object[][] casesData = {
+        {"index before beginning",                       -2,                 null,              null},
+        {"index at beginning",                           0,                  null,              null},
+        {"index in the middle of the first segment",     2,                  null,              null},
+        {"index in the middle of the third segment",     5,                  3,                 4},
+        {"index at the end",                             source.length()-1,  40,                41},
+        {"index after the end",                          source.length()+1,  source.length()-1, source.length()},
+    };
+
+    for (Object[] caseDatum : casesData) {
+      String desc = (String) caseDatum[0];
+      int startIdx = (int) caseDatum[1];
+      Integer expStart = (Integer) caseDatum[2];
+      Integer expLimit = (Integer) caseDatum[3];
+
+      Range range = segments.rangeBeforeIndex(startIdx);
+
+      if (startIdx == -2) {
+        logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
+      }
+
+      if (expStart == null) {
+        assert expLimit == null;
+        assertThat("Out of bounds range should be null", range == null);
+      } else {
+        assertEquals(desc + ", start", expStart.intValue(), range.getStart());
+        assertEquals(desc + ", limit", expLimit.intValue(), range.getLimit());
+      }
+    }
+  }
+
 }
