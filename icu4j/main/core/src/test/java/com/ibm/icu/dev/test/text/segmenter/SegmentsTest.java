@@ -171,11 +171,11 @@ public class SegmentsTest extends CoreTestFmwk {
     Segments segments = enWordSegmenter.segment(source);
 
     Object[][] casesData = {
-        {"index before beginning", -2,                    0, 3},
-        {"index at beginning",     0,                     3, 4},
-        {"index in the middle (end of first segment)",    3,                  4, 9},
-        {"index at the end",       source.length()-1,     source.length(), -1},
-        {"index after the end",    source.length()+1,     null, null},
+        {"index before beginning",                        -2,                    0, 3},
+        {"index at beginning",                            0,                     3, 4},
+        {"index in the middle (end of first segment)",    3,                     4, 9},
+        {"index at the end",                              source.length()-1,     null, null},
+        {"index after the end",                           source.length()+1,     null, null},
     };
 
     for (Object[] caseDatum : casesData) {

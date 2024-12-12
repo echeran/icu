@@ -52,6 +52,9 @@ public interface Segments {
     }
 
     int limit = breakIter.next();
+    if (limit == BreakIterator.DONE) {
+      return null;
+    }
 
     return new Range(start, limit);
   }
