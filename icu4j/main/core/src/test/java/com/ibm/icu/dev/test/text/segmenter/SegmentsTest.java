@@ -278,7 +278,7 @@ public class SegmentsTest extends CoreTestFmwk {
     Object[][] casesData = {
         {"first " + TAKE_LIMIT + " before beginning",                       -2,                 new int[]{0, 3, 4, 9, 10}},
         {"first " + TAKE_LIMIT + " in the middle of the third segment",     5,                  new int[]{9, 10, 15, 16, 19}},
-        {"first " + TAKE_LIMIT + " at the end",                             source.length(),  new int[0]},
+        {"first " + TAKE_LIMIT + " at the end",                             source.length(),    new int[0]},
         {"first " + TAKE_LIMIT + " after the end",                          source.length()+1,  new int[0]},
     };
 
