@@ -190,8 +190,8 @@ public class SegmentsTest extends CoreTestFmwk {
         assert expLimit == null;
         assertThat("Out of bounds range should be null", range == null);
       } else {
-        assertEquals(desc + ", start", expStart.intValue(), range.getStart());
-        assertEquals(desc + ", limit", expLimit.intValue(), range.getLimit());
+        assertEquals(desc + ", start", (long) expStart.intValue(), range.getStart());
+        assertEquals(desc + ", limit", (long) expLimit.intValue(), range.getLimit());
       }
     }
   }
@@ -235,8 +235,8 @@ public class SegmentsTest extends CoreTestFmwk {
         assert expLimit == null;
         assertThat("Out of bounds range should be null", range == null);
       } else {
-        assertEquals(desc + ", start", expStart.intValue(), range.getStart());
-        assertEquals(desc + ", limit", expLimit.intValue(), range.getLimit());
+        assertEquals(desc + ", start", (long) expStart.intValue(), (long) range.getStart());
+        assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) range.getLimit());
       }
     }
   }
