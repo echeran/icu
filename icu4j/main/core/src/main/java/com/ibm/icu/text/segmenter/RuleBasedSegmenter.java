@@ -9,7 +9,7 @@ public class RuleBasedSegmenter implements Segmenter {
 
 
   @Override
-  public Segments segment(String s) {
+  public Segments segment(CharSequence s) {
     return new RuleBasedSegments(s, this);
   }
 
@@ -47,20 +47,20 @@ public class RuleBasedSegmenter implements Segmenter {
   }
 
   public static class RuleBasedSegments implements Segments {
-    private String source;
+    private CharSequence source;
 
     private RuleBasedSegmenter segmenter;
 
     private BreakIterator breakIter;
 
-    RuleBasedSegments(String source, RuleBasedSegmenter segmenter) {
+    RuleBasedSegments(CharSequence source, RuleBasedSegmenter segmenter) {
       this.source = source;
       this.segmenter = segmenter;
       this.breakIter = this.segmenter.getNewBreakIterator();
     }
 
     @Override
-    public String getSourceString() {
+    public CharSequence getSourceSequence() {
       return this.source;
     }
 

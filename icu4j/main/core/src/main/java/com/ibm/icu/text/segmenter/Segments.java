@@ -8,7 +8,7 @@ import java.util.stream.StreamSupport;
 
 public interface Segments {
 
-  String getSourceString();
+  CharSequence getSourceSequence();
 
   @Deprecated
   Segmenter getSegmenter();
@@ -26,7 +26,7 @@ public interface Segments {
 
   default Stream<Range> rangesAfterIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceString());
+    breakIter.setText(getSourceSequence());
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
     RangeIterable iterable = new RangeIterable(breakIter, IterationDirection.FORWARDS, i);
@@ -35,7 +35,7 @@ public interface Segments {
 
   default Stream<Range> rangesBeforeIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceString());
+    breakIter.setText(getSourceSequence());
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
     RangeIterable iterable = new RangeIterable(breakIter, IterationDirection.BACKWARDS, i);
@@ -44,7 +44,7 @@ public interface Segments {
 
   default Range rangeAfterIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceString());
+    breakIter.setText(getSourceSequence());
 
     int start = breakIter.following(i);
     if (start == BreakIterator.DONE) {
@@ -58,7 +58,7 @@ public interface Segments {
 
   default Range rangeBeforeIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceString());
+    breakIter.setText(getSourceSequence());
 
 
     // TODO(ICU-22987): Remove after fixing preceding(int) to return `DONE` for negative inputs
@@ -80,7 +80,7 @@ public interface Segments {
   }
 
   default Function<Range, CharSequence> rangeToSequenceFn() {
-    return range -> getSourceString().subSequence(range.getStart(), range.getLimit());
+    return range -> getSourceSequence().subSequence(range.getStart(), range.getLimit());
   }
 
   class Range {

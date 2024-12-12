@@ -10,7 +10,7 @@ public class LocalizedSegmenter implements Segmenter {
   private SegmentationType segmentationType;
 
   @Override
-  public Segments segment(String s) {
+  public Segments segment(CharSequence s) {
     return new LocalizedSegments(s, this);
   }
 
@@ -78,20 +78,20 @@ public class LocalizedSegmenter implements Segmenter {
 
   public static class LocalizedSegments implements Segments {
 
-    private String source;
+    private CharSequence source;
 
     private LocalizedSegmenter segmenter;
 
     private BreakIterator breakIter;
 
-    private LocalizedSegments(String source, LocalizedSegmenter segmenter) {
+    private LocalizedSegments(CharSequence source, LocalizedSegmenter segmenter) {
       this.source = source;
       this.segmenter = segmenter;
       this.breakIter = this.segmenter.getNewBreakIterator();
     }
 
     @Override
-    public String getSourceString() {
+    public CharSequence getSourceSequence() {
       return source;
     }
 
