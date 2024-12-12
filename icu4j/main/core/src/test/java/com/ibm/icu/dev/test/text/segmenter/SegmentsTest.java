@@ -322,6 +322,10 @@ public class SegmentsTest extends CoreTestFmwk {
       int[] act = segments.boundariesBeforeIndex(startIdx).limit(TAKE_LIMIT).toArray();
 
       assertThat(act, is(exp));
+
+      if (startIdx == -2) {
+        logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
+      }
     }
   }
 
