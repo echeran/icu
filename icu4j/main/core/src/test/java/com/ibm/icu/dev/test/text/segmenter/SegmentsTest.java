@@ -167,7 +167,7 @@ public class SegmentsTest extends CoreTestFmwk {
 
     String source = "The quick brown fox jumped over the lazy dog.";
 
-    // Create new Segments for source1
+    // Create new Segments for source
     Segments segments = enWordSegmenter.segment(source);
 
     Object[][] casesData = {
@@ -207,7 +207,7 @@ public class SegmentsTest extends CoreTestFmwk {
 
     String source = "The quick brown fox jumped over the lazy dog.";
 
-    // Create new Segments for source1
+    // Create new Segments for source
     Segments segments = enWordSegmenter.segment(source);
 
     Object[][] casesData = {
@@ -238,6 +238,90 @@ public class SegmentsTest extends CoreTestFmwk {
         assertEquals(desc + ", start", (long) expStart.intValue(), (long) range.getStart());
         assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) range.getLimit());
       }
+    }
+  }
+
+  @Test
+  public void testBoundaries() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source = "The quick brown fox jumped over the lazy dog.";
+
+    // Create new Segments for source
+    Segments segments = enWordSegmenter.segment(source);
+
+    int[] exp = {0, 3, 4, 9, 10, 15, 16, 19, 20, 26, 27, 31, 32, 35, 36, 40, 41, 44, 45};
+
+    int[] act = segments.boundaries().toArray();
+
+    assertThat(act, is(exp));
+  }
+
+  @Test
+  public void testBoundariesAfterIndex() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source = "The quick brown fox jumped over the lazy dog.";
+    int TAKE_LIMIT = 5;
+
+    // Create new Segments for source
+    Segments segments = enWordSegmenter.segment(source);
+
+    Object[][] casesData = {
+        {"first " + TAKE_LIMIT + " before beginning",                       -2,                 new int[]{0, 3, 4, 9, 10}},
+        {"first " + TAKE_LIMIT + " in the middle of the third segment",     5,                  new int[]{9, 10, 15, 16, 19}},
+        {"first " + TAKE_LIMIT + " at the end",                             source.length(),  new int[0]},
+        {"first " + TAKE_LIMIT + " after the end",                          source.length()+1,  new int[0]},
+    };
+
+    for (Object[] caseDatum : casesData) {
+      String desc = (String) caseDatum[0];
+      int startIdx = (int) caseDatum[1];
+      int[] exp = (int[]) caseDatum[2];
+
+      int[] act = segments.boundariesAfterIndex(startIdx).limit(TAKE_LIMIT).toArray();
+
+      assertThat(act, is(exp));
+    }
+  }
+
+  @Test
+  public void testBoundariesBeforeIndex() {
+    LocalizedSegmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source = "The quick brown fox jumped over the lazy dog.";
+    int TAKE_LIMIT = 5;
+
+    // Create new Segments for source
+    Segments segments = enWordSegmenter.segment(source);
+
+    Object[][] casesData = {
+        {"first " + TAKE_LIMIT + " before beginning",                 -2,                new int[0]},
+        {"first " + TAKE_LIMIT + " at the beginning",                 0,                 new int[0]},
+        {"first " + TAKE_LIMIT + " in the middle of the 2nd to last", 42,                new int[]{41, 40, 36, 35, 32}},
+        {"first " + TAKE_LIMIT + " after the end",                    source.length()+1, new int[]{45, 44, 41, 40, 36}},
+    };
+
+    for (Object[] caseDatum : casesData) {
+      String desc = (String) caseDatum[0];
+      int startIdx = (int) caseDatum[1];
+      int[] exp = (int[]) caseDatum[2];
+
+      int[] act = segments.boundariesBeforeIndex(startIdx).limit(TAKE_LIMIT).toArray();
+
+      assertThat(act, is(exp));
     }
   }
 

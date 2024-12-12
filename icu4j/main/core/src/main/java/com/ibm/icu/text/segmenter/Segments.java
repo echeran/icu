@@ -3,6 +3,7 @@ package com.ibm.icu.text.segmenter;
 import com.ibm.icu.text.BreakIterator;
 import java.util.Iterator;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -86,6 +87,43 @@ public interface Segments {
     return range -> getSourceSequence().subSequence(range.getStart(), range.getLimit());
   }
 
+  default IntStream boundaries() {
+    return boundariesAfterIndex(-1);
+  }
+
+  default IntStream boundariesAfterIndex(int i) {
+    BreakIterator breakIter = getInstanceBreakIterator();
+    breakIter.setText(getSourceSequence());
+
+    // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
+    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.FORWARDS, i);
+    Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
+    return boundariesAsIntegers.mapToInt(Integer::intValue);
+  }
+
+  default IntStream boundariesBeforeIndex(int i) {
+    BreakIterator breakIter = getInstanceBreakIterator();
+    breakIter.setText(getSourceSequence());
+
+    // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
+    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.BACKWARDS, i);
+    Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
+    return boundariesAsIntegers.mapToInt(Integer::intValue);
+  }
+
+  //
+  // Inner enums/classes in common for other inner classes
+  //
+
+  enum IterationDirection {
+    FORWARDS,
+    BACKWARDS,
+  }
+
+  //
+  // Inner classes for Range, RangeIterable, and RangeIterator
+  //
+
   class Range {
     int start;
     int limit;
@@ -104,11 +142,6 @@ public interface Segments {
     }
   }
 
-  enum IterationDirection {
-    FORWARDS,
-    BACKWARDS,
-  }
-
   /**
    * This {@code Iterable} exists to enable the creation of a {@code Spliterator} that in turn
    * enables the creation of a lazy {@code Stream}.
@@ -123,6 +156,7 @@ public interface Segments {
       this.direction = direction;
       this.startIdx = startIdx;
     }
+
     @Override
     public Iterator<Range> iterator() {
       return new RangeIterator(this.breakIter, this.direction, this.startIdx);
@@ -132,7 +166,6 @@ public interface Segments {
   class RangeIterator implements Iterator<Range> {
     BreakIterator breakIter;
     IterationDirection direction;
-    int startIdx; // remove this if not needed
     int start;
     int limit;
 
@@ -178,6 +211,70 @@ public interface Segments {
 
       return result;
     }
-
   }
+
+  //
+  // Inner classes for BoundaryIterable and BoundaryIterator
+  //
+
+  class BoundaryIterable implements Iterable<Integer> {
+    BreakIterator breakIter;
+    IterationDirection direction;
+    int startIdx;
+
+    BoundaryIterable(BreakIterator breakIter, IterationDirection direction, int startIdx) {
+      this.breakIter = breakIter;
+      this.direction = direction;
+      this.startIdx = startIdx;
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+      return new BoundaryIterator(this.breakIter, this.direction, this.startIdx);
+    }
+  }
+
+  class BoundaryIterator implements Iterator<Integer> {
+    BreakIterator breakIter;
+    IterationDirection direction;
+    int currIdx;
+
+    BoundaryIterator(BreakIterator breakIter, IterationDirection direction, int startIdx) {
+      this.breakIter = breakIter;
+      this.direction = direction;
+
+      // TODO(ICU-22987): Remove after fixing preceding(int) to return `DONE` for negative inputs
+      if (startIdx < 0 && direction == IterationDirection.BACKWARDS) {
+        this.currIdx = BreakIterator.DONE;
+        return;
+      }
+
+      if (direction == IterationDirection.FORWARDS) {
+        this.currIdx = breakIter.following(startIdx);
+      } else {
+        assert direction == IterationDirection.BACKWARDS;
+        this.currIdx = breakIter.preceding(startIdx);
+      }
+    }
+
+    @Override
+    public boolean hasNext() {
+      return this.currIdx != BreakIterator.DONE;
+    }
+
+    @Override
+    public Integer next() {
+      int result = this.currIdx;
+
+      if (direction == IterationDirection.FORWARDS) {
+        this.currIdx = breakIter.next();
+      } else {
+        assert direction == IterationDirection.BACKWARDS;
+        this.currIdx = breakIter.previous();
+      }
+
+      return result;
+    }
+  }
+
 }
