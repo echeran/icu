@@ -21,29 +21,29 @@ public interface Segments {
     return ranges().map(rangeToSequenceFn());
   }
 
-  default Stream<Range> ranges() {
+  default Stream<Segment> ranges() {
     return rangesAfterIndex(-1);
   };
 
-  default Stream<Range> rangesAfterIndex(int i) {
+  default Stream<Segment> rangesAfterIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
     breakIter.setText(getSourceSequence());
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    RangeIterable iterable = new RangeIterable(breakIter, IterationDirection.FORWARDS, i);
+    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.FORWARDS, i);
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
-  default Stream<Range> rangesBeforeIndex(int i) {
+  default Stream<Segment> rangesBeforeIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
     breakIter.setText(getSourceSequence());
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    RangeIterable iterable = new RangeIterable(breakIter, IterationDirection.BACKWARDS, i);
+    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.BACKWARDS, i);
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
-  default Range rangeAfterIndex(int i) {
+  default Segment rangeAfterIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
     breakIter.setText(getSourceSequence());
 
@@ -57,10 +57,10 @@ public interface Segments {
       return null;
     }
 
-    return new Range(start, limit);
+    return new Segment(start, limit);
   }
 
-  default Range rangeBeforeIndex(int i) {
+  default Segment rangeBeforeIndex(int i) {
     BreakIterator breakIter = getInstanceBreakIterator();
     breakIter.setText(getSourceSequence());
 
@@ -80,11 +80,11 @@ public interface Segments {
 
     assert limit <= start;
 
-    return new Range(limit, start);
+    return new Segment(limit, start);
   }
 
-  default Function<Range, CharSequence> rangeToSequenceFn() {
-    return range -> getSourceSequence().subSequence(range.getStart(), range.getLimit());
+  default Function<Segment, CharSequence> rangeToSequenceFn() {
+    return segment -> getSourceSequence().subSequence(segment.start(), segment.limit());
   }
 
   default IntStream boundaries() {
@@ -124,21 +124,14 @@ public interface Segments {
   // Inner classes for Range, RangeIterable, and RangeIterator
   //
 
-  class Range {
-    int start;
-    int limit;
+  class Segment {
+    public final int start;
+    public final int limit;
+    public final int ruleStatus = 0;
 
-    public Range(int start, int limit) {
+    public Segment(int start, int limit) {
       this.start = start;
       this.limit = limit;
-    }
-
-    public int getStart() {
-      return start;
-    }
-
-    public int getLimit() {
-      return limit;
     }
   }
 
@@ -146,30 +139,30 @@ public interface Segments {
    * This {@code Iterable} exists to enable the creation of a {@code Spliterator} that in turn
    * enables the creation of a lazy {@code Stream}.
    */
-  class RangeIterable implements Iterable<Range> {
+  class SegmentIterable implements Iterable<Segment> {
     BreakIterator breakIter;
     IterationDirection direction;
     int startIdx;
 
-    RangeIterable(BreakIterator breakIter, IterationDirection direction, int startIdx) {
+    SegmentIterable(BreakIterator breakIter, IterationDirection direction, int startIdx) {
       this.breakIter = breakIter;
       this.direction = direction;
       this.startIdx = startIdx;
     }
 
     @Override
-    public Iterator<Range> iterator() {
-      return new RangeIterator(this.breakIter, this.direction, this.startIdx);
+    public Iterator<Segment> iterator() {
+      return new SegmentIterator(this.breakIter, this.direction, this.startIdx);
     }
   }
 
-  class RangeIterator implements Iterator<Range> {
+  class SegmentIterator implements Iterator<Segment> {
     BreakIterator breakIter;
     IterationDirection direction;
     int start;
     int limit;
 
-    RangeIterator(BreakIterator breakIter, IterationDirection direction, int startIdx) {
+    SegmentIterator(BreakIterator breakIter, IterationDirection direction, int startIdx) {
       this.breakIter = breakIter;
       this.direction = direction;
 
@@ -198,12 +191,12 @@ public interface Segments {
     }
 
     @Override
-    public Range next() {
-      Range result;
+    public Segment next() {
+      Segment result;
       if (this.limit < this.start) {
-        result = new Range(this.limit, this.start);
+        result = new Segment(this.limit, this.start);
       } else {
-        result = new Range(this.start, this.limit);
+        result = new Segment(this.start, this.limit);
       }
 
       this.start = this.limit;

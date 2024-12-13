@@ -7,7 +7,7 @@ import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.segmenter.LocalizedSegmenter;
 import com.ibm.icu.text.segmenter.Segmenter.SegmentationType;
 import com.ibm.icu.text.segmenter.Segments;
-import com.ibm.icu.text.segmenter.Segments.Range;
+import com.ibm.icu.text.segmenter.Segments.Segment;
 import com.ibm.icu.util.ULocale;
 import java.util.Arrays;
 import java.util.List;
@@ -32,13 +32,13 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Range> ranges = segments1.ranges().collect(Collectors.toList());
+    List<Segment> segments = segments1.ranges().collect(Collectors.toList());
 
-    assertEquals("first range start", 0, ranges.get(0).getStart());
-    assertEquals("first range limit", 3, ranges.get(0).getLimit());
+    assertEquals("first range start", 0, segments.get(0).start());
+    assertEquals("first range limit", 3, segments.get(0).limit());
 
-    assertEquals("second range start", 3, ranges.get(1).getStart());
-    assertEquals("second range limit", 4, ranges.get(1).getLimit());
+    assertEquals("second range start", 3, segments.get(1).start());
+    assertEquals("second range limit", 4, segments.get(1).limit());
   }
 
   @Test
@@ -102,13 +102,13 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Range> ranges = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
+    List<Segment> segments = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
 
-    assertEquals("first range start", 3, ranges.get(0).getStart());
-    assertEquals("first range limit", 4, ranges.get(0).getLimit());
+    assertEquals("first range start", 3, segments.get(0).start());
+    assertEquals("first range limit", 4, segments.get(0).limit());
 
-    assertEquals("second range start", 4, ranges.get(1).getStart());
-    assertEquals("second range limit", 9, ranges.get(1).getLimit());
+    assertEquals("second range start", 4, segments.get(1).start());
+    assertEquals("second range limit", 9, segments.get(1).limit());
   }
 
   @Test
@@ -125,13 +125,13 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Range> ranges = segments1.rangesBeforeIndex(startIdx).collect(Collectors.toList());
+    List<Segment> segments = segments1.rangesBeforeIndex(startIdx).collect(Collectors.toList());
 
-    assertEquals("first range start", 4, ranges.get(0).getStart());
-    assertEquals("first range limit", 9, ranges.get(0).getLimit());
+    assertEquals("first range start", 4, segments.get(0).start());
+    assertEquals("first range limit", 9, segments.get(0).limit());
 
-    assertEquals("second range start", 3, ranges.get(1).getStart());
-    assertEquals("second range limit", 4, ranges.get(1).getLimit());
+    assertEquals("second range start", 3, segments.get(1).start());
+    assertEquals("second range limit", 4, segments.get(1).limit());
   }
 
   @Test
@@ -184,14 +184,14 @@ public class SegmentsTest extends CoreTestFmwk {
       Integer expStart = (Integer) caseDatum[2];
       Integer expLimit = (Integer) caseDatum[3];
 
-      Range range = segments.rangeAfterIndex(startIdx);
+      Segment segment = segments.rangeAfterIndex(startIdx);
 
       if (expStart == null) {
         assert expLimit == null;
-        assertThat("Out of bounds range should be null", range == null);
+        assertThat("Out of bounds range should be null", segment == null);
       } else {
-        assertEquals(desc + ", start", (long) expStart.intValue(), range.getStart());
-        assertEquals(desc + ", limit", (long) expLimit.intValue(), range.getLimit());
+        assertEquals(desc + ", start", (long) expStart.intValue(), segment.start());
+        assertEquals(desc + ", limit", (long) expLimit.intValue(), segment.limit());
       }
     }
   }
@@ -225,7 +225,7 @@ public class SegmentsTest extends CoreTestFmwk {
       Integer expStart = (Integer) caseDatum[2];
       Integer expLimit = (Integer) caseDatum[3];
 
-      Range range = segments.rangeBeforeIndex(startIdx);
+      Segment segment = segments.rangeBeforeIndex(startIdx);
 
       if (startIdx == -2) {
         logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
@@ -233,10 +233,10 @@ public class SegmentsTest extends CoreTestFmwk {
 
       if (expStart == null) {
         assert expLimit == null;
-        assertThat("Out of bounds range should be null", range == null);
+        assertThat("Out of bounds range should be null", segment == null);
       } else {
-        assertEquals(desc + ", start", (long) expStart.intValue(), (long) range.getStart());
-        assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) range.getLimit());
+        assertEquals(desc + ", start", (long) expStart.intValue(), (long) segment.start());
+        assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) segment.limit());
       }
     }
   }
