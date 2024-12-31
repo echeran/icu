@@ -34,11 +34,11 @@ public class SegmentsTest extends CoreTestFmwk {
 
     List<Segment> segments = segments1.ranges().collect(Collectors.toList());
 
-    assertEquals("first range start", 0, segments.get(0).start());
-    assertEquals("first range limit", 3, segments.get(0).limit());
+    assertEquals("first range start", 0, segments.get(0).start);
+    assertEquals("first range limit", 3, segments.get(0).limit);
 
-    assertEquals("second range start", 3, segments.get(1).start());
-    assertEquals("second range limit", 4, segments.get(1).limit());
+    assertEquals("second range start", 3, segments.get(1).start);
+    assertEquals("second range limit", 4, segments.get(1).limit);
   }
 
   @Test
@@ -104,11 +104,11 @@ public class SegmentsTest extends CoreTestFmwk {
 
     List<Segment> segments = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
 
-    assertEquals("first range start", 3, segments.get(0).start());
-    assertEquals("first range limit", 4, segments.get(0).limit());
+    assertEquals("first range start", 3, segments.get(0).start);
+    assertEquals("first range limit", 4, segments.get(0).limit);
 
-    assertEquals("second range start", 4, segments.get(1).start());
-    assertEquals("second range limit", 9, segments.get(1).limit());
+    assertEquals("second range start", 4, segments.get(1).start);
+    assertEquals("second range limit", 9, segments.get(1).limit);
   }
 
   @Test
@@ -127,11 +127,11 @@ public class SegmentsTest extends CoreTestFmwk {
 
     List<Segment> segments = segments1.rangesBeforeIndex(startIdx).collect(Collectors.toList());
 
-    assertEquals("first range start", 4, segments.get(0).start());
-    assertEquals("first range limit", 9, segments.get(0).limit());
+    assertEquals("first range start", 4, segments.get(0).start);
+    assertEquals("first range limit", 9, segments.get(0).limit);
 
-    assertEquals("second range start", 3, segments.get(1).start());
-    assertEquals("second range limit", 4, segments.get(1).limit());
+    assertEquals("second range start", 3, segments.get(1).start);
+    assertEquals("second range limit", 4, segments.get(1).limit);
   }
 
   @Test
@@ -190,8 +190,8 @@ public class SegmentsTest extends CoreTestFmwk {
         assert expLimit == null;
         assertThat("Out of bounds range should be null", segment == null);
       } else {
-        assertEquals(desc + ", start", (long) expStart.intValue(), segment.start());
-        assertEquals(desc + ", limit", (long) expLimit.intValue(), segment.limit());
+        assertEquals(desc + ", start", (long) expStart.intValue(), segment.start);
+        assertEquals(desc + ", limit", (long) expLimit.intValue(), segment.limit);
       }
     }
   }
@@ -235,8 +235,8 @@ public class SegmentsTest extends CoreTestFmwk {
         assert expLimit == null;
         assertThat("Out of bounds range should be null", segment == null);
       } else {
-        assertEquals(desc + ", start", (long) expStart.intValue(), (long) segment.start());
-        assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) segment.limit());
+        assertEquals(desc + ", start", (long) expStart.intValue(), (long) segment.start);
+        assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) segment.limit);
       }
     }
   }

@@ -84,7 +84,7 @@ public interface Segments {
   }
 
   default Function<Segment, CharSequence> rangeToSequenceFn() {
-    return segment -> getSourceSequence().subSequence(segment.start(), segment.limit());
+    return segment -> getSourceSequence().subSequence(segment.start, segment.limit);
   }
 
   default IntStream boundaries() {
