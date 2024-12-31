@@ -2,6 +2,9 @@ package com.ibm.icu.text.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.util.ULocale;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class LocalizedSegmenter implements Segmenter {
 
@@ -76,7 +79,7 @@ public class LocalizedSegmenter implements Segmenter {
 
   }
 
-  public static class LocalizedSegments implements Segments {
+  public class LocalizedSegments implements Segments {
 
     private CharSequence source;
 
@@ -92,17 +95,57 @@ public class LocalizedSegmenter implements Segmenter {
 
     @Override
     public CharSequence getSourceSequence() {
-      return source;
+      return this.source;
     }
 
     @Override
-    public Segmenter getSegmenter() {
-      return segmenter;
+    public Stream<CharSequence> subSequences() {
+      return SegmentsImplUtils.subSequences(this.breakIter, this.source);
     }
 
     @Override
-    public BreakIterator getInstanceBreakIterator() {
-      return this.breakIter;
+    public Stream<Segment> ranges() {
+      return SegmentsImplUtils.ranges(this.breakIter, this.source);
+    }
+
+    @Override
+    public Stream<Segment> rangesAfterIndex(int i) {
+      return SegmentsImplUtils.rangesAfterIndex(this.breakIter, this.source, i);
+    }
+
+    @Override
+    public Stream<Segment> rangesBeforeIndex(int i) {
+      return SegmentsImplUtils.rangesBeforeIndex(this.breakIter, this.source, i);
+    }
+
+    @Override
+    public Segment rangeAfterIndex(int i) {
+      return SegmentsImplUtils.rangeAfterIndex(this.breakIter, this.source, i);
+    }
+
+    @Override
+    public Segment rangeBeforeIndex(int i) {
+      return SegmentsImplUtils.rangeBeforeIndex(this.breakIter, this.source, i);
+    }
+
+    @Override
+    public Function<Segment, CharSequence> rangeToSequenceFn() {
+      return SegmentsImplUtils.rangeToSequenceFn(this.source);
+    }
+
+    @Override
+    public IntStream boundaries() {
+      return SegmentsImplUtils.boundaries(this.breakIter, this.source);
+    }
+
+    @Override
+    public IntStream boundariesAfterIndex(int i) {
+      return SegmentsImplUtils.boundariesAfterIndex(this.breakIter, this.source, i);
+    }
+
+    @Override
+    public IntStream boundariesBeforeIndex(int i) {
+      return SegmentsImplUtils.boundariesBeforeIndex(this.breakIter, this.source, i);
     }
   }
 

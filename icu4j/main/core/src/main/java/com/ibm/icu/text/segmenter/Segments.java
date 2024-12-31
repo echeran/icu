@@ -11,105 +11,25 @@ public interface Segments {
 
   CharSequence getSourceSequence();
 
-  @Deprecated
-  Segmenter getSegmenter();
+  Stream<CharSequence> subSequences();
 
-  @Deprecated
-  BreakIterator getInstanceBreakIterator();
+  Stream<Segment> ranges();
 
-  default Stream<CharSequence> subSequences() {
-    return ranges().map(rangeToSequenceFn());
-  }
+  Stream<Segment> rangesAfterIndex(int i);
 
-  default Stream<Segment> ranges() {
-    return rangesAfterIndex(-1);
-  };
+  Stream<Segment> rangesBeforeIndex(int i);
 
-  default Stream<Segment> rangesAfterIndex(int i) {
-    BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceSequence());
+  Segment rangeAfterIndex(int i);
 
-    // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.FORWARDS, i);
-    return StreamSupport.stream(iterable.spliterator(), false);
-  }
+  Segment rangeBeforeIndex(int i);
 
-  default Stream<Segment> rangesBeforeIndex(int i) {
-    BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceSequence());
+  Function<Segment, CharSequence> rangeToSequenceFn();
 
-    // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.BACKWARDS, i);
-    return StreamSupport.stream(iterable.spliterator(), false);
-  }
+  IntStream boundaries();
 
-  default Segment rangeAfterIndex(int i) {
-    BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceSequence());
+  IntStream boundariesAfterIndex(int i);
 
-    int start = breakIter.following(i);
-    if (start == BreakIterator.DONE) {
-      return null;
-    }
-
-    int limit = breakIter.next();
-    if (limit == BreakIterator.DONE) {
-      return null;
-    }
-
-    return new Segment(start, limit);
-  }
-
-  default Segment rangeBeforeIndex(int i) {
-    BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceSequence());
-
-
-    // TODO(ICU-22987): Remove after fixing preceding(int) to return `DONE` for negative inputs
-    if (i < 0) {
-      // return the same thing as we would if preceding() returned DONE
-      return null;
-    }
-
-    int start = breakIter.preceding(i);
-    int limit = breakIter.previous();
-
-    if (start == BreakIterator.DONE || limit == BreakIterator.DONE) {
-      return null;
-    }
-
-    assert limit <= start;
-
-    return new Segment(limit, start);
-  }
-
-  default Function<Segment, CharSequence> rangeToSequenceFn() {
-    return segment -> getSourceSequence().subSequence(segment.start, segment.limit);
-  }
-
-  default IntStream boundaries() {
-    return boundariesAfterIndex(-1);
-  }
-
-  default IntStream boundariesAfterIndex(int i) {
-    BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceSequence());
-
-    // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.FORWARDS, i);
-    Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
-    return boundariesAsIntegers.mapToInt(Integer::intValue);
-  }
-
-  default IntStream boundariesBeforeIndex(int i) {
-    BreakIterator breakIter = getInstanceBreakIterator();
-    breakIter.setText(getSourceSequence());
-
-    // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.BACKWARDS, i);
-    Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
-    return boundariesAsIntegers.mapToInt(Integer::intValue);
-  }
+  IntStream boundariesBeforeIndex(int i);
 
   //
   // Inner enums/classes in common for other inner classes
