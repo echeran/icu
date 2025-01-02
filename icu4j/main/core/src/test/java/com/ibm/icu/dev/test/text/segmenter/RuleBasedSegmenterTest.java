@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.segmenter.RuleBasedSegmenter;
+import com.ibm.icu.text.segmenter.RuleBasedSegmenterBuilder;
 import com.ibm.icu.text.segmenter.Segmenter;
 import com.ibm.icu.text.segmenter.Segments;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class RuleBasedSegmenterTest extends CoreTestFmwk {
       // the following rule substring was taken as a subset from BreakIteratorRules_en_US_TEST.java:
       String rules = subrule;
 
-      Segmenter seg = RuleBasedSegmenter.builder()
+      Segmenter seg = new RuleBasedSegmenterBuilder()
           .setRules(rules)
           .build();
       Segments segments = seg.segment(source);

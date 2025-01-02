@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.segmenter.LocalizedSegmenter;
 import com.ibm.icu.text.segmenter.LocalizedSegmenter.SegmentationType;
+import com.ibm.icu.text.segmenter.LocalizedSegmenterBuilder;
 import com.ibm.icu.text.segmenter.Segmenter;
 import com.ibm.icu.text.segmenter.Segments;
 import com.ibm.icu.text.segmenter.Segments.Segment;
@@ -23,7 +24,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testRanges() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(SegmentationType.WORD)
             .build();
@@ -45,7 +46,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testMultipleSegmentObjectsFromSegmenter() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(SegmentationType.WORD)
             .build();
@@ -92,7 +93,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testRangesAfterIndex() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
@@ -115,7 +116,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testRangesBeforeIndex() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
@@ -138,7 +139,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testRangeToSequenceFn() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
@@ -161,7 +162,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testRangeAfterIndex() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
@@ -201,7 +202,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testRangeBeforeIndex() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(SegmentationType.WORD)
             .build();
@@ -245,7 +246,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testBoundaries() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(SegmentationType.WORD)
             .build();
@@ -265,7 +266,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testBoundariesAfterIndex() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(SegmentationType.WORD)
             .build();
@@ -297,7 +298,7 @@ public class SegmentsTest extends CoreTestFmwk {
   @Test
   public void testBoundariesBeforeIndex() {
     Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
+        new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
             .setSegmentationType(SegmentationType.WORD)
             .build();

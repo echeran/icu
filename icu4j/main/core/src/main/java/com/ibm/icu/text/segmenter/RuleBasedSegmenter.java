@@ -15,10 +15,6 @@ public class RuleBasedSegmenter implements Segmenter {
     return new RuleBasedSegments(s, this);
   }
 
-  public static Builder builder() {
-    return new Builder();
-  }
-
   RuleBasedSegmenter(String rules) {
     this.rules = rules;
   }
@@ -31,22 +27,6 @@ public class RuleBasedSegmenter implements Segmenter {
   @Deprecated
   public RuleBasedBreakIterator getNewBreakIterator() {
     return new RuleBasedBreakIterator(this.rules);
-  }
-
-  public static class Builder {
-
-    String rules;
-
-    Builder() { }
-
-    public Builder setRules(String rules) {
-      this.rules = rules;
-      return this;
-    }
-
-    public RuleBasedSegmenter build() {
-      return new RuleBasedSegmenter(this.rules);
-    }
   }
 
   public static class RuleBasedSegments implements Segments {
