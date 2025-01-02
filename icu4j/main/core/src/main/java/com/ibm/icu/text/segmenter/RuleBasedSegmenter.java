@@ -53,6 +53,11 @@ public class RuleBasedSegmenter implements Segmenter {
     }
 
     @Override
+    public boolean isBoundary(int i) {
+      return SegmentsImplUtils.isBoundary(this.breakIter, this.source, i);
+    }
+
+    @Override
     public Stream<Segment> rangesAfterIndex(int i) {
       return SegmentsImplUtils.rangesAfterIndex(this.breakIter, this.source, i);
     }

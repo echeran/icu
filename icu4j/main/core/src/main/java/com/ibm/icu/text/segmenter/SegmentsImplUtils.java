@@ -12,13 +12,19 @@ import java.util.stream.StreamSupport;
 
 public class SegmentsImplUtils {
 
+  public static boolean isBoundary(BreakIterator breakIter, CharSequence source, int i) {
+    breakIter.setText(source);
+
+    return breakIter.isBoundary(i);
+  }
+
   public static Stream<CharSequence> subSequences(BreakIterator breakIter, CharSequence sourceSequence) {
     return ranges(breakIter, sourceSequence).map(rangeToSequenceFn(sourceSequence));
   }
 
   public static Stream<Segment> ranges(BreakIterator breakIter, CharSequence sourceSequence) {
     return rangesAfterIndex(breakIter, sourceSequence, -1);
-  };
+  }
 
   public static Stream<Segment> rangesAfterIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     breakIter.setText(sourceSequence);

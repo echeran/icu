@@ -12,6 +12,14 @@ public interface Segments {
 
   Stream<Segment> ranges();
 
+  /**
+   * Returns whether offset {@code i} is a segmentation boundary. Throws an exception when
+   * {@code i} is not a valid boundary position for the source sequence.
+   * @param i
+   * @return
+   */
+  boolean isBoundary(int i);
+
   Stream<Segment> rangesAfterIndex(int i);
 
   Stream<Segment> rangesBeforeIndex(int i);

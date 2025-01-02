@@ -91,6 +91,38 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
+  public void testIsBoundary() {
+    Segmenter enWordSegmenter =
+        new LocalizedSegmenterBuilder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
+            .build();
+
+    String source1 = "The quick brown fox jumped over the lazy dog.";
+
+    // Create new Segments for source1
+    Segments segments1 = enWordSegmenter.segment(source1);
+
+    Object[][] casesData = {
+        {"start of segment",                     4,                     true},
+        {"between start and limit of segment",   6,                     false},
+        {"limit of segment",                     9,                     true},
+        {"beginning of string",                  0,                     true},
+        {"end of string",                        source1.length(),      true},
+    };
+
+    for (Object[] caseDatum : casesData) {
+      String desc = (String) caseDatum[0];
+      int idx = (int) caseDatum[1];
+      boolean exp = (boolean) caseDatum[2];
+
+      assertThat(desc, segments1.isBoundary(idx) == exp);
+    }
+
+
+  }
+
+  @Test
   public void testRangesAfterIndex() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
