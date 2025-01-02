@@ -8,9 +8,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public interface Segments {
-
-  CharSequence getSourceSequence();
-
   Stream<CharSequence> subSequences();
 
   Stream<Segment> ranges();

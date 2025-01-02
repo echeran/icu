@@ -17,14 +17,6 @@ public class LocalizedSegmenter implements Segmenter {
     return new LocalizedSegments(s, this);
   }
 
-  public ULocale getLocale() {
-    return this.locale;
-  }
-
-  public SegmentationType getSegmentationType() {
-    return this.segmentationType;
-  }
-
   public static Builder builder() {
     return new Builder();
   }
@@ -34,7 +26,12 @@ public class LocalizedSegmenter implements Segmenter {
     this.segmentationType = segmentationType;
   }
 
+  /**
+   * @Deprecated internal
+   * @return
+   */
   @Override
+  @Deprecated
   public BreakIterator getNewBreakIterator() {
     BreakIterator breakIter;
     switch (this.segmentationType) {
@@ -91,11 +88,6 @@ public class LocalizedSegmenter implements Segmenter {
       this.source = source;
       this.segmenter = segmenter;
       this.breakIter = this.segmenter.getNewBreakIterator();
-    }
-
-    @Override
-    public CharSequence getSourceSequence() {
-      return this.source;
     }
 
     @Override
