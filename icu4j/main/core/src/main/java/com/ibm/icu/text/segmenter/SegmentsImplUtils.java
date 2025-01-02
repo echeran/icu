@@ -24,7 +24,7 @@ public class SegmentsImplUtils {
     breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.FORWARDS, i);
+    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.FORWARDS, i, sourceSequence);
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
@@ -32,7 +32,7 @@ public class SegmentsImplUtils {
      breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.BACKWARDS, i);
+    SegmentIterable iterable = new SegmentIterable(breakIter, IterationDirection.BACKWARDS, i, sourceSequence);
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
@@ -49,7 +49,7 @@ public class SegmentsImplUtils {
       return null;
     }
 
-    return new Segment(start, limit);
+    return new Segment(start, limit, sourceSequence);
   }
 
   public static Segment rangeBeforeIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
@@ -71,7 +71,7 @@ public class SegmentsImplUtils {
 
     assert limit <= start;
 
-    return new Segment(limit, start);
+    return new Segment(limit, start, sourceSequence);
   }
 
   public static Function<Segment, CharSequence> rangeToSequenceFn(CharSequence sourceSequence) {

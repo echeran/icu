@@ -41,17 +41,19 @@ public interface Segments {
   }
 
   //
-  // Inner classes for Range, RangeIterable, and RangeIterator
+  // Inner classes for Segment, SegmentIterable, and SegmentIterator
   //
 
   class Segment {
     public final int start;
     public final int limit;
     public final int ruleStatus = 0;
+    public final CharSequence soruce;
 
-    public Segment(int start, int limit) {
+    public Segment(int start, int limit, CharSequence source) {
       this.start = start;
       this.limit = limit;
+      this.soruce = source;
     }
   }
 
@@ -61,30 +63,34 @@ public interface Segments {
    */
   class SegmentIterable implements Iterable<Segment> {
     BreakIterator breakIter;
-    IterationDirection direction;
+    final IterationDirection direction;
     int startIdx;
+    final CharSequence source;
 
-    SegmentIterable(BreakIterator breakIter, IterationDirection direction, int startIdx) {
+    SegmentIterable(BreakIterator breakIter, IterationDirection direction, int startIdx, CharSequence source) {
       this.breakIter = breakIter;
       this.direction = direction;
       this.startIdx = startIdx;
+      this.source = source;
     }
 
     @Override
     public Iterator<Segment> iterator() {
-      return new SegmentIterator(this.breakIter, this.direction, this.startIdx);
+      return new SegmentIterator(this.breakIter, this.direction, this.startIdx, this.source);
     }
   }
 
   class SegmentIterator implements Iterator<Segment> {
     BreakIterator breakIter;
-    IterationDirection direction;
+    final IterationDirection direction;
     int start;
     int limit;
+    final CharSequence source;
 
-    SegmentIterator(BreakIterator breakIter, IterationDirection direction, int startIdx) {
+    SegmentIterator(BreakIterator breakIter, IterationDirection direction, int startIdx, CharSequence source) {
       this.breakIter = breakIter;
       this.direction = direction;
+      this.source = source;
 
       if (direction == IterationDirection.FORWARDS) {
         this.start = breakIter.following(startIdx);
@@ -114,9 +120,9 @@ public interface Segments {
     public Segment next() {
       Segment result;
       if (this.limit < this.start) {
-        result = new Segment(this.limit, this.start);
+        result = new Segment(this.limit, this.start, this.source);
       } else {
-        result = new Segment(this.start, this.limit);
+        result = new Segment(this.start, this.limit, this.source);
       }
 
       this.start = this.limit;
