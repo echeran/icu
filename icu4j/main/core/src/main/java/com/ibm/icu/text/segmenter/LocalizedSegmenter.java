@@ -27,8 +27,8 @@ public class LocalizedSegmenter implements Segmenter {
   }
 
   /**
-   * @Deprecated internal
-   * @return
+   * @internal
+   * @deprecated This API is ICU internal only.
    */
   @Override
   @Deprecated

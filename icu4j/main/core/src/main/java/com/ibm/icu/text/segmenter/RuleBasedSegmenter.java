@@ -23,7 +23,12 @@ public class RuleBasedSegmenter implements Segmenter {
     this.rules = rules;
   }
 
+  /**
+   * @internal
+   * @deprecated This API is ICU internal only.
+   */
   @Override
+  @Deprecated
   public RuleBasedBreakIterator getNewBreakIterator() {
     return new RuleBasedBreakIterator(this.rules);
   }
