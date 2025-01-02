@@ -5,7 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.segmenter.LocalizedSegmenter;
-import com.ibm.icu.text.segmenter.Segmenter.SegmentationType;
+import com.ibm.icu.text.segmenter.LocalizedSegmenter.SegmentationType;
 import com.ibm.icu.text.segmenter.Segments;
 import com.ibm.icu.text.segmenter.Segments.Segment;
 import com.ibm.icu.util.ULocale;
@@ -93,7 +93,7 @@ public class SegmentsTest extends CoreTestFmwk {
     LocalizedSegmenter enWordSegmenter =
         LocalizedSegmenter.builder()
             .setLocale(ULocale.ENGLISH)
-            .setSegmentationType(SegmentationType.WORD)
+            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
 
     String source1 = "The quick brown fox jumped over the lazy dog.";
@@ -116,7 +116,7 @@ public class SegmentsTest extends CoreTestFmwk {
     LocalizedSegmenter enWordSegmenter =
         LocalizedSegmenter.builder()
             .setLocale(ULocale.ENGLISH)
-            .setSegmentationType(SegmentationType.WORD)
+            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
 
     String source1 = "The quick brown fox jumped over the lazy dog.";
@@ -139,7 +139,7 @@ public class SegmentsTest extends CoreTestFmwk {
     LocalizedSegmenter enWordSegmenter =
         LocalizedSegmenter.builder()
             .setLocale(ULocale.ENGLISH)
-            .setSegmentationType(SegmentationType.WORD)
+            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
 
     String source1 = "The quick brown fox jumped over the lazy dog.";
@@ -162,7 +162,7 @@ public class SegmentsTest extends CoreTestFmwk {
     LocalizedSegmenter enWordSegmenter =
         LocalizedSegmenter.builder()
             .setLocale(ULocale.ENGLISH)
-            .setSegmentationType(SegmentationType.WORD)
+            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
             .build();
 
     String source = "The quick brown fox jumped over the lazy dog.";

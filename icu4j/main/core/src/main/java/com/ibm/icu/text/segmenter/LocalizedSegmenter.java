@@ -52,6 +52,13 @@ public class LocalizedSegmenter implements Segmenter {
     return breakIter;
   }
 
+  public enum SegmentationType {
+    GRAPHEME_CLUSTER,
+    WORD,
+    LINE,
+    SENTENCE,
+  }
+
   public static class Builder {
 
     private ULocale locale = ULocale.ROOT;

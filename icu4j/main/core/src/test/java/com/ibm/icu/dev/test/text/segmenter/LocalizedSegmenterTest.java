@@ -5,7 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.segmenter.LocalizedSegmenter;
-import com.ibm.icu.text.segmenter.Segmenter.SegmentationType;
+import com.ibm.icu.text.segmenter.LocalizedSegmenter.SegmentationType;
 import com.ibm.icu.text.segmenter.Segmenter;
 import com.ibm.icu.text.segmenter.Segments;
 import com.ibm.icu.util.ULocale;

@@ -8,10 +8,4 @@ public interface Segmenter {
   @Deprecated
   BreakIterator getNewBreakIterator();
 
-  public enum SegmentationType {
-    GRAPHEME_CLUSTER,
-    WORD,
-    LINE,
-    SENTENCE,
-  }
 }
