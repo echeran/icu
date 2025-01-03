@@ -85,10 +85,10 @@ public class SegmentsImplUtils {
   }
 
   public static IntStream boundaries(BreakIterator breakIter, CharSequence sourceSequence) {
-    return boundariesAfterIndex(breakIter, sourceSequence, -1);
+    return boundariesAfter(breakIter, sourceSequence, -1);
   }
 
-  public static IntStream boundariesAfterIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+  public static IntStream boundariesAfter(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager

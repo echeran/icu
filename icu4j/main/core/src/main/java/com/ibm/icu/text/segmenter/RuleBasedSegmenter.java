@@ -88,8 +88,8 @@ public class RuleBasedSegmenter implements Segmenter {
     }
 
     @Override
-    public IntStream boundariesAfterIndex(int i) {
-      return SegmentsImplUtils.boundariesAfterIndex(this.breakIter, this.source, i);
+    public IntStream boundariesAfter(int i) {
+      return SegmentsImplUtils.boundariesAfter(this.breakIter, this.source, i);
     }
 
     @Override

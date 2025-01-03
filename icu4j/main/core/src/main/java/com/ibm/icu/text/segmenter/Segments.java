@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public interface Segments {
   Stream<CharSequence> subSequences();
@@ -32,7 +31,7 @@ public interface Segments {
 
   IntStream boundaries();
 
-  IntStream boundariesAfterIndex(int i);
+  IntStream boundariesAfter(int i);
 
   IntStream boundariesBeforeIndex(int i);
 

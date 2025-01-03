@@ -296,7 +296,7 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
-  public void testBoundariesAfterIndex() {
+  public void testBoundariesAfter() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -312,6 +312,7 @@ public class SegmentsTest extends CoreTestFmwk {
     Object[][] casesData = {
         {"first " + TAKE_LIMIT + " before beginning",                       -2,                 new int[]{0, 3, 4, 9, 10}},
         {"first " + TAKE_LIMIT + " in the middle of the third segment",     5,                  new int[]{9, 10, 15, 16, 19}},
+        {"first " + TAKE_LIMIT + " on the limit of the third segment",      9,                  new int[]{10, 15, 16, 19, 20}},
         {"first " + TAKE_LIMIT + " at the end",                             source.length(),    new int[0]},
         {"first " + TAKE_LIMIT + " after the end",                          source.length()+1,  new int[0]},
     };
@@ -321,9 +322,9 @@ public class SegmentsTest extends CoreTestFmwk {
       int startIdx = (int) caseDatum[1];
       int[] exp = (int[]) caseDatum[2];
 
-      int[] act = segments.boundariesAfterIndex(startIdx).limit(TAKE_LIMIT).toArray();
+      int[] act = segments.boundariesAfter(startIdx).limit(TAKE_LIMIT).toArray();
 
-      assertThat(act, is(exp));
+      assertThat(desc, act, is(exp));
     }
   }
 
