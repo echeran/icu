@@ -11,15 +11,15 @@ public interface Segments {
 
   Segment segmentAt(int i);
 
-  Stream<Segment> ranges();
+  Stream<Segment> segments();
 
   Stream<Segment> rangesAfterIndex(int i);
 
   Stream<Segment> rangesBeforeIndex(int i);
 
-  Segment rangeAfterIndex(int i);
+  Segment segmentsFrom(int i);
 
-  Segment rangeBeforeIndex(int i);
+  Segment segmentsBefore(int i);
 
   Function<Segment, CharSequence> rangeToSequenceFn();
 
@@ -103,14 +103,18 @@ public interface Segments {
       this.direction = direction;
       this.source = source;
 
-      if (direction == IterationDirection.FORWARDS) {
-        this.start = breakIter.following(startIdx);
+      Segment segmentAtIdx = SegmentsImplUtils.segmentAt(breakIter, source, startIdx);
+
+      if (segmentAtIdx == null) {
+        this.start = BreakIterator.DONE;
+      } else if (direction == IterationDirection.FORWARDS) {
+        this.start = segmentAtIdx.start;
+        this.limit = breakIter.following(this.start);
       } else {
         assert direction == IterationDirection.BACKWARDS;
-        this.start = breakIter.preceding(startIdx);
+        this.start = breakIter.preceding(segmentAtIdx.start);
+        this.limit = getDirectionBasedNextIdx();
       }
-
-      this.limit = getDirectionBasedNextIdx();
     }
 
     int getDirectionBasedNextIdx() {

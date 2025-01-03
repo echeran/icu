@@ -53,8 +53,8 @@ public class RuleBasedSegmenter implements Segmenter {
     }
 
     @Override
-    public Stream<Segment> ranges() {
-      return SegmentsImplUtils.ranges(this.breakIter, this.source);
+    public Stream<Segment> segments() {
+      return SegmentsImplUtils.segments(this.breakIter, this.source);
     }
 
     @Override
@@ -64,21 +64,21 @@ public class RuleBasedSegmenter implements Segmenter {
 
     @Override
     public Stream<Segment> rangesAfterIndex(int i) {
-      return SegmentsImplUtils.rangesAfterIndex(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentsFrom(this.breakIter, this.source, i);
     }
 
     @Override
     public Stream<Segment> rangesBeforeIndex(int i) {
-      return SegmentsImplUtils.rangesBeforeIndex(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentsBefore(this.breakIter, this.source, i);
     }
 
     @Override
-    public Segment rangeAfterIndex(int i) {
+    public Segment segmentsFrom(int i) {
       return SegmentsImplUtils.rangeAfterIndex(this.breakIter, this.source, i);
     }
 
     @Override
-    public Segment rangeBeforeIndex(int i) {
+    public Segment segmentsBefore(int i) {
       return SegmentsImplUtils.rangeBeforeIndex(this.breakIter, this.source, i);
     }
 

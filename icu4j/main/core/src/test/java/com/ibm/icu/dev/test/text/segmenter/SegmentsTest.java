@@ -22,7 +22,7 @@ import org.junit.runners.JUnit4;
 public class SegmentsTest extends CoreTestFmwk {
 
   @Test
-  public void testRanges() {
+  public void testSegments() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -34,7 +34,7 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Segment> segments = segments1.ranges().collect(Collectors.toList());
+    List<Segment> segments = segments1.segments().collect(Collectors.toList());
 
     assertEquals("first range start", 0, segments.get(0).start);
     assertEquals("first range limit", 3, segments.get(0).limit);
@@ -123,7 +123,7 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
-  public void testRangesAfterIndex() {
+  public void testSegmentsFrom() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -138,15 +138,15 @@ public class SegmentsTest extends CoreTestFmwk {
 
     List<Segment> segments = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
 
-    assertEquals("first range start", 3, segments.get(0).start);
-    assertEquals("first range limit", 4, segments.get(0).limit);
+    assertEquals("first range start", 0, segments.get(0).start);
+    assertEquals("first range limit", 3, segments.get(0).limit);
 
-    assertEquals("second range start", 4, segments.get(1).start);
-    assertEquals("second range limit", 9, segments.get(1).limit);
+    assertEquals("second range start", 3, segments.get(1).start);
+    assertEquals("second range limit", 4, segments.get(1).limit);
   }
 
   @Test
-  public void testRangesBeforeIndex() {
+  public void testSegmentsBefore() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -218,7 +218,7 @@ public class SegmentsTest extends CoreTestFmwk {
       Integer expStart = (Integer) caseDatum[2];
       Integer expLimit = (Integer) caseDatum[3];
 
-      Segment segment = segments.rangeAfterIndex(startIdx);
+      Segment segment = segments.segmentsFrom(startIdx);
 
       if (expStart == null) {
         assert expLimit == null;
@@ -259,7 +259,7 @@ public class SegmentsTest extends CoreTestFmwk {
       Integer expStart = (Integer) caseDatum[2];
       Integer expLimit = (Integer) caseDatum[3];
 
-      Segment segment = segments.rangeBeforeIndex(startIdx);
+      Segment segment = segments.segmentsBefore(startIdx);
 
       if (startIdx < 0 ) {
         logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");

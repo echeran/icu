@@ -21,7 +21,7 @@ public class SegmentsImplUtils {
   }
 
   public static Stream<CharSequence> subSequences(BreakIterator breakIter, CharSequence sourceSequence) {
-    return ranges(breakIter, sourceSequence).map(rangeToSequenceFn(sourceSequence));
+    return segments(breakIter, sourceSequence).map(rangeToSequenceFn(sourceSequence));
   }
 
   public static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
@@ -50,11 +50,11 @@ public class SegmentsImplUtils {
     }
   }
 
-  public static Stream<Segment> ranges(BreakIterator breakIter, CharSequence sourceSequence) {
-    return rangesAfterIndex(breakIter, sourceSequence, -1);
+  public static Stream<Segment> segments(BreakIterator breakIter, CharSequence sourceSequence) {
+    return segmentsFrom(breakIter, sourceSequence, 0);
   }
 
-  public static Stream<Segment> rangesAfterIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+  public static Stream<Segment> segmentsFrom(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
@@ -62,7 +62,7 @@ public class SegmentsImplUtils {
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
-  public static Stream<Segment> rangesBeforeIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+  public static Stream<Segment> segmentsBefore(BreakIterator breakIter, CharSequence sourceSequence, int i) {
      breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
