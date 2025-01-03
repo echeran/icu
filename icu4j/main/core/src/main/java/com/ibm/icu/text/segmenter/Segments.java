@@ -11,14 +11,6 @@ public interface Segments {
 
   Stream<Segment> ranges();
 
-  /**
-   * Returns whether offset {@code i} is a segmentation boundary. Throws an exception when
-   * {@code i} is not a valid boundary position for the source sequence.
-   * @param i
-   * @return
-   */
-  boolean isBoundary(int i);
-
   Stream<Segment> rangesAfterIndex(int i);
 
   Stream<Segment> rangesBeforeIndex(int i);
@@ -28,6 +20,14 @@ public interface Segments {
   Segment rangeBeforeIndex(int i);
 
   Function<Segment, CharSequence> rangeToSequenceFn();
+
+  /**
+   * Returns whether offset {@code i} is a segmentation boundary. Throws an exception when
+   * {@code i} is not a valid boundary position for the source sequence.
+   * @param i
+   * @return
+   */
+  boolean isBoundary(int i);
 
   IntStream boundaries();
 
@@ -48,16 +48,21 @@ public interface Segments {
   // Inner classes for Segment, SegmentIterable, and SegmentIterator
   //
 
+  // TODO: consider options in design for potential memory usage optimization:
+  //   1) keep simple class with public fields, but requires field per Segment to point to source
+  //   2) make Segment an interface (getSource, getStart, getLimit, getRuleStatus, newSegment), and
+  //      maybe an abstract class that implements the interface, maybe with a default method impl
+  //      for convenience for getting (allocating & returning) the subsequence
   class Segment {
     public final int start;
     public final int limit;
     public final int ruleStatus = 0;
-    public final CharSequence soruce;
+    public final CharSequence source;
 
     public Segment(int start, int limit, CharSequence source) {
       this.start = start;
       this.limit = limit;
-      this.soruce = source;
+      this.source = source;
     }
   }
 

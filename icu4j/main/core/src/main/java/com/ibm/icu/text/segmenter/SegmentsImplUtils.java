@@ -94,6 +94,7 @@ public class SegmentsImplUtils {
     breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
+    // TODO: optimize IntStream creation to avoid autoboxing
     BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.FORWARDS, i);
     Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
     return boundariesAsIntegers.mapToInt(Integer::intValue);
@@ -112,6 +113,7 @@ public class SegmentsImplUtils {
     int backFromIdx = isOnBoundary ? i + 1 : i;
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
+    // TODO: optimize IntStream creation to avoid autoboxing
     BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.BACKWARDS, backFromIdx);
     Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
     return boundariesAsIntegers.mapToInt(Integer::intValue);
