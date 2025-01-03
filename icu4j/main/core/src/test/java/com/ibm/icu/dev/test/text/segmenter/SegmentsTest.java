@@ -261,7 +261,7 @@ public class SegmentsTest extends CoreTestFmwk {
 
       Segment segment = segments.rangeBeforeIndex(startIdx);
 
-      if (startIdx == -2) {
+      if (startIdx < 0 ) {
         logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
       }
 
@@ -364,6 +364,51 @@ public class SegmentsTest extends CoreTestFmwk {
         logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
       }
     }
+  }
+
+  @Test
+  public void testSegmentAt() {
+    Segmenter enWordSegmenter =
+        new LocalizedSegmenterBuilder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+
+    String source = "The quick brown fox jumped over the lazy dog.";
+
+    // Create new Segments for source
+    Segments segments1 = enWordSegmenter.segment(source);
+
+    Object[][] casesData = {
+        {"index before beginning",                       -2,                 null,              null},
+        {"index at beginning",                           0,                  0,                 3},
+        {"index in the middle of the first segment",     2,                  0,                 3},
+        {"index in the middle of the third segment",     5,                  4,                 9},
+        {"index at the end",                             source.length()-1,  44,                45},
+        {"index after the end",                          source.length()+1,  null,              null},
+    };
+
+    for (Object[] caseDatum : casesData) {
+      String desc = (String) caseDatum[0];
+      int startIdx = (int) caseDatum[1];
+      Integer expStart = (Integer) caseDatum[2];
+      Integer expLimit = (Integer) caseDatum[3];
+
+      if (startIdx < 0 ) {
+        logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
+      }
+
+      if (expStart == null) {
+        assertThat("Out of bounds range should be null", expLimit == null);
+      } else {
+        Segment segment = segments1.segmentAt(startIdx);
+
+        assertEquals(desc + ", start", (long) expStart.intValue(), (long) segment.start);
+        assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) segment.limit);
+      }
+    }
+
+
   }
 
 }

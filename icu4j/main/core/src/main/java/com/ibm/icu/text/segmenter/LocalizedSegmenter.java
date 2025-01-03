@@ -75,6 +75,11 @@ public class LocalizedSegmenter implements Segmenter {
     }
 
     @Override
+    public Segment segmentAt(int i) {
+      return SegmentsImplUtils.segmentAt(this.breakIter, this.source, i);
+    }
+
+    @Override
     public Stream<Segment> ranges() {
       return SegmentsImplUtils.ranges(this.breakIter, this.source);
     }

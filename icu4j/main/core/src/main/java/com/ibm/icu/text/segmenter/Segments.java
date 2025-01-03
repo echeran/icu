@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 public interface Segments {
   Stream<CharSequence> subSequences();
 
+  Segment segmentAt(int i);
+
   Stream<Segment> ranges();
 
   Stream<Segment> rangesAfterIndex(int i);

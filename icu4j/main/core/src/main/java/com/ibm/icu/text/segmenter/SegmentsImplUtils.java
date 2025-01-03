@@ -24,6 +24,32 @@ public class SegmentsImplUtils {
     return ranges(breakIter, sourceSequence).map(rangeToSequenceFn(sourceSequence));
   }
 
+  public static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+    // TODO: make initialization of breakIterator a prerequisite
+    breakIter.setText(sourceSequence);
+
+    int start;
+    int limit;
+
+    boolean isBoundary = breakIter.isBoundary(i);
+
+    if (isBoundary) {
+      start = i;
+      limit = breakIter.next();
+    } else {
+      // BreakIterator::isBoundary(i) will advance forwards to the next boundary if the argument
+      // is not a boundary.
+      limit = breakIter.current();
+      start = breakIter.previous();
+    }
+
+    if (start != BreakIterator.DONE && limit != BreakIterator.DONE) {
+      return new Segment(start, limit, sourceSequence);
+    } else {
+      return null;
+    }
+  }
+
   public static Stream<Segment> ranges(BreakIterator breakIter, CharSequence sourceSequence) {
     return rangesAfterIndex(breakIter, sourceSequence, -1);
   }
