@@ -329,7 +329,7 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
-  public void testBoundariesBeforeIndex() {
+  public void testBoundariesBackFrom() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -343,10 +343,12 @@ public class SegmentsTest extends CoreTestFmwk {
     Segments segments = enWordSegmenter.segment(source);
 
     Object[][] casesData = {
-        {"first " + TAKE_LIMIT + " before beginning",                 -2,                new int[0]},
-        {"first " + TAKE_LIMIT + " at the beginning",                 0,                 new int[0]},
-        {"first " + TAKE_LIMIT + " in the middle of the 2nd to last", 42,                new int[]{41, 40, 36, 35, 32}},
-        {"first " + TAKE_LIMIT + " after the end",                    source.length()+1, new int[]{45, 44, 41, 40, 36}},
+        {"first " + TAKE_LIMIT + " before beginning",                          -2,                 new int[0]},
+        {"first " + TAKE_LIMIT + " at the beginning",                          0,                  new int[]{0}},
+        {"first " + TAKE_LIMIT + " from the start of the 2nd to last segment", 41,                 new int[]{41, 40, 36, 35, 32}},
+        {"first " + TAKE_LIMIT + " in the middle of the 2nd to last segment",  42,                 new int[]{41, 40, 36, 35, 32}},
+        {"first " + TAKE_LIMIT + " at the end",                                source.length(),    new int[]{45, 44, 41, 40, 36}},
+        {"first " + TAKE_LIMIT + " after the end",                             source.length()+1,  new int[]{45, 44, 41, 40, 36}},
     };
 
     for (Object[] caseDatum : casesData) {
@@ -354,11 +356,11 @@ public class SegmentsTest extends CoreTestFmwk {
       int startIdx = (int) caseDatum[1];
       int[] exp = (int[]) caseDatum[2];
 
-      int[] act = segments.boundariesBeforeIndex(startIdx).limit(TAKE_LIMIT).toArray();
+      int[] act = segments.boundariesBackFrom(startIdx).limit(TAKE_LIMIT).toArray();
 
-      assertThat(act, is(exp));
+      assertThat(desc, act, is(exp));
 
-      if (startIdx == -2) {
+      if (startIdx < 0) {
         logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
       }
     }

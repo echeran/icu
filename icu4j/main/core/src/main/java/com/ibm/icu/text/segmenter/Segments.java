@@ -33,7 +33,7 @@ public interface Segments {
 
   IntStream boundariesAfter(int i);
 
-  IntStream boundariesBeforeIndex(int i);
+  IntStream boundariesBackFrom(int i);
 
   //
   // Inner enums/classes in common for other inner classes

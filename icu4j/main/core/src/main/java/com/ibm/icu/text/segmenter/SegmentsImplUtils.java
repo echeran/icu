@@ -10,6 +10,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+
+// Global TODO: make initialization of breakIterator a prerequisite
 public class SegmentsImplUtils {
 
   public static boolean isBoundary(BreakIterator breakIter, CharSequence source, int i) {
@@ -97,11 +99,20 @@ public class SegmentsImplUtils {
     return boundariesAsIntegers.mapToInt(Integer::intValue);
   }
 
-  public static IntStream boundariesBeforeIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+  public static IntStream boundariesBackFrom(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+    // TODO: make initialization of breakIterator a prerequisite
     breakIter.setText(sourceSequence);
 
+    int sourceLength = sourceSequence.length();
+    if (i < 0) {
+      return IntStream.empty();
+    }
+
+    boolean isOnBoundary = i <= sourceLength && isBoundary(breakIter, sourceSequence, i);
+    int backFromIdx = isOnBoundary ? i + 1 : i;
+
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.BACKWARDS, i);
+    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.BACKWARDS, backFromIdx);
     Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
     return boundariesAsIntegers.mapToInt(Integer::intValue);
   }
