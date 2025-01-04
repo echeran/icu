@@ -21,7 +21,7 @@ public class SegmentsImplUtils {
   }
 
   public static Stream<CharSequence> subSequences(BreakIterator breakIter, CharSequence sourceSequence) {
-    return segments(breakIter, sourceSequence).map(rangeToSequenceFn(sourceSequence));
+    return segments(breakIter, sourceSequence).map(segmentToSequenceFn(sourceSequence));
   }
 
   public static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
@@ -70,7 +70,7 @@ public class SegmentsImplUtils {
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
-  public static Segment rangeAfterIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+  public static Segment segmentAfterIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     breakIter.setText(sourceSequence);
 
     int start = breakIter.following(i);
@@ -86,7 +86,7 @@ public class SegmentsImplUtils {
     return new Segment(start, limit, sourceSequence);
   }
 
-  public static Segment rangeBeforeIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
+  public static Segment segmentBeforeIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     breakIter.setText(sourceSequence);
 
 
@@ -108,7 +108,7 @@ public class SegmentsImplUtils {
     return new Segment(limit, start, sourceSequence);
   }
 
-  public static Function<Segment, CharSequence> rangeToSequenceFn(CharSequence sourceSequence) {
+  public static Function<Segment, CharSequence> segmentToSequenceFn(CharSequence sourceSequence) {
     return segment -> sourceSequence.subSequence(segment.start, segment.limit);
   }
 

@@ -134,7 +134,7 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Segment> segments = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
+    List<Segment> segments = segments1.segmentsFrom(startIdx).collect(Collectors.toList());
 
     assertEquals("first range start", 0, segments.get(0).start);
     assertEquals("first range limit", 3, segments.get(0).limit);
@@ -157,7 +157,7 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Segment> segments = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
+    List<Segment> segments = segments1.segmentsFrom(startIdx).collect(Collectors.toList());
 
     assertEquals("first range start", 3, segments.get(0).start);
     assertEquals("first range limit", 4, segments.get(0).limit);
@@ -180,7 +180,7 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Segment> segments = segments1.rangesBeforeIndex(startIdx).collect(Collectors.toList());
+    List<Segment> segments = segments1.segmentsBefore(startIdx).collect(Collectors.toList());
 
     assertEquals("first range start", 3, segments.get(0).start);
     assertEquals("first range limit", 4, segments.get(0).limit);
@@ -203,7 +203,7 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<Segment> segments = segments1.rangesBeforeIndex(startIdx).collect(Collectors.toList());
+    List<Segment> segments = segments1.segmentsBefore(startIdx).collect(Collectors.toList());
 
     assertEquals("first range start", 4, segments.get(0).start);
     assertEquals("first range limit", 9, segments.get(0).limit);
@@ -213,7 +213,7 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
-  public void testRangeToSequenceFn() {
+  public void testSegmentToSequenceFn() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -228,15 +228,15 @@ public class SegmentsTest extends CoreTestFmwk {
 
     List<CharSequence> exp1 = Arrays.asList(" ", "quick", " ", "The");
 
-    List<CharSequence> act1 = segments1.rangesBeforeIndex(startIdx)
-        .map(segments1.rangeToSequenceFn())
+    List<CharSequence> act1 = segments1.segmentsBefore(startIdx)
+        .map(segments1.segmentToSequenceFn())
         .collect(Collectors.toList());
 
     assertThat(act1, is(exp1));
   }
 
   @Test
-  public void testRangeAfterIndex() {
+  public void testSegmentAfterIndex() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -262,7 +262,7 @@ public class SegmentsTest extends CoreTestFmwk {
       Integer expStart = (Integer) caseDatum[2];
       Integer expLimit = (Integer) caseDatum[3];
 
-      Segment segment = segments.segmentsFrom(startIdx);
+      Segment segment = segments.segmentAfterIndex(startIdx);
 
       if (expStart == null) {
         assert expLimit == null;
@@ -276,7 +276,7 @@ public class SegmentsTest extends CoreTestFmwk {
 
 
   @Test
-  public void testRangeBeforeIndex() {
+  public void testSegmentBeforeIndex() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -303,7 +303,7 @@ public class SegmentsTest extends CoreTestFmwk {
       Integer expStart = (Integer) caseDatum[2];
       Integer expLimit = (Integer) caseDatum[3];
 
-      Segment segment = segments.segmentsBefore(startIdx);
+      Segment segment = segments.segmentBeforeIndex(startIdx);
 
       if (startIdx < 0 ) {
         logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");

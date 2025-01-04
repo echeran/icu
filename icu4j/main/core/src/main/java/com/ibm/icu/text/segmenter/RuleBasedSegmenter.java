@@ -63,28 +63,28 @@ public class RuleBasedSegmenter implements Segmenter {
     }
 
     @Override
-    public Stream<Segment> rangesAfterIndex(int i) {
+    public Stream<Segment> segmentsFrom(int i) {
       return SegmentsImplUtils.segmentsFrom(this.breakIter, this.source, i);
     }
 
     @Override
-    public Stream<Segment> rangesBeforeIndex(int i) {
+    public Stream<Segment> segmentsBefore(int i) {
       return SegmentsImplUtils.segmentsBefore(this.breakIter, this.source, i);
     }
 
     @Override
-    public Segment segmentsFrom(int i) {
-      return SegmentsImplUtils.rangeAfterIndex(this.breakIter, this.source, i);
+    public Segment segmentAfterIndex(int i) {
+      return SegmentsImplUtils.segmentAfterIndex(this.breakIter, this.source, i);
     }
 
     @Override
-    public Segment segmentsBefore(int i) {
-      return SegmentsImplUtils.rangeBeforeIndex(this.breakIter, this.source, i);
+    public Segment segmentBeforeIndex(int i) {
+      return SegmentsImplUtils.segmentBeforeIndex(this.breakIter, this.source, i);
     }
 
     @Override
-    public Function<Segment, CharSequence> rangeToSequenceFn() {
-      return SegmentsImplUtils.rangeToSequenceFn(this.source);
+    public Function<Segment, CharSequence> segmentToSequenceFn() {
+      return SegmentsImplUtils.segmentToSequenceFn(this.source);
     }
 
     @Override

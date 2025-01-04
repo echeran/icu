@@ -7,21 +7,22 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public interface Segments {
+  
   Stream<CharSequence> subSequences();
 
   Segment segmentAt(int i);
 
   Stream<Segment> segments();
 
-  Stream<Segment> rangesAfterIndex(int i);
+  Stream<Segment> segmentsFrom(int i);
 
-  Stream<Segment> rangesBeforeIndex(int i);
+  Stream<Segment> segmentsBefore(int i);
 
-  Segment segmentsFrom(int i);
+  Segment segmentAfterIndex(int i);
 
-  Segment segmentsBefore(int i);
+  Segment segmentBeforeIndex(int i);
 
-  Function<Segment, CharSequence> rangeToSequenceFn();
+  Function<Segment, CharSequence> segmentToSequenceFn();
 
   /**
    * Returns whether offset {@code i} is a segmentation boundary. Throws an exception when
