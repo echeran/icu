@@ -118,12 +118,10 @@ public class SegmentsTest extends CoreTestFmwk {
 
       assertThat(desc, segments1.isBoundary(idx) == exp);
     }
-
-
   }
 
   @Test
-  public void testSegmentsFrom() {
+  public void testSegmentsFrom_middleOfSegment() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -146,7 +144,7 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
-  public void testSegmentsBefore() {
+  public void testSegmentsFrom_onBoundary() {
     Segmenter enWordSegmenter =
         new LocalizedSegmenterBuilder()
             .setLocale(ULocale.ENGLISH)
@@ -154,7 +152,53 @@ public class SegmentsTest extends CoreTestFmwk {
             .build();
 
     String source1 = "The quick brown fox jumped over the lazy dog.";
-    int startIdx = 10;
+    int startIdx = 3;
+
+    // Create new Segments for source1
+    Segments segments1 = enWordSegmenter.segment(source1);
+
+    List<Segment> segments = segments1.rangesAfterIndex(startIdx).collect(Collectors.toList());
+
+    assertEquals("first range start", 3, segments.get(0).start);
+    assertEquals("first range limit", 4, segments.get(0).limit);
+
+    assertEquals("second range start", 4, segments.get(1).start);
+    assertEquals("second range limit", 9, segments.get(1).limit);
+  }
+
+  @Test
+  public void testSegmentsBefore_middleOfSegment() {
+    Segmenter enWordSegmenter =
+        new LocalizedSegmenterBuilder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
+            .build();
+
+    String source1 = "The quick brown fox jumped over the lazy dog.";
+    int startIdx = 8;
+
+    // Create new Segments for source1
+    Segments segments1 = enWordSegmenter.segment(source1);
+
+    List<Segment> segments = segments1.rangesBeforeIndex(startIdx).collect(Collectors.toList());
+
+    assertEquals("first range start", 3, segments.get(0).start);
+    assertEquals("first range limit", 4, segments.get(0).limit);
+
+    assertEquals("second range start", 0, segments.get(1).start);
+    assertEquals("second range limit", 3, segments.get(1).limit);
+  }
+
+  @Test
+  public void testSegmentsBefore_onBoundary() {
+    Segmenter enWordSegmenter =
+        new LocalizedSegmenterBuilder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
+            .build();
+
+    String source1 = "The quick brown fox jumped over the lazy dog.";
+    int startIdx = 9;
 
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
@@ -182,7 +226,7 @@ public class SegmentsTest extends CoreTestFmwk {
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
 
-    List<CharSequence> exp1 = Arrays.asList("quick", " ", "The");
+    List<CharSequence> exp1 = Arrays.asList(" ", "quick", " ", "The");
 
     List<CharSequence> act1 = segments1.rangesBeforeIndex(startIdx)
         .map(segments1.rangeToSequenceFn())
