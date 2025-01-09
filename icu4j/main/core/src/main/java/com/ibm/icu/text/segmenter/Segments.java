@@ -18,10 +18,6 @@ public interface Segments {
 
   Stream<Segment> segmentsBefore(int i);
 
-  Segment segmentAfterIndex(int i);
-
-  Segment segmentBeforeIndex(int i);
-
   Function<Segment, CharSequence> segmentToSequenceFn();
 
   /**

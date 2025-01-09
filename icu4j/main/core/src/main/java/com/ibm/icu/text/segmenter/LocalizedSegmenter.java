@@ -128,16 +128,6 @@ public class LocalizedSegmenter implements Segmenter {
     }
 
     @Override
-    public Segment segmentAfterIndex(int i) {
-      return SegmentsImplUtils.segmentAfterIndex(this.breakIter, this.source, i);
-    }
-
-    @Override
-    public Segment segmentBeforeIndex(int i) {
-      return SegmentsImplUtils.segmentBeforeIndex(this.breakIter, this.source, i);
-    }
-
-    @Override
     public Function<Segment, CharSequence> segmentToSequenceFn() {
       return SegmentsImplUtils.segmentToSequenceFn(this.source);
     }
