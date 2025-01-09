@@ -29,7 +29,7 @@ public class RuleBasedSegmenter implements Segmenter {
    */
   @Override
   @Deprecated
-  public RuleBasedBreakIterator getNewBreakIterator() {
+  public BreakIterator getNewBreakIterator() {
     return new RuleBasedBreakIterator(this.rules);
   }
 
