@@ -6,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import com.ibm.icu.dev.test.CoreTestFmwk;
 import com.ibm.icu.text.segmenter.LocalizedSegmenter;
 import com.ibm.icu.text.segmenter.LocalizedSegmenter.SegmentationType;
-import com.ibm.icu.text.segmenter.LocalizedSegmenterBuilder;
 import com.ibm.icu.text.segmenter.Segmenter;
 import com.ibm.icu.text.segmenter.Segments;
 import com.ibm.icu.util.ULocale;
@@ -34,7 +33,7 @@ public class LocalizedSegmenterTest extends CoreTestFmwk {
       List<CharSequence> expWords = (List<CharSequence>) caseDatum[1];
 
       Segmenter wordSeg =
-          new LocalizedSegmenterBuilder()
+          LocalizedSegmenter.builder()
               .setLocale(locale)
               .setSegmentationType(SegmentationType.SENTENCE)
               .build();

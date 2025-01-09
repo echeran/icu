@@ -17,6 +17,10 @@ public class LocalizedSegmenter implements Segmenter {
     return new LocalizedSegments(s, this);
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   LocalizedSegmenter(ULocale locale, SegmentationType segmentationType) {
     this.locale = locale;
     this.segmentationType = segmentationType;
@@ -53,6 +57,30 @@ public class LocalizedSegmenter implements Segmenter {
     WORD,
     LINE,
     SENTENCE,
+  }
+
+  public static class Builder {
+
+    private ULocale locale = ULocale.ROOT;
+
+    private SegmentationType segmentationType = SegmentationType.GRAPHEME_CLUSTER;
+
+    Builder() { }
+
+    public Builder setLocale(ULocale locale) {
+      this.locale = locale;
+      return this;
+    }
+
+    public Builder setSegmentationType(SegmentationType segmentationType) {
+      this.segmentationType = segmentationType;
+      return this;
+    }
+
+    public LocalizedSegmenter build() {
+      return new LocalizedSegmenter(this.locale, this.segmentationType);
+    }
+
   }
 
   public class LocalizedSegments implements Segments {
