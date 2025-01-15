@@ -6,7 +6,7 @@ parent: Formatting Messages
 grand_parent: Formatting
 ---
 <!--
-© 2023 and later: Unicode, Inc. and others.
+© 2025 and later: Unicode, Inc. and others.
 License & terms of use: http://www.unicode.org/copyright.html
 -->
 
@@ -109,7 +109,7 @@ Let's call it `hello_mf2.cpp`
 
 1. This will output
     ```
-    Hello John, today is January 13, 2025!
+    Hello John, today is January 28, 2025!
     ```
 
 ## C++ Windows with Visual Studio
@@ -161,7 +161,7 @@ The content is listed above (see the Linux section).
 
 1. This will output
     ```
-    Hello John, today is January 13, 2025!
+    Hello John, today is January 28, 2025!
     ```
 
 ### From Visual Studio (UI)
@@ -245,7 +245,7 @@ Let's call it `hello_mf2`.
 
 1. When run, it will output
     ```
-    "Hello John, today is January 13, 2025!"
+    "Hello John, today is January 28, 2025!"
     ```
 
 ### From Visual Studio with minimal work
@@ -348,10 +348,10 @@ know how to create a project in your favorite IDE, and so on.
         ```
     1. Add imports
         ```java
-        import java.util.Date;
         import java.util.HashMap;
         import java.util.Locale;
         import java.util.Map;
+        import com.ibm.icu.util.Calendar;
         import com.ibm.icu.message2.MessageFormatter;
         ```
 
@@ -362,5 +362,5 @@ know how to create a project in your favorite IDE, and so on.
 
 1. This will output
     ```
-    Hello John, today is January 13, 2025!
+    Hello John, today is January 28, 2025!
     ```
