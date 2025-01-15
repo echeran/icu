@@ -115,6 +115,45 @@ License & terms of use: http://www.unicode.org/copyright.html
 
 ## C++ Windows with Visual Studio
 
+### From Visual Studio with minimal work
+
+These instructions will use a release version of ICU4C (tested with 76.1) and
+a "Hello ICU world" project already created.
+They provide minimal effort that only requires downloading and opening in Visual Studio
+before using.
+
+> :point_right: **Note**: the MessageFormat 2 implementation in a previously release version may be behind the spec in the first few releases of ICU after the MF2.0 spec was declared 1.0 in CLDR 46.1,
+which occurred between ICU 76 and ICU 77. The difference between latest MF2.0 and the spec version supported in ICU may be minimal.
+
+
+1. Download the Visual Studio artifacts from the
+[official release of ICU 76.1](https://github.com/unicode-org/icu/releases/tag/release-76-1):
+    * [icu4c-76_1-Win32-MSVC2022.zip](https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-Win32-MSVC2022.zip)
+    * [icu4c-76_1-Win64-MSVC2022.zip](https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-Win64-MSVC2022.zip)
+
+1. Download the "Hello ICU / MF2 World" project [HelloMF2.zip](HelloMF2.zip).
+
+1. Unzip the files you just downloaded and merge the content of the two ICU folders.
+The "hello world" project to be a sibling to the icu folder.
+
+1. The folder tree structure should look like this
+    
+    ```
+    someFolderOfYourChoice\
+      +- HelloMF2\
+      | \- HelloMF2\
+      \- icu\
+        \- icu4c\
+          +- bin\
+          +- bin64\
+          +- include\
+          | \- unicode\
+          +- lib\
+          \- lib64\
+    ```
+
+1. Open the `HelloMF2.sln` solution in Visual Studio and you are ready to go.
+
 ### From command line
 
 Start the Visual Studio "x64 Native Tools Command Prompt for VS 20xx"
@@ -243,45 +282,6 @@ The link to download and the contents are listed above (see the Linux section).
     ```
     Hello John, today is January 28, 2025!
     ```
-
-### From Visual Studio with minimal work
-
-These instructions will use a release version of ICU4C (tested with 76.1) and
-a "Hello ICU world" project already created.
-They provide minimal effort that only requires downloading and opening in Visual Studio
-before using.
-
-> :point_right: **Note**: the MessageFormat 2 implementation in a previously release version may be behind the spec in the first few releases of ICU after the MF2.0 spec was declared 1.0 in CLDR 46.1,
-which occurred between ICU 76 and ICU 77. The difference between latest MF2.0 and the spec version supported in ICU may be minimal.
-
-
-1. Download the Visual Studio artifacts from the
-[official release of ICU 76.1](https://github.com/unicode-org/icu/releases/tag/release-76-1):
-    * [icu4c-76_1-Win32-MSVC2022.zip](https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-Win32-MSVC2022.zip)
-    * [icu4c-76_1-Win64-MSVC2022.zip](https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-Win64-MSVC2022.zip)
-
-1. Download the "Hello ICU / MF2 World" project [HelloMF2.zip](HelloMF2.zip).
-
-1. Unzip the files you just downloaded and merge the content of the two ICU folders.
-The "hello world" project to be a sibling to the icu folder.
-
-1. The folder tree structure should look like this
-    
-    ```
-    someFolderOfYourChoice\
-      +- HelloMF2\
-      | \- HelloMF2\
-      \- icu\
-        \- icu4c\
-          +- bin\
-          +- bin64\
-          +- include\
-          | \- unicode\
-          +- lib\
-          \- lib64\
-    ```
-
-1. Open the `HelloMF2.sln` solution in Visual Studio and you are ready to go.
 
 
 ## Java
