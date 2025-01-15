@@ -56,7 +56,8 @@ License & terms of use: http://www.unicode.org/copyright.html
     popd
     ```
 
-1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder). Call it `hello_mf2.cpp`
+1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder) called [`hello_mf2.cpp`](hello_mf2.cpp) (click to view and/or download). The contents are reproduced below.
+
     ```cpp
     // hello_mf2.cpp
     #include <iostream>
@@ -144,7 +145,7 @@ Start the Visual Studio "x64 Native Tools Command Prompt for VS 20xx"
     ```
 
 1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder). Call it `hello_mf2.cpp`.
-The content is listed above (see the Linux section).
+The link to download and the contents are listed above (see the Linux section).
 
 1. Build your application and run it
 
@@ -233,8 +234,8 @@ The content is listed above (see the Linux section).
 
     * Select the "View" -- "Solution Explorer" menu
     * In the left-side tree "HelloMF2" / "Source Files" open `HelloMF2.cpp`
-    * Copy-paste the code from the `hello_mf2.cpp` (in this document) and paste it in
-      `HelloMF2.cpp`, replacing all the existing content (select all + paste).
+    * Download the `hello_mf2.cpp` file (see earlier in this page for download link) and save it as
+      `HelloMF2.cpp`, thereby replacing it.
 
 1. At this point you should be able to build and run the application, debug it, etc.
 
