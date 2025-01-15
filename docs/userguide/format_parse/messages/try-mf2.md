@@ -96,6 +96,7 @@ License & terms of use: http://www.unicode.org/copyright.html
     ```
 
 1. Build your application and run it
+
     ```sh
     g++ hello_mf2.cpp -I$DESTDIR/usr/local/include -std=c++17 -L$DESTDIR/usr/local/lib -licuuc -licudata -licui18n
 
@@ -296,6 +297,7 @@ know how to create a project in your favorite IDE, and so on.
 ### Instructions
 
 1. Create a new Maven project
+
     ```sh
     mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=hello_icu_mf2 -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.5 -DinteractiveMode=false
 
@@ -322,6 +324,7 @@ know how to create a project in your favorite IDE, and so on.
         **Warning:** make sure it is done in `dependencies`, not in `dependencyManagement / dependencies`
 
 1. Edit the `src/test/java/com/mycompany/app/AppTest.java` file
+
     1. Add a new test method
         ```java
         @Test
@@ -333,14 +336,15 @@ know how to create a project in your favorite IDE, and so on.
             Calendar cal = Calendar.getInstance();
             cal.set(2025, 0, 28);
  
- 
             Map<String, Object> arguments = new HashMap<>();
             arguments.put("user", "John");
             arguments.put("now", cal);
             System.out.println(mf2.formatToString(arguments));
         }
         ```
+
     1. Add imports
+
         ```java
         import java.util.HashMap;
         import java.util.Locale;
@@ -350,6 +354,7 @@ know how to create a project in your favorite IDE, and so on.
         ```
 
 1. Now run the tests
+
     ```sh
     mvn package -q
     ```
