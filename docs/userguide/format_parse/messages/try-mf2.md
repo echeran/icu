@@ -38,7 +38,6 @@ License & terms of use: http://www.unicode.org/copyright.html
 
 1. Build ICU4C (you only need to do this once)
 
-
     ```sh
     git clone https://github.com/unicode-org/icu.git
     pushd icu/icu4c/source
@@ -57,7 +56,7 @@ License & terms of use: http://www.unicode.org/copyright.html
     popd
     ```
 
-1. Create a minimal C++ file here (in the $$ICU_SANDBOX folder).
+1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder).
 Let's call it `hello_mf2.cpp`
     ```cpp
     // hello_mf2.cpp
@@ -108,10 +107,185 @@ Let's call it `hello_mf2.cpp`
     # end
     ```
 
-## C++ Windows
+1. This will output
+    ```
+    Hello John, today is January 13, 2025!
+    ```
+
+## C++ Windows with Visual Studio
+
+### From command line
+
+Start the Visual Studio "x64 Native Tools Command Prompt for VS 20xx"
+
+1. Prepare a sandbox folder
+
+    ```cmd
+    set ICU_SANDBOX=%USERPROFILE%\hello_icu_mf2
+    md %ICU_SANDBOX%
+    cd %ICU_SANDBOX%
+    ```
+
+1. Build ICU4C (you only need to do this once):
+
+    ```cmd
+    git clone https://github.com/unicode-org/icu.git
+    
+    cd icu\icu4c
+    msbuild source/allinone/allinone.sln /p:Configuration=Release /p:Platform=x64 /p:SkipUWP=true
+    cd ..\..
+    
+    set DESTDIR=%ICU_SANDBOX%\icu_release
+    rd /q/s %DESTDIR%
+    md %DESTDIR%
+    xcopy icu\icu4c\include %DESTDIR%\include /E /V /I /Q /Y
+    xcopy icu\icu4c\bin64   %DESTDIR%\bin64   /E /V /I /Q /Y
+    xcopy icu\icu4c\lib64   %DESTDIR%\lib64   /E /V /I /Q /Y
+    ```
+
+1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder).
+Let's call it `hello_mf2.cpp`.
+The content is listed above (see the Linux section).
+
+1. Build your application and run it
+
+    ```sh
+    g++ hello_mf2.cpp -I$DESTDIR/usr/local/include -std=c++17 -L$DESTDIR/usr/local/lib -licuuc -licudata -licui18n
+    
+    # if macOS
+    DYLD_LIBRARY_PATH=$DESTDIR/usr/local/lib ./a.out
+    # else if Linux
+    LD_LIBRARY_PATH=$DESTDIR/usr/local/lib ./a.out
+    # end
+    ```
+
+1. This will output
+    ```
+    Hello John, today is January 13, 2025!
+    ```
+
+### From Visual Studio (UI)
+
+1. Prepare a sandbox folder. Let's call it `hello_icu_mf2`.
+
+1. Build ICU4C (you only need to do this once)
+
+    * Clone the ICU repository from
+      <https://github.com/unicode-org/icu> to the `hello_icu_mf2` folder.
+      We will end up with the folder `hello_icu_mf2\icu`.
+
+        > :point_right: **Note**: You can also downloaded a pre-build artifact from [GitHub releases](https://github.com/unicode-org/icu/releases/tag/release-76-1). But in that case the 
+        MessageFormat 2 implementation will be behind the spec.
+
+    * Start Visual Studio.
+    * Select _"Open a project or solution"_
+    * Open the `allinone.sln` solution from the `hello_icu_mf2\icu\icu4c\source\allinone` folder.
+    * Select the "Build" -- "Configuration Manager" menu
+    * Change the active solution to "Release" and "x64" (or another architecture, but you will have to be consistent everywhere after this)
+    * Select the "Build" -- "Build solution" menu
+    * Select the "File" -- "Close solution" menu
+
+1. Create a minimal C++ project in the `hello_icu_mf2` folder. 
+Let's call it `hello_mf2`.
+
+    * You are still in Visual Studio. Select "Create a new project"
+    * Choose the project template "Console App" (tagged `C++`, `Windows`, `Console`)
+    * Click the "Next" button
+    * Set the "Project name" to "HelloMF2" and set the "Location" to the `hello_icu_mf2` folder. \
+    * Click "Create"
+    * A project will be created in the `hello_icu_mf2\HelloMF2` folder.
+
+1. Create a macro pointing to the ICU folder with the files we built.
+
+    * Select the "View" -- "Property Manager" menu
+    * In the new dialog select the root of the tree ("HelloMF2", not the Debug / Release leafs)
+    * Right click and select "Add New Project Property Sheet..."
+    * Call it `IcuPropertySheet.props` and click "Add"
+    * Open (double-click) `IcuPropertySheet` in any of the "leafs" of the tree on the left.
+      For example in `HelloMF2 / Release | 64 / IcuPropertySheet`
+    * Select "User Macros" under "Common Properties" (left tree)
+    * Click the "Add Macro" button
+    * Name it `IcuDistro` and set the "Value" to the `..\icu\icu4c` folder.
+      If the test project we created is not in `hello_icu_mf2`, next to `icu`, then you can use a full path to the ICU folder where you just did a built.
+      You can also point it to one you downloaded (from the GitHub releases, see above).
+    * Click the "OK" button
+
+1. Configure the project
+
+    * Select `HelloMF2` in the left-side tree
+    * Select the "Project" -- "Properties" menu
+    * For "Configuration" (top-left) select "All Configurations"
+    * For "Platform" (top-right) select "All Platforms"
+    * In the left side tree:
+        * "C/C++" / "General" set "Additional Include Directories" to
+          `$(IcuDistro)\include;%(AdditionalIncludeDirectories)`
+        * "C/C++" / "Language" set "C++ Language Standard" to
+          `ISO C++17 Standard (/std:c++17)`
+        * "Linker" / "General" set "Additional Dependencies" to \
+          `icudt.lib;icuin.lib;icuuc.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)`
+        * "Linker" / "General" set "Additional Library Directories" to \
+          `$(IcuDistro)/lib64;%(AdditionalLibraryDirectories)`
+        * "Debugging" set "Environment" to \
+          `PATH=$(IcuDistro)/bin64;%PATH%`
+    * For "Platform" (top-right) select "Win32"
+    * In the left side tree remove the `"64"` in two of the settings:
+        * "Linker" / "General" set "Additional Library Directories" to \
+          `$(IcuDistro)/lib;%(AdditionalLibraryDirectories)`
+        * "Debugging" set "Environment" to \
+          `PATH=$(IcuDistro)/bin;%PATH%`
+
+1. Update the default source file to use some ICU functionality
+
+    * Select the "View" -- "Solution Explorer" menu
+    * In the left-side tree "HelloMF2" / "Source Files" open `HelloMF2.cpp`
+    * Copy-paste the code from the `hello_mf2.cpp` (in this document) and paste it in
+      `HelloMF2.cpp`, replacing all the existing content (select all + paste).
+
+1. At this point you should be able to build and run the application, debug it, etc.
+
+1. When run, it will output
+    ```
+    "Hello John, today is January 13, 2025!"
+    ```
+
+### From Visual Studio with minimal work
+
+These instructions will use a release version of ICU4C (tested with 76.1) and
+a "Hello ICU world" project already created.
+They provide minimal effort that only requires downloading and opening in Visual Studio
+before using.
+
+> :point_right: **Note**: the MessageFormat 2 implementation in a previously release version may be behind the spec in the first few releases of ICU after the MF2.0 spec was declared 1.0 in CLDR 46.1,
+which occurred between ICU 76 and ICU 77. The difference between latest MF2.0 and the spec version supported in ICU may be minimal.
 
 
-WORK in PROGRESS
+1. Download the Visual Studio artifacts from the
+[official release of ICU 76.1](https://github.com/unicode-org/icu/releases/tag/release-76-1):
+    * [icu4c-76_1-Win32-MSVC2022.zip](https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-Win32-MSVC2022.zip)
+    * [icu4c-76_1-Win64-MSVC2022.zip](https://github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-Win64-MSVC2022.zip)
+
+1. Download the "Hello ICU / MF2 World" project [HelloMF2.zip](HelloMF2.zip).
+
+1. Unzip the files you just downloaded and merge the content of the two ICU folders.
+The "hello world" project to be a sibling to the icu folder.
+
+1. The folder tree structure should look like this
+    
+    ```
+    someFolderOfYourChoice\
+      +- HelloMF2\
+      | \- HelloMF2\
+      \- icu\
+        \- icu4c\
+          +- bin\
+          +- bin64\
+          +- include\
+          | \- unicode\
+          +- lib\
+          \- lib64\
+    ```
+
+1. Open the `HelloMF2.sln` solution in Visual Studio and you are ready to go.
 
 
 ## Java
