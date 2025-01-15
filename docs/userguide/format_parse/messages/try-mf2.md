@@ -56,8 +56,7 @@ License & terms of use: http://www.unicode.org/copyright.html
     popd
     ```
 
-1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder).
-Let's call it `hello_mf2.cpp`
+1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder). Call it `hello_mf2.cpp`
     ```cpp
     // hello_mf2.cpp
     #include <iostream>
@@ -107,7 +106,7 @@ Let's call it `hello_mf2.cpp`
     # end
     ```
 
-1. This will output
+    This will output
     ```
     Hello John, today is January 28, 2025!
     ```
@@ -143,39 +142,35 @@ Start the Visual Studio "x64 Native Tools Command Prompt for VS 20xx"
     xcopy icu\icu4c\lib64   %DESTDIR%\lib64   /E /V /I /Q /Y
     ```
 
-1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder).
-Let's call it `hello_mf2.cpp`.
+1. Create a minimal C++ file here (we are in the `$ICU_SANDBOX` folder). Call it `hello_mf2.cpp`.
 The content is listed above (see the Linux section).
 
 1. Build your application and run it
 
-    ```sh
-    g++ hello_mf2.cpp -I$DESTDIR/usr/local/include -std=c++17 -L$DESTDIR/usr/local/lib -licuuc -licudata -licui18n
+    ```cmd
+    set DESTDIR=%ICU_SANDBOX%\icu_release
+    cl /std:c++17 /EHsc /I %DESTDIR%\include %DESTDIR%/lib64/*.lib hello_mf2.cpp
     
-    # if macOS
-    DYLD_LIBRARY_PATH=$DESTDIR/usr/local/lib ./a.out
-    # else if Linux
-    LD_LIBRARY_PATH=$DESTDIR/usr/local/lib ./a.out
-    # end
+    rem set PATH only once, not every time
+    set PATH=%DESTDIR%\bin64;%PATH%
+    
+    .\hello_mf2.exe
     ```
 
-1. This will output
+    This will output
     ```
     Hello John, today is January 28, 2025!
     ```
 
 ### From Visual Studio (UI)
 
-1. Prepare a sandbox folder. Let's call it `hello_icu_mf2`.
+1. Prepare a sandbox folder. Call it `hello_icu_mf2`.
 
 1. Build ICU4C (you only need to do this once)
 
     * Clone the ICU repository from
       <https://github.com/unicode-org/icu> to the `hello_icu_mf2` folder.
       We will end up with the folder `hello_icu_mf2\icu`.
-
-        > :point_right: **Note**: You can also downloaded a pre-build artifact from [GitHub releases](https://github.com/unicode-org/icu/releases/tag/release-76-1). But in that case the 
-        MessageFormat 2 implementation will be behind the spec.
 
     * Start Visual Studio.
     * Select _"Open a project or solution"_
@@ -185,8 +180,7 @@ The content is listed above (see the Linux section).
     * Select the "Build" -- "Build solution" menu
     * Select the "File" -- "Close solution" menu
 
-1. Create a minimal C++ project in the `hello_icu_mf2` folder. 
-Let's call it `hello_mf2`.
+1. Create a minimal C++ project in the `hello_icu_mf2` folder. Call it `hello_mf2`.
 
     * You are still in Visual Studio. Select "Create a new project"
     * Choose the project template "Console App" (tagged `C++`, `Windows`, `Console`)
@@ -228,7 +222,7 @@ Let's call it `hello_mf2`.
         * "Debugging" set "Environment" to \
           `PATH=$(IcuDistro)/bin64;%PATH%`
     * For "Platform" (top-right) select "Win32"
-    * In the left side tree remove the `"64"` in two of the settings:
+    * In the left side tree remove the `64` in two of the settings:
         * "Linker" / "General" set "Additional Library Directories" to \
           `$(IcuDistro)/lib;%(AdditionalLibraryDirectories)`
         * "Debugging" set "Environment" to \
@@ -245,7 +239,7 @@ Let's call it `hello_mf2`.
 
 1. When run, it will output
     ```
-    "Hello John, today is January 28, 2025!"
+    Hello John, today is January 28, 2025!
     ```
 
 ### From Visual Studio with minimal work
@@ -308,7 +302,7 @@ know how to create a project in your favorite IDE, and so on.
     cd hello_icu_mf2
     ```
 
-1. Edit the `pom.xml` file
+1. Modify the `pom.xml` file
 
     1. The project created as above uses the Java 17 version.
     If you are using a lower version then change `<maven.compiler.release>` property to whatever Java version you are using.
@@ -317,7 +311,7 @@ know how to create a project in your favorite IDE, and so on.
         mvn versions:set-property -Dproperty=maven.compiler.release -DnewVersion=11
         ```
 
-    1. Add this to `<dependencies>`
+    1. Edit the file and add this to `<dependencies>`
         ```xml
         <dependency>
           <groupId>com.ibm.icu</groupId>
@@ -327,7 +321,7 @@ know how to create a project in your favorite IDE, and so on.
         ```
         **Warning:** make sure it is done in `dependencies`, not in `dependencyManagement / dependencies`
 
-1. Change the `src/test/java/com/mycompany/app/AppTest.java` file
+1. Edit the `src/test/java/com/mycompany/app/AppTest.java` file
     1. Add a new test method
         ```java
         @Test
@@ -360,7 +354,7 @@ know how to create a project in your favorite IDE, and so on.
     mvn package -q
     ```
 
-1. This will output
+    This will output the following in the the tests' console output
     ```
     Hello John, today is January 28, 2025!
     ```
