@@ -21,7 +21,6 @@ License & terms of use: http://www.unicode.org/copyright.html
 
 ---
 
-# Hello `MessageFormat2`
 
 
 
@@ -30,6 +29,7 @@ License & terms of use: http://www.unicode.org/copyright.html
 
 
 1. Prepare a sandbox folder
+
     ```sh
     export ICU_SANDBOX=~/hello_icu_mf2
     mkdir $ICU_SANDBOX
@@ -71,28 +71,28 @@ Let's call it `hello_mf2.cpp`
     using namespace icu;
 
     int main() {
-       ErrorCode errorCode;
-       UParseError parseError;
-
-       icu::Calendar* cal(Calendar::createInstance(errorCode));
-       cal->set(2025, Calendar::JANUARY, 28);
-       UDate date = cal->getTime(errorCode);
-
-       message2::MessageFormatter::Builder builder(errorCode);
-       message2::MessageFormatter mf = builder
-           .setPattern("Hello {$user}, today is {$now :date style=long}!", parseError, errorCode)
-           .setLocale(Locale("en_US"))
-           .build(errorCode);
-
-       std::map<UnicodeString, message2::Formattable> argsBuilder;
-       argsBuilder["user"] = message2::Formattable("John");
-       argsBuilder["now"] = message2::Formattable::forDate(date);
-       message2::MessageArguments arguments(argsBuilder, errorCode);
-
-       icu::UnicodeString result = mf.formatToString(arguments, errorCode);
-       std::string strResult;
-       result.toUTF8String(strResult);
-       std::cout << strResult << std::endl;
+        ErrorCode errorCode;
+        UParseError parseError;
+ 
+        icu::Calendar* cal(Calendar::createInstance(errorCode));
+        cal->set(2025, Calendar::JANUARY, 28);
+        UDate date = cal->getTime(errorCode);
+ 
+        message2::MessageFormatter::Builder builder(errorCode);
+        message2::MessageFormatter mf = builder
+                .setPattern("Hello {$user}, today is {$now :date style=long}!", parseError, errorCode)
+                .setLocale(Locale("en_US"))
+                .build(errorCode);
+ 
+        std::map<UnicodeString, message2::Formattable> argsBuilder;
+        argsBuilder["user"] = message2::Formattable("John");
+        argsBuilder["now"] = message2::Formattable::forDate(date);
+        message2::MessageArguments arguments(argsBuilder, errorCode);
+ 
+        icu::UnicodeString result = mf.formatToString(arguments, errorCode);
+        std::string strResult;
+        result.toUTF8String(strResult);
+        std::cout << strResult << std::endl;
     }
     ```
 
@@ -332,18 +332,18 @@ know how to create a project in your favorite IDE, and so on.
         ```java
         @Test
         public void testMessageFormat2() {
-           MessageFormatter mf2 = MessageFormatter.builder()
-               .setLocale(Locale.US)
-               .setPattern("Hello {$user}, today is {$now :date style=long}!")
-               .build();
-           Calendar cal = Calendar.getInstance();
-           cal.set(2025, 0, 28);
-
-
-           Map<String, Object> arguments = new HashMap<>();
-           arguments.put("user", "John");
-           arguments.put("now", cal);
-           System.out.println(mf2.formatToString(arguments));
+            MessageFormatter mf2 = MessageFormatter.builder()
+                    .setLocale(Locale.US)
+                    .setPattern("Hello {$user}, today is {$now :date style=long}!")
+                    .build();
+            Calendar cal = Calendar.getInstance();
+            cal.set(2025, 0, 28);
+ 
+ 
+            Map<String, Object> arguments = new HashMap<>();
+            arguments.put("user", "John");
+            arguments.put("now", cal);
+            System.out.println(mf2.formatToString(arguments));
         }
         ```
     1. Add imports
