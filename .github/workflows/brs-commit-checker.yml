@@ -57,28 +57,10 @@ jobs:
             - name: Install pipenv
               run: |
                 sudo pip3 install pipenv
-              # Use add-mask to obfuscate secret values in the jobs
-              # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions
-              # https://stackoverflow.com/a/71698374/2077918
-            - name: Store Jira credentials if provided
-              run: |
-                JIRA_USERNAME=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.jira_user_email' )
-                echo "::add-mask::${JIRA_USERNAME}"
-                JIRA_PASSWORD=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.jira_user_api_token' )
-                echo "::add-mask::${JIRA_PASSWORD}"
-                if [ ! -z "${JIRA_USERNAME}" ] && [ ! -z "${JIRA_PASSWORD}" ]
-                then
-                    echo "::add-mask::${JIRA_USERNAME}"
-                    echo "::add-mask::${JIRA_PASSWORD}"
-                    pushd ./tools/commit-checker
-                    echo "appending username and password to .env file"
-                    echo "JIRA_USERNAME=${JIRA_USERNAME}" >> ./.env
-                    echo "JIRA_PASSWORD=${JIRA_PASSWORD}" >> ./.env
-                    popd
-                else
-                    echo "Either jira_user_email or jira_user_api_token is empty. Not storing credentials file to enable access to sensitive tickets."
-                fi
             - name: Generate report
+              env:
+                JIRA_USERNAME: ${{ secrets.COMMIT_CHECKER_JIRA_EMAIL }}
+                JIRA_PASSWORD: ${{ secrets.COMMIT_CHECKER_JIRA_TOKEN }}
               run: |
                 pushd ./tools/commit-checker
                 pipenv install
