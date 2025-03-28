@@ -70,46 +70,6 @@ public class SegmentsImplUtils {
     return StreamSupport.stream(iterable.spliterator(), false);
   }
 
-  public static Segment segmentAfterIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
-    breakIter.setText(sourceSequence);
-
-    int start = breakIter.following(i);
-    if (start == BreakIterator.DONE) {
-      return null;
-    }
-
-    int limit = breakIter.next();
-    if (limit == BreakIterator.DONE) {
-      return null;
-    }
-
-    return new Segment(start, limit, sourceSequence);
-  }
-
-  // TODO(ICU-22987): Remove unused segmentBeforeIndex / segmentAfterIndex after
-  //  ensuring fix for preceding(int) to return `DONE` for negative inputs
-  public static Segment segmentBeforeIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
-    breakIter.setText(sourceSequence);
-
-
-    // TODO(ICU-22987): Remove after fixing preceding(int) to return `DONE` for negative inputs
-    if (i < 0) {
-      // return the same thing as we would if preceding() returned DONE
-      return null;
-    }
-
-    int start = breakIter.preceding(i);
-    int limit = breakIter.previous();
-
-    if (start == BreakIterator.DONE || limit == BreakIterator.DONE) {
-      return null;
-    }
-
-    assert limit <= start;
-
-    return new Segment(limit, start, sourceSequence);
-  }
-
   public static Function<Segment, CharSequence> segmentToSequenceFn(CharSequence sourceSequence) {
     return segment -> sourceSequence.subSequence(segment.start, segment.limit);
   }
