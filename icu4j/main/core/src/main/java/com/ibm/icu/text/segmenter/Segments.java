@@ -231,8 +231,8 @@ public interface Segments {
     public int characteristics() {
       return Spliterator.DISTINCT  // BreakIterator always advances
           | Spliterator.IMMUTABLE // design of Segmenter API is to provide an immutable view of
-          // segmentation by preventing the input string from mutating
-          // in the underlying BreakIterator
+                                  // segmentation by preventing the input string from mutating
+                                  // in the underlying BreakIterator
           | Spliterator.NONNULL   // primtive int is non-null
           | Spliterator.ORDERED   // BreakIterator always advances, and in a single direction
           ;
