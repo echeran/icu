@@ -11,12 +11,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-// Global TODO: make initialization of breakIterator a prerequisite
 public class SegmentsImplUtils {
 
   public static boolean isBoundary(BreakIterator breakIter, CharSequence source, int i) {
-    breakIter.setText(source);
-
     return breakIter.isBoundary(i);
   }
 
@@ -25,9 +22,6 @@ public class SegmentsImplUtils {
   }
 
   public static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
-    // TODO: make initialization of breakIterator a prerequisite
-    breakIter.setText(sourceSequence);
-
     int start;
     int limit;
 
@@ -86,9 +80,6 @@ public class SegmentsImplUtils {
   }
 
   public static IntStream boundariesBackFrom(BreakIterator breakIter, CharSequence sourceSequence, int i) {
-    // TODO: make initialization of breakIterator a prerequisite
-    breakIter.setText(sourceSequence);
-
     int sourceLength = sourceSequence.length();
     if (i < 0) {
       return IntStream.empty();

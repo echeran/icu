@@ -60,6 +60,8 @@ public class RuleBasedSegmenter implements Segmenter {
       this.source = source;
       this.segmenter = segmenter;
       this.breakIter = this.segmenter.getNewBreakIterator();
+
+      this.breakIter.setText(source);
     }
 
     @Override
