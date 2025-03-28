@@ -1,10 +1,10 @@
 package com.ibm.icu.text.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
-import com.ibm.icu.text.segmenter.Segments.BoundaryIterable;
 import com.ibm.icu.text.segmenter.Segments.IterationDirection;
 import com.ibm.icu.text.segmenter.Segments.Segment;
 import com.ibm.icu.text.segmenter.Segments.SegmentIterable;
+import com.ibm.icu.text.segmenter.Segments.SegmentSpliterator;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -86,6 +86,8 @@ public class SegmentsImplUtils {
     return new Segment(start, limit, sourceSequence);
   }
 
+  // TODO(ICU-22987): Remove unused segmentBeforeIndex / segmentAfterIndex after
+  //  ensuring fix for preceding(int) to return `DONE` for negative inputs
   public static Segment segmentBeforeIndex(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     breakIter.setText(sourceSequence);
 
@@ -120,10 +122,7 @@ public class SegmentsImplUtils {
     breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    // TODO: optimize IntStream creation to avoid autoboxing
-    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.FORWARDS, i);
-    Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
-    return boundariesAsIntegers.mapToInt(Integer::intValue);
+    return StreamSupport.intStream(new SegmentSpliterator(breakIter, IterationDirection.FORWARDS, i), false);
   }
 
   public static IntStream boundariesBackFrom(BreakIterator breakIter, CharSequence sourceSequence, int i) {
@@ -139,10 +138,7 @@ public class SegmentsImplUtils {
     int backFromIdx = isOnBoundary ? i + 1 : i;
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    // TODO: optimize IntStream creation to avoid autoboxing
-    BoundaryIterable iterable = new BoundaryIterable(breakIter, IterationDirection.BACKWARDS, backFromIdx);
-    Stream<Integer> boundariesAsIntegers =  StreamSupport.stream(iterable.spliterator(), false);
-    return boundariesAsIntegers.mapToInt(Integer::intValue);
+    return StreamSupport.intStream(new SegmentSpliterator(breakIter, IterationDirection.BACKWARDS, backFromIdx), false);
   }
 
 }
