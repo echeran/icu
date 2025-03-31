@@ -54,6 +54,8 @@ public interface Segments {
   //   2) make Segment an interface (getSource, getStart, getLimit, getRuleStatus, newSegment), and
   //      maybe an abstract class that implements the interface, maybe with a default method impl
   //      for convenience for getting (allocating & returning) the subsequence
+  //   3) do not link the multiple Segment objects and the single Segments object via a field, and
+  //      instead provide a function on Segments that can convert each Segment into a CharSequence
   class Segment {
     public final int start;
     public final int limit;
