@@ -83,7 +83,7 @@ public class LocalizedSegmenter implements Segmenter {
 
   }
 
-  public class LocalizedSegments implements Segments {
+  class LocalizedSegments implements Segments {
 
     private CharSequence source;
 

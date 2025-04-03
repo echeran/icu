@@ -49,7 +49,7 @@ public class RuleBasedSegmenter implements Segmenter {
     }
   }
 
-  public static class RuleBasedSegments implements Segments {
+  static class RuleBasedSegments implements Segments {
     private CharSequence source;
 
     private RuleBasedSegmenter segmenter;
