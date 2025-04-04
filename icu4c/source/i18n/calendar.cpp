@@ -1599,11 +1599,13 @@ void Calendar::computeWeekFields(UErrorCode &ec) {
         // to handle the case in which we are the first week of the
         // next year.
 
-        int32_t prevDoy = dayOfYear + handleGetYearLength(eyear - 1);
+        int32_t prevDoy = dayOfYear + handleGetYearLength(eyear - 1, ec);
+        if(U_FAILURE(ec)) return;
         woy = weekNumber(prevDoy, dayOfWeek);
         yearOfWeekOfYear--;
     } else {
-        int32_t lastDoy = handleGetYearLength(eyear);
+        int32_t lastDoy = handleGetYearLength(eyear, ec);
+        if(U_FAILURE(ec)) return;
         // Fast check: For it to be week 1 of the next year, the DOY
         // must be on or after L-5, where L is yearLength(), then it
         // cannot possibly be week 1 of the next year:
@@ -2906,7 +2908,7 @@ void Calendar::validateField(UCalendarDateFields field, UErrorCode &status) {
         if (U_FAILURE(status)) {
            return;
         }
-        validateField(field, 1, handleGetYearLength(y), status);
+        validateField(field, 1, handleGetYearLength(y, status), status);
         break;
     case UCAL_DAY_OF_WEEK_IN_MONTH:
         if (internalGet(field) == 0) {
@@ -3804,16 +3806,20 @@ int32_t Calendar::handleGetExtendedYearFromWeekFields(int32_t yearWoy, int32_t w
 
 int32_t Calendar::handleGetMonthLength(int32_t extendedYear, int32_t month, UErrorCode& status) const
 {
-    return handleComputeMonthStart(extendedYear, month+1, true, status) -
+    int32_t nextMonth;
+    if (uprv_add32_overflow(month, 1, &nextMonth)) {
+        status = U_ILLEGAL_ARGUMENT_ERROR;
+        return 0;
+    }
+    return handleComputeMonthStart(extendedYear, nextMonth, true, status) -
         handleComputeMonthStart(extendedYear, month, true, status);
 }
 
-int32_t Calendar::handleGetYearLength(int32_t eyear) const
+int32_t Calendar::handleGetYearLength(int32_t eyear, UErrorCode& status) const
 {
-    UErrorCode status = U_ZERO_ERROR;
     int32_t result = handleComputeMonthStart(eyear+1, 0, false, status) -
         handleComputeMonthStart(eyear, 0, false, status);
-    U_ASSERT(U_SUCCESS(status));
+    if (U_FAILURE(status)) return 0;
     return result;
 }
 
@@ -3852,7 +3858,7 @@ Calendar::getActualMaximum(UCalendarDateFields field, UErrorCode& status) const
             }
             cal->setLenient(true);
             cal->prepareGetActual(field,false,status);
-            result = handleGetYearLength(cal->get(UCAL_EXTENDED_YEAR, status));
+            result = handleGetYearLength(cal->get(UCAL_EXTENDED_YEAR, status), status);
             delete cal;
         }
         break;
@@ -4245,17 +4251,20 @@ int32_t Calendar::internalGetMonth(UErrorCode& status) const {
     if (U_FAILURE(status)) {
         return 0;
     }
-    if (resolveFields(kMonthPrecedence) == UCAL_MONTH) {
-        return internalGet(UCAL_MONTH, status);
+    if (resolveFields(kMonthPrecedence) == UCAL_ORDINAL_MONTH) {
+        return internalGet(UCAL_ORDINAL_MONTH);
     }
-    return internalGet(UCAL_ORDINAL_MONTH, status);
+    return internalGet(UCAL_MONTH);
 }
 
-int32_t Calendar::internalGetMonth(int32_t defaultValue, UErrorCode& /* status */) const {
-    if (resolveFields(kMonthPrecedence) == UCAL_MONTH) {
-        return internalGet(UCAL_MONTH, defaultValue);
+int32_t Calendar::internalGetMonth(int32_t defaultValue, UErrorCode& status) const {
+    if (U_FAILURE(status)) {
+        return 0;
     }
-    return internalGet(UCAL_ORDINAL_MONTH);
+    if (resolveFields(kMonthPrecedence) == UCAL_ORDINAL_MONTH) {
+        return internalGet(UCAL_ORDINAL_MONTH);
+    }
+    return internalGet(UCAL_MONTH, defaultValue);
 }
 
 BasicTimeZone*

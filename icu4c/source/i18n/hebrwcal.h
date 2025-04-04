@@ -40,7 +40,7 @@ U_NAMESPACE_BEGIN
  * solar year (approximately 365.24 days) is not an even multiple of
  * the lunar month (approximately 29.53 days) an extra "leap month" is
  * inserted in 7 out of every 19 years.  To make matters even more
- * interesting, the start of a year can be delayed by up to three days
+ * interesting, the start of a year can be delayed by up to two days
  * in order to prevent certain holidays from falling on the Sabbath and
  * to prevent certain illegal year lengths.  Finally, the lengths of certain
  * months can vary depending on the number of days in the year.
@@ -326,9 +326,9 @@ public:
      * calendar system.  Subclasses should override this method if they can
      * provide a more correct or more efficient implementation than the
      * default implementation in Calendar.
-     * @stable ICU 2.0
+     * @internal
      */
-    virtual int32_t handleGetYearLength(int32_t eyear) const override;
+    virtual int32_t handleGetYearLength(int32_t eyear, UErrorCode& status) const override;
 
     /**
      * Subclasses may override this method to compute several fields

@@ -204,7 +204,7 @@ The command requires a version number string that follows the typical Java / Mav
     This can be done by running the following command:
 
     ```
-    mvn versions:set-property -DnewVersion=74 -Dproperty=icu.major.version
+    mvn versions:set-property -DnewVersion=74 -Dproperty=icu.major.version -DgenerateBackupPoms=false
     ```
 
     This should happen at the same time and along with the work in the previous step for the version number
@@ -222,7 +222,7 @@ The command requires a version number string that follows the typical Java / Mav
 6. cldr-to-icu build tool has a dependency on the icu4j packages which needs to be updated in [`tools/cldr/cldr-to-icu/pom.xml`](https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/pom.xml). Please update it to match the version that was updated in `icu4j/pom.xml` in the steps above.
 
 ```xml
-version>74.0.1-SNAPSHOT</version>
+<version>74.0.1-SNAPSHOT</version>
 ```
 
 Since ICU 77 this moved to a property:

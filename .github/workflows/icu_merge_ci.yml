@@ -30,8 +30,8 @@ permissions:
 jobs:
 
   # Initialize the Maven artifact cache
-  # Uses Java 8 because Java version not deemed significant for downloading
-  # artifacts
+  # Using Java 11 because Java version is not deemed significant for downloading artifacts,
+  # and is the lowest version we support, so the cached artifacts can be used by any other version.
   #
   # This job is created according to the cache strategy of reuse from a single job:
   # https://github.com/actions/cache/blob/main/caching-strategies.md#make-cache-read-only--reuse-cache-from-centralized-job
@@ -45,14 +45,14 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Cache local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
       # Download all of the artifacts needed for the code and build plugins
       - name: Download all artifacts
         run: |
@@ -71,7 +71,7 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Lookup read-only cache of local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -144,7 +144,7 @@ jobs:
       - name: Create directory for lib files
         run: mkdir icu4c/source/perflib
       - name: Get ICU libs
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
         with:
           name: icu-perf-libs
           path: icu4c/source/lib
@@ -218,7 +218,7 @@ jobs:
       - name: Create directory for lib files
         run: mkdir icu4c/source/perflib
       - name: Get ICU libs
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
         with:
           name: icu-perf-libs
           path: icu4c/source/lib
@@ -283,7 +283,7 @@ jobs:
       - name: Create directory for lib files
         run: mkdir icu4c/source/perflib
       - name: Get ICU libs
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
         with:
           name: icu-perf-libs
           path: icu4c/source/lib
@@ -335,7 +335,7 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Lookup read-only cache of local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -345,20 +345,16 @@ jobs:
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
 
       - name: Build and run unicodesetperf test
         run: |
-          # This file needs to be restored  otherwise GHA cannot
-          # check-out the perfdata branch. Setting up this task with GH lfs
-          # modifies the file but the details of why and how are unknown.
-          git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
-          git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn ${SHARED_MVN_ARGS} verify -DskipITs -DskipTests;
+          mvn ${SHARED_MVN_ARGS} install -DskipITs -DskipTests;
           git status
           cd perf-tests;
           mkdir -p perf/results/j_unicodesetperf/${{ matrix.perf }};
+          mvn dependency:copy-dependencies
           java -cp ./target/*:./target/dependency/* com.ibm.icu.dev.test.perf.UnicodeSetPerf ${{ matrix.perf }} -a -t 2 -p 4 [:Lt:] | tee perf/results/j_unicodesetperf/${{ matrix.perf }}/output.txt
 
       - name: Store performance test results
@@ -397,7 +393,7 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Lookup read-only cache of local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -407,19 +403,15 @@ jobs:
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
 
       - name: Build and run ucharacterperf test
         run: |
-          # This file needs to be restored  otherwise GHA cannot
-          # check-out the perfdata branch. Setting up this task with GH lfs
-          # modifies the file but the details of why and how are unknown.
-          git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
-          git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn ${SHARED_MVN_ARGS} verify -DskipITs -DskipTests;
+          mvn ${SHARED_MVN_ARGS} install -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_ucharacterperf;
+          mvn dependency:copy-dependencies
           java -cp ./target/*:./target/dependency/* com.ibm.icu.dev.test.perf.UCharacterPerf -a -t 2 -p 4 0 ffff | tee perf/results/j_ucharacterperf/output.txt
 
       - name: Store performance test results
@@ -461,7 +453,7 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Lookup read-only cache of local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -471,23 +463,19 @@ jobs:
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
 
       - name: Build and run decimalformatperf
         run: |
-          # This file needs to be restored  otherwise GHA cannot
-          # check-out the perfdata branch. Setting up this task with GH lfs
-          # modifies the file but the details of why and how are unknown.
-          git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
-          git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn ${SHARED_MVN_ARGS} verify -DskipITs -DskipTests;
+          mvn ${SHARED_MVN_ARGS} install -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_decimalformatperf/${{ matrix.locale }}/${{ matrix.perf }};
           # Delay execution by random number of seconds. Spreading execution of multiple
           # tests over 180 secs. minimizes the possibility of push conflicts when storing
           # tests results in the data branch.
           sleep $(($RANDOM % 180));
+          mvn dependency:copy-dependencies
           java -cp ./target/*:./target/dependency/* com.ibm.icu.dev.test.perf.DecimalFormatPerformanceTest ${{ matrix.perf }} -a -t 2 -p 4 -L ${{ matrix.locale }} "#,###.##" "1.234,56" -r 1 | tee perf/results/j_decimalformatperf/${{ matrix.locale }}/${{ matrix.perf }}/output.txt
 
       - name: Store performance test results
@@ -530,7 +518,7 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Lookup read-only cache of local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -540,25 +528,21 @@ jobs:
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
 
       - name: Build and run normperf
         env:
           DATA_FILE_PATH: data/collation
         run: |
-          # This file needs to be restored  otherwise GHA cannot
-          # check-out the perfdata branch. Setting up this task with GH lfs
-          # modifies the file but the details of why and how are unknown.
-          git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
-          git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn ${SHARED_MVN_ARGS} verify -DskipITs -DskipTests;
+          mvn ${SHARED_MVN_ARGS} install -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_normperf/${{ matrix.source_text }}/${{ matrix.perf }};
           # Delay execution by random number of seconds. Spreading execution of multiple
           # tests over 180 secs. minimizes the possibility of push conflicts when storing
           # tests results in the data branch.
           sleep $(($RANDOM % 180));
+          mvn dependency:copy-dependencies
           java -cp ./target/*:./target/dependency/* com.ibm.icu.dev.test.perf.NormalizerPerformanceTest ${{ matrix.perf }} -a -t 2 -p 4 -f $DATA_FILE_PATH/${{ matrix.source_text }}.txt -e UTF-8 ${{ matrix.mode }} | tee perf/results/j_normperf/${{ matrix.source_text }}/${{ matrix.perf }}/output.txt
           cat perf/results/j_normperf/${{ matrix.source_text }}/${{ matrix.perf }}/output.txt
 
@@ -669,7 +653,7 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Lookup read-only cache of local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -679,26 +663,22 @@ jobs:
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
 
       - name: Build and run converterperf
         env:
           DATA_FILE_PATH: data/conversion
         run: |
-          # This file needs to be restored  otherwise GHA cannot
-          # check-out the perfdata branch. Setting up this task with GH lfs
-          # modifies the file but the details of why and how are unknown.
-          git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
-          git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2;
           cd icu4j;
-          mvn ${SHARED_MVN_ARGS} verify -DskipITs -DskipTests;
+          mvn ${SHARED_MVN_ARGS} install -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_converterperf/${{ matrix.source_text }}/${{ matrix.test_enc }}/${{ matrix.perf }};
           # Delay execution by random number of seconds. Spreading execution of multiple
           # tests over 180 secs. minimizes the possibility of push conflicts when storing
           # tests results in the data branch.
           sleep $(($RANDOM % 180));
-          java -cp ./target/*:./target/dependency/*:../main/charset/target/* com.ibm.icu.dev.test.perf.ConverterPerformanceTest ${{ matrix.perf }} -a -t 2 -p 4 -f $DATA_FILE_PATH/${{ matrix.source_text }}.txt -e UTF-8 -T ${{ matrix.test_enc }} | tee perf/results/j_converterperf/${{ matrix.source_text }}/${{ matrix.test_enc }}/${{ matrix.perf }}/output.txt
+          mvn dependency:copy-dependencies
+          java -cp ./target/*:./target/dependency/* com.ibm.icu.dev.test.perf.ConverterPerformanceTest ${{ matrix.perf }} -a -t 2 -p 4 -f $DATA_FILE_PATH/${{ matrix.source_text }}.txt -e UTF-8 -T ${{ matrix.test_enc }} | tee perf/results/j_converterperf/${{ matrix.source_text }}/${{ matrix.test_enc }}/${{ matrix.perf }}/output.txt
 
       - name: Store performance test results
         uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
@@ -752,7 +732,7 @@ jobs:
       - name: Checkout lfs objects
         run: git lfs pull
       - name: Lookup read-only cache of local Maven repository
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -762,7 +742,7 @@ jobs:
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '11'
 
       - name: Extract identifying digit and parameter.
         run: |
@@ -771,19 +751,15 @@ jobs:
           echo "DDIR=${ddir: -1}" >> $GITHUB_ENV
       - name: Build and run dateformatperf
         run: |
-          # This file needs to be restored  otherwise GHA cannot
-          # check-out the perfdata branch. Setting up this task with GH lfs
-          # modifies the file but the details of why and how are unknown.
-          git restore --staged tools/multi/proj/icu4cscan/old-xmls.tar.bz2
-          git restore tools/multi/proj/icu4cscan/old-xmls.tar.bz2
           cd icu4j;
-          mvn ${SHARED_MVN_ARGS} verify -DskipITs -DskipTests;
+          mvn ${SHARED_MVN_ARGS} install -DskipITs -DskipTests;
           cd perf-tests;
           mkdir -p perf/results/j_dateformatperf/${{ matrix.locale }}/${{ matrix.perf }}/${{ env.DDIR }};
           # Delay execution by random number of seconds. Spreading execution of multiple
           # tests over 180 secs. minimizes the possibility of push conflicts when storing
           # tests results in the data branch.
           sleep $(($RANDOM % 180));
+          mvn dependency:copy-dependencies
           java -cp ./target/*:./target/dependency/* com.ibm.icu.dev.test.perf.DateFormatPerformanceTest ${{ matrix.perf }} -a -t 2 -p 4 -L ${{ matrix.locale }} ${{ env.PARM }} -r 1 | tee perf/results/j_dateformatperf/${{ matrix.locale }}/${{ matrix.perf }}/${{ env.DDIR }}/output.txt
 
       - name: Store performance test results
