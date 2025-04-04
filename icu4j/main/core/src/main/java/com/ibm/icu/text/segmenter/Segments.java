@@ -135,12 +135,21 @@ public interface Segments {
     public final int start;
     public final int limit;
     public final int ruleStatus = 0;
-    public final CharSequence source;
+    private final CharSequence source;
 
     public Segment(int start, int limit, CharSequence source) {
       this.start = start;
       this.limit = limit;
       this.source = source;
+    }
+
+    /**
+     * Return the subsequence represented by this {@code Segment}
+     * @return a new {@code CharSequence} object that is the subsequence represented by this
+     * {@code Segment}.
+     */
+    public CharSequence getSubSequence() {
+      return source.subSequence(this.start, this.limit);
     }
   }
 
