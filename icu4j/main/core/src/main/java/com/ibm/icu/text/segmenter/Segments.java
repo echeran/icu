@@ -13,11 +13,11 @@ public interface Segments {
   Stream<CharSequence> subSequences();
 
   /**
-   * Return the segment that contains index {@code i}. Containment is inclusive of the start index
+   * Returns the segment that contains index {@code i}. Containment is inclusive of the start index
    * and exclusive of the limit index.
    *
-   * <p>Specifically, the containing segment is defined as the segment with start {@code s} and limit
-   * {@code  l} such that {@code  s ≤ i < l}.</p>
+   * <p>Specifically, the containing segment is defined as the segment with start {@code s} and
+   * limit {@code  l} such that {@code  s ≤ i < l}.</p>
    * @param i index in the input {@code CharSequence} to the {@code Segmenter}
    * @throws IllegalArgumentException if {@code i} is less than 0 or greater than the length of the
    *    input {@code CharSequence} to the {@code Segmenter}
@@ -26,7 +26,7 @@ public interface Segments {
   Segment segmentAt(int i);
 
   /**
-   * Return a {@code Stream} of all {@code Segment}s in the source sequence. Start with the first
+   * Returns a {@code Stream} of all {@code Segment}s in the source sequence. Start with the first
    * and iterate forwards until the end of the sequence.
    *
    * <p>This is equivalent to {@code segmentsFrom(0)}.</p>
@@ -35,7 +35,7 @@ public interface Segments {
   Stream<Segment> segments();
 
   /**
-   * Return a {@code Stream} of all {@code Segment}s in the source sequence where all segment limits
+   * Returns a {@code Stream} of all {@code Segment}s in the source sequence where all segment limits
    * {@code  l} satisfy {@code i < l}.  Iteration moves forwards.
    *
    * <p>This means that the first segment in the stream is the same
@@ -54,8 +54,8 @@ public interface Segments {
   Stream<Segment> segmentsFrom(int i);
 
   /**
-   * Return a {@code Stream} of all {@code Segment}s in the source sequence where all segment limits
-   * {@code  l} satisfy {@code l ≤ i}. Iteration moves backwards.
+   * Returns a {@code Stream} of all {@code Segment}s in the source sequence where all segment
+   * limits {@code  l} satisfy {@code l ≤ i}. Iteration moves backwards.
    *
    * <p>This means that the all segments in the stream come before the one that
    * is returned by {@code segmentAt(i)}. A segment is not considered to contain index {@code i} if
@@ -79,7 +79,7 @@ public interface Segments {
   boolean isBoundary(int i);
 
   /**
-   * Return all segmentation boundaries, starting from the beginning and moving forwards.
+   * Returns all segmentation boundaries, starting from the beginning and moving forwards.
    *
    * <p><b>Note:</b> {@code boundaries() != boundariesAfter(0)}.
    * This difference naturally results from the strict inequality condition in boundariesAfter,
@@ -90,14 +90,14 @@ public interface Segments {
   IntStream boundaries();
 
   /**
-   * Return all segmentation boundaries after the provided index.  Iteration moves forwards.
+   * Returns all segmentation boundaries after the provided index.  Iteration moves forwards.
    * @param i index in the input {@code CharSequence} to the {@code Segmenter}
    * @return An {@code IntStream} of all boundaries {@code b} such that {@code b > i}
    */
   IntStream boundariesAfter(int i);
 
   /**
-   * Return all segmentation boundaries on or before the provided index. Iteration moves backwards.
+   * Returns all segmentation boundaries on or before the provided index. Iteration moves backwards.
    *
    * <p>The phrase "back from" is used to indicate both that: 1) boundaries are "on or before" the
    * input index; 2) the direction of iteration is backwards (towards the beginning).
@@ -144,7 +144,7 @@ public interface Segments {
     }
 
     /**
-     * Return the subsequence represented by this {@code Segment}
+     * Returns the subsequence represented by this {@code Segment}
      * @return a new {@code CharSequence} object that is the subsequence represented by this
      * {@code Segment}.
      */
