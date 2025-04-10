@@ -137,7 +137,7 @@ public interface Segments {
     public final int ruleStatus = 0;
     private final CharSequence source;
 
-    public Segment(int start, int limit, CharSequence source) {
+    Segment(int start, int limit, CharSequence source) {
       this.start = start;
       this.limit = limit;
       this.source = source;
