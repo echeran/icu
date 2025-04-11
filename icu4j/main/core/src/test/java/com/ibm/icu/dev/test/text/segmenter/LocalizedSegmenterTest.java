@@ -11,6 +11,7 @@ import com.ibm.icu.text.segmenter.Segments;
 import com.ibm.icu.util.ULocale;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,5 +44,24 @@ public class LocalizedSegmenterTest extends CoreTestFmwk {
 
       assertThat(actWords, is(expWords));
     }
+  }
+
+  @Test
+  public void testJavaLocaleInLocalizedSegmenter() {
+    String source = "Die 21en Jahrh. ist die Beste.";
+    String localeTag = "de";
+    Locale locale = Locale.forLanguageTag(localeTag);
+    List<CharSequence> expWords = Arrays.asList("Die", " ", "21en", " ", "Jahrh", ".", " ", "ist", " ", "die", " ", "Beste", ".");
+
+    Segmenter wordSeg =
+        LocalizedSegmenter.builder()
+            .setLocale(locale)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
+    Segments segments = wordSeg.segment(source);
+
+    List<CharSequence> actWords = segments.subSequences().collect(Collectors.toList());
+
+    assertThat(actWords, is(expWords));
   }
 }
