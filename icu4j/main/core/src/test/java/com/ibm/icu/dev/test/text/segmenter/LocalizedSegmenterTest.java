@@ -25,7 +25,7 @@ public class LocalizedSegmenterTest extends CoreTestFmwk {
     String source = "Das 21ste Jahrh. ist das beste.";
 
     Object[][] casesData = {
-        {"de", Arrays.asList("Das", " ", "21ste", " ", "Jahrh", ".", " ", "ist", " ", "das", " ", "Beste", ".")},
+        {"de", Arrays.asList("Das", " ", "21ste", " ", "Jahrh", ".", " ", "ist", " ", "das", " ", "beste", ".")},
     };
 
     for (Object[] caseDatum : casesData) {
@@ -48,10 +48,10 @@ public class LocalizedSegmenterTest extends CoreTestFmwk {
 
   @Test
   public void testJavaLocaleInLocalizedSegmenter() {
-    String source = "Die 21en Jahrh. ist die Beste.";
+    String source = "Das 21ste Jahrh. ist das beste.";
     String localeTag = "de";
     Locale locale = Locale.forLanguageTag(localeTag);
-    List<CharSequence> expWords = Arrays.asList("Das", " ", "21ste", " ", "Jahrh", ".", " ", "ist", " ", "das", " ", "Beste", ".");
+    List<CharSequence> expWords = Arrays.asList("Das", " ", "21ste", " ", "Jahrh", ".", " ", "ist", " ", "das", " ", "beste", ".");
 
     Segmenter wordSeg =
         LocalizedSegmenter.builder()
