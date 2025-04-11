@@ -77,7 +77,7 @@ public class LocalizedSegmenter implements Segmenter {
       return this;
     }
 
-    public LocalizedSegmenter build() {
+    public Segmenter build() {
       return new LocalizedSegmenter(this.locale, this.segmentationType);
     }
 

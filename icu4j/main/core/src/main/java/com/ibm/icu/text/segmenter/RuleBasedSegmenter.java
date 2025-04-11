@@ -44,7 +44,7 @@ public class RuleBasedSegmenter implements Segmenter {
       return this;
     }
 
-    public RuleBasedSegmenter build() {
+    public Segmenter build() {
       return new RuleBasedSegmenter(this.rules);
     }
   }
