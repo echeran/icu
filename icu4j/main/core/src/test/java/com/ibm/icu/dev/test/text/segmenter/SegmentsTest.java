@@ -212,29 +212,6 @@ public class SegmentsTest extends CoreTestFmwk {
   }
 
   @Test
-  public void testSegmentToSequenceFn() {
-    Segmenter enWordSegmenter =
-        LocalizedSegmenter.builder()
-            .setLocale(ULocale.ENGLISH)
-            .setSegmentationType(LocalizedSegmenter.SegmentationType.WORD)
-            .build();
-
-    String source1 = "The quick brown fox jumped over the lazy dog.";
-    int startIdx = 10;
-
-    // Create new Segments for source1
-    Segments segments1 = enWordSegmenter.segment(source1);
-
-    List<CharSequence> exp1 = Arrays.asList(" ", "quick", " ", "The");
-
-    List<CharSequence> act1 = segments1.segmentsBefore(startIdx)
-        .map(segments1.segmentToSequenceFn())
-        .collect(Collectors.toList());
-
-    assertThat(act1, is(exp1));
-  }
-
-  @Test
   public void testBoundaries() {
     Segmenter enWordSegmenter =
         LocalizedSegmenter.builder()

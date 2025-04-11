@@ -100,11 +100,6 @@ public class LocalizedSegmenter implements Segmenter {
     }
 
     @Override
-    public Stream<CharSequence> subSequences() {
-      return SegmentsImplUtils.subSequences(this.breakIter, this.source);
-    }
-
-    @Override
     public Segment segmentAt(int i) {
       return SegmentsImplUtils.segmentAt(this.breakIter, this.source, i);
     }
@@ -127,11 +122,6 @@ public class LocalizedSegmenter implements Segmenter {
     @Override
     public Stream<Segment> segmentsBefore(int i) {
       return SegmentsImplUtils.segmentsBefore(this.breakIter, this.source, i);
-    }
-
-    @Override
-    public Function<Segment, CharSequence> segmentToSequenceFn() {
-      return SegmentsImplUtils.segmentToSequenceFn(this.source);
     }
 
     @Override

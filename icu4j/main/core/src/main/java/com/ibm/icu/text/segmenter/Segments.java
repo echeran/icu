@@ -9,8 +9,15 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public interface Segments {
-  
-  Stream<CharSequence> subSequences();
+
+  /**
+   * Returns a {@code Stream} of the {@code CharSequence}s for all of the segments in the source
+   * sequence. Start from the beginning of the sequence and iterate forwards until the end.
+   * @return a {@code Stream} of all {@code Segments} in the source sequence.
+   */
+  default Stream<CharSequence> subSequences() {
+    return segments().map(Segment::getSubSequence);
+  };
 
   /**
    * Returns the segment that contains index {@code i}. Containment is inclusive of the start index
@@ -65,8 +72,6 @@ public interface Segments {
    * @return a {@code Stream} of all {@code Segment}s before {@code i}
    */
   Stream<Segment> segmentsBefore(int i);
-
-  Function<Segment, CharSequence> segmentToSequenceFn();
 
   /**
    * Returns whether offset {@code i} is a segmentation boundary. Throws an exception when

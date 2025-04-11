@@ -17,10 +17,6 @@ public class SegmentsImplUtils {
     return breakIter.isBoundary(i);
   }
 
-  public static Stream<CharSequence> subSequences(BreakIterator breakIter, CharSequence sourceSequence) {
-    return segments(breakIter, sourceSequence).map(segmentToSequenceFn(sourceSequence));
-  }
-
   public static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     int start;
     int limit;
