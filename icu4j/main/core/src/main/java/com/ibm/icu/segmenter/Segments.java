@@ -1,9 +1,5 @@
-package com.ibm.icu.text.segmenter;
+package com.ibm.icu.segmenter;
 
-import com.ibm.icu.text.BreakIterator;
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 

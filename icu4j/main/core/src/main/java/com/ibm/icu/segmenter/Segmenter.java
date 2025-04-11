@@ -1,4 +1,4 @@
-package com.ibm.icu.text.segmenter;
+package com.ibm.icu.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
 

@@ -1,4 +1,4 @@
-package com.ibm.icu.text.segmenter;
+package com.ibm.icu.segmenter;
 
 /**
  * A simple struct to represent an element of the segmentation result. The {@code start} and

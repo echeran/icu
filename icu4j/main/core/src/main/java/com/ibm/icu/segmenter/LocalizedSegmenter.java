@@ -1,9 +1,8 @@
-package com.ibm.icu.text.segmenter;
+package com.ibm.icu.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.util.ULocale;
 import java.util.Locale;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 

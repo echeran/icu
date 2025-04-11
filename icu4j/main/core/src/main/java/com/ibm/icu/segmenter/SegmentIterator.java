@@ -1,7 +1,7 @@
-package com.ibm.icu.text.segmenter;
+package com.ibm.icu.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
-import com.ibm.icu.text.segmenter.Segments.IterationDirection;
+import com.ibm.icu.segmenter.Segments.IterationDirection;
 import java.util.Iterator;
 
 class SegmentIterator implements Iterator<Segment> {
