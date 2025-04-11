@@ -2,9 +2,6 @@ package com.ibm.icu.text.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.text.segmenter.Segments.IterationDirection;
-import com.ibm.icu.text.segmenter.Segments.Segment;
-import com.ibm.icu.text.segmenter.Segments.SegmentIterable;
-import com.ibm.icu.text.segmenter.Segments.SegmentSpliterator;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
