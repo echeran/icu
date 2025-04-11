@@ -12,6 +12,20 @@ import java.util.stream.Stream;
  * {@code Segment} object can also provide the subsequence of the original input that it
  * represents.
  *
+ * <p>Example:
+ *
+ * <blockquote><pre>
+ * Segmenter wordSeg =
+ *     LocalizedSegmenter.builder()
+ *         .setLocale(ULocale.forLanguageTag("de"))
+ *         .setSegmentationType(SegmentationType.WORD)
+ *         .build();
+ *
+ * Segments segments = wordSeg.segment("Das 21ste Jahrh. ist das beste.");
+ *
+ * List<CharSequence> words = segments.subSequences().collect(Collectors.toList());
+ * </pre></blockquote>
+ *
  * @author Elango Cheran
  * @see Segmenter
  * @see Segment
