@@ -7,12 +7,27 @@ import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * An interface that represents the segmentation results, including the APIs for iteration therein,
+ * that are yielded from passing an input {@code CharSequence} to a {@code Segmenter}.
+ *
+ * <p>The segmentation results can be provided either as the segmentation boundary indices
+ * ({code int}s) or as segments, which are represented by the {@link Segment} class. In turn, the
+ * {@code Segment} object can also provide the subsequence of the original input that it
+ * represents.
+ *
+ * @author Elango Cheran
+ * @see Segmenter
+ * @see Segment
+ * @draft ICU 78
+ */
 public interface Segments {
 
   /**
    * Returns a {@code Stream} of the {@code CharSequence}s for all of the segments in the source
    * sequence. Start from the beginning of the sequence and iterate forwards until the end.
    * @return a {@code Stream} of all {@code Segments} in the source sequence.
+   * @draft ICU 78
    */
   default Stream<CharSequence> subSequences() {
     return segments().map(Segment::getSubSequence);
@@ -28,6 +43,7 @@ public interface Segments {
    * @throws IllegalArgumentException if {@code i} is less than 0 or greater than the length of the
    *    input {@code CharSequence} to the {@code Segmenter}
    * @return A segment that either starts at or contains index {@code i}
+   * @draft ICU 78
    */
   Segment segmentAt(int i);
 
@@ -37,6 +53,7 @@ public interface Segments {
    *
    * <p>This is equivalent to {@code segmentsFrom(0)}.</p>
    * @return a {@code Stream} of all {@code Segments} in the source sequence.
+   * @draft ICU 78
    */
   Stream<Segment> segments();
 
@@ -56,6 +73,7 @@ public interface Segments {
    * all {@code Segment}s.</p>
    * @param i index in the input {@code CharSequence} to the {@code Segmenter}
    * @return a {@code Stream} of all {@code Segment}s at or after {@code i}
+   * @draft ICU 78
    */
   Stream<Segment> segmentsFrom(int i);
 
@@ -69,6 +87,7 @@ public interface Segments {
    * {@code l ≤ i}.</p>
    * @param i index in the input {@code CharSequence} to the {@code Segmenter}
    * @return a {@code Stream} of all {@code Segment}s before {@code i}
+   * @draft ICU 78
    */
   Stream<Segment> segmentsBefore(int i);
 
@@ -79,6 +98,7 @@ public interface Segments {
    * @throws IllegalArgumentException if {@code i} is less than 0 or greater than the length of the
    *     input {@code CharSequence} to the {@code Segmenter}
    * @return Returns whether offset {@code i} is a segmentation boundary.
+   * @draft ICU 78
    */
   boolean isBoundary(int i);
 
@@ -90,6 +110,7 @@ public interface Segments {
    * and the fact that 0 is the first boundary returned from the start of an input sequence.</p>
    * @return An {@code IntStream} of all segmentation boundaries, starting at the first
    * boundary with index 0, and moving forwards in the input sequence.
+   * @draft ICU 78
    */
   IntStream boundaries();
 
@@ -97,6 +118,7 @@ public interface Segments {
    * Returns all segmentation boundaries after the provided index.  Iteration moves forwards.
    * @param i index in the input {@code CharSequence} to the {@code Segmenter}
    * @return An {@code IntStream} of all boundaries {@code b} such that {@code b > i}
+   * @draft ICU 78
    */
   IntStream boundariesAfter(int i);
 
@@ -112,6 +134,7 @@ public interface Segments {
    *     space of all boundaries.</p>
    * @param i index in the input {@code CharSequence} to the {@code Segmenter}
    * @return An {@code IntStream} of all boundaries {@code b} such that {@code b ≤ i}
+   * @draft ICU 78
    */
   IntStream boundariesBackFrom(int i);
 
@@ -128,7 +151,14 @@ public interface Segments {
   // Inner classes for Segment, SegmentIterable, and SegmentIterator
   //
 
-  class Segment {
+  /**
+   * A simple struct to represent an element of the segmentation result. The {@code start} and
+   * {@code limit} indices correspond to {@code source}, the input {@code CharSequence} that was
+   * originally passed to the {@code Segmenter}. {@code start} and {@code limit} are inclusive and
+   * exclusive boundaries, respectively.
+   * @draft ICU 78
+   */
+  public class Segment {
     public final int start;
     public final int limit;
     public final int ruleStatus = 0;
@@ -144,6 +174,7 @@ public interface Segments {
      * Returns the subsequence represented by this {@code Segment}
      * @return a new {@code CharSequence} object that is the subsequence represented by this
      * {@code Segment}.
+     * @draft ICU 78
      */
     public CharSequence getSubSequence() {
       return source.subSequence(this.start, this.limit);

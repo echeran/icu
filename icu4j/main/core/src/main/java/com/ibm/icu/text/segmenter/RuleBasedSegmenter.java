@@ -2,19 +2,32 @@ package com.ibm.icu.text.segmenter;
 
 import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.text.RuleBasedBreakIterator;
+import java.io.InputStream;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Performs segmentation according to the provided rule string. The rule string must follow the
+ * same guidelines as for {@link RuleBasedBreakIterator#getInstanceFromCompiledRules(InputStream)}.
+ * @draft ICU 78
+ */
 public class RuleBasedSegmenter implements Segmenter {
 
   private String rules;
 
+  /**
+   * @draft ICU 78
+   */
   @Override
   public Segments segment(CharSequence s) {
     return new RuleBasedSegments(s, this);
   }
 
+  /**
+   * @return a builder for constructing {@code RuleBasedSegmenter}
+   * @draft ICU 78
+   */
   public static Builder builder() {
     return new Builder();
   }
@@ -33,17 +46,32 @@ public class RuleBasedSegmenter implements Segmenter {
     return new RuleBasedBreakIterator(this.rules);
   }
 
+  /**
+   * Builder for {@link RuleBasedSegmenter}
+   * @draft ICU 78
+   */
   public static class Builder {
 
     String rules;
 
     Builder() { }
 
+    /**
+     * Sets the rule string for segmentation.
+     * @param rules rule string.  The rule string must follow the same guidelines as for
+     *     {@link RuleBasedBreakIterator#getInstanceFromCompiledRules(InputStream)}.
+     * @draft ICU 78
+     */
     public Builder setRules(String rules) {
       this.rules = rules;
       return this;
     }
 
+    /**
+     * Builds the {@code Segmenter}
+     * @return the constructed {@code Segmenter} instance
+     * @draft ICU 78
+     */
     public Segmenter build() {
       return new RuleBasedSegmenter(this.rules);
     }

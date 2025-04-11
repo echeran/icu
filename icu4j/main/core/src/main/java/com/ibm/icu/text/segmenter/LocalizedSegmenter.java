@@ -7,6 +7,9 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Performs segmentation according to the rules defined for the locale.
+ */
 public class LocalizedSegmenter implements Segmenter {
 
   private ULocale locale;
@@ -18,6 +21,10 @@ public class LocalizedSegmenter implements Segmenter {
     return new LocalizedSegments(s, this);
   }
 
+  /**
+   * @return a builder for constructing {@code LocalizedSegmenter}
+   * @draft ICU 78
+   */
   public static Builder builder() {
     return new Builder();
   }
@@ -53,6 +60,12 @@ public class LocalizedSegmenter implements Segmenter {
     return breakIter;
   }
 
+  /**
+   * The type of segmentation to be performed. See the ICU User Guide page
+   * <a
+   * href="https://unicode-org.github.io/icu/userguide/boundaryanalysis/#four-types-of-breakiterator">Boundary Analysis</a>
+   * for further details.
+   */
   public enum SegmentationType {
     GRAPHEME_CLUSTER,
     WORD,
@@ -60,6 +73,10 @@ public class LocalizedSegmenter implements Segmenter {
     SENTENCE,
   }
 
+  /**
+   * Builder for {@link LocalizedSegmenter}
+   * @draft ICU 78
+   */
   public static class Builder {
 
     private ULocale locale = ULocale.ROOT;
@@ -68,21 +85,41 @@ public class LocalizedSegmenter implements Segmenter {
 
     Builder() { }
 
+    /**
+     * Set the locale for which segmentation rules will be loaded
+     * @param locale an ICU locale object
+     * @draft ICU 78
+     */
     public Builder setLocale(ULocale locale) {
       this.locale = locale;
       return this;
     }
 
+    /**
+     * Set the locale for which segmentation rules will be loaded
+     * @param locale a Java locale object
+     * @draft ICU 78
+     */
     public Builder setLocale(Locale locale) {
       this.locale = ULocale.forLocale(locale);
       return this;
     }
 
+    /**
+     * Set the segmentation type to be performed.
+     * @param segmentationType
+     * @draft ICU 78
+     */
     public Builder setSegmentationType(SegmentationType segmentationType) {
       this.segmentationType = segmentationType;
       return this;
     }
 
+    /**
+     * Builds the {@code Segmenter}
+     * @return the constructed {@code Segmenter} instance
+     * @draft ICU 78
+     */
     public Segmenter build() {
       return new LocalizedSegmenter(this.locale, this.segmentationType);
     }
