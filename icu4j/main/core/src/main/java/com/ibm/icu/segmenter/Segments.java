@@ -53,7 +53,7 @@ public interface Segments {
    * <p>Specifically, the containing segment is defined as the segment with start {@code s} and
    * limit {@code  l} such that {@code  s ≤ i < l}.</p>
    * @param i index in the input {@code CharSequence} to the {@code Segmenter}
-   * @throws IllegalArgumentException if {@code i} is less than 0 or greater than the length of the
+   * @throws IndexOutOfBoundsException if {@code i} is less than 0 or greater than the length of the
    *    input {@code CharSequence} to the {@code Segmenter}
    * @return A segment that either starts at or contains index {@code i}
    * @draft ICU 78

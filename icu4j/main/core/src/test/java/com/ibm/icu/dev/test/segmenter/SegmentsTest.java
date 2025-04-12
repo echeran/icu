@@ -346,8 +346,21 @@ public class SegmentsTest extends CoreTestFmwk {
         assertEquals(desc + ", limit", (long) expLimit.intValue(), (long) segment.limit);
       }
     }
+  }
 
+  @Test(expected = IndexOutOfBoundsException.class)
+  public void testSegmentAt_throwsIndexOutOfBoundsException() {
+    Segmenter enWordSegmenter =
+        LocalizedSegmenter.builder()
+            .setLocale(ULocale.ENGLISH)
+            .setSegmentationType(SegmentationType.WORD)
+            .build();
 
+    String source = "The quick brown fox jumped over the lazy dog.";
+
+    Segments segments = enWordSegmenter.segment(source);
+
+    segments.segmentAt(-1);
   }
 
 }

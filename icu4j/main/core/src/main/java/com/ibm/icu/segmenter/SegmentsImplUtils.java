@@ -18,25 +18,33 @@ class SegmentsImplUtils {
   }
 
   static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
-    int start;
-    int limit;
+    try {
+      int start;
+      int limit;
 
-    boolean isBoundary = breakIter.isBoundary(i);
+      boolean isBoundary = breakIter.isBoundary(i);
 
-    if (isBoundary) {
-      start = i;
-      limit = breakIter.next();
-    } else {
-      // BreakIterator::isBoundary(i) will advance forwards to the next boundary if the argument
-      // is not a boundary.
-      limit = breakIter.current();
-      start = breakIter.previous();
-    }
+      if (isBoundary) {
+        start = i;
+        limit = breakIter.next();
+      } else {
+        // BreakIterator::isBoundary(i) will advance forwards to the next boundary if the argument
+        // is not a boundary.
+        limit = breakIter.current();
+        start = breakIter.previous();
+      }
 
-    if (start != BreakIterator.DONE && limit != BreakIterator.DONE) {
-      return new Segment(start, limit, sourceSequence);
-    } else {
-      return null;
+      if (start != BreakIterator.DONE && limit != BreakIterator.DONE) {
+        return new Segment(start, limit, sourceSequence);
+      } else {
+        return null;
+      }
+    } catch (IllegalArgumentException iae) {
+      // Catch the error that is thrown by the implementation helper method inside BreakIterator
+      // (called checkOffset) whenever the index passed to `.isBoundary(int)` is out of bounds
+      // in the original string. Since IndexOutOfBoundsException is more appropriate, throw that
+      // instead.
+      throw new IndexOutOfBoundsException(i);
     }
   }
 
