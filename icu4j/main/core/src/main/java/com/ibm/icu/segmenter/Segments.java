@@ -29,7 +29,6 @@ import java.util.stream.Stream;
  * List<CharSequence> words = segments.subSequences().collect(Collectors.toList());
  * </pre></blockquote>
  *
- * @author Elango Cheran
  * @see Segmenter
  * @see Segment
  * @draft ICU 78

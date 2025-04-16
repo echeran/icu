@@ -24,7 +24,6 @@ import com.ibm.icu.text.BreakIterator;
  *
  * @see Segments
  * @see BreakIterator
- * @author Elango Cheran
  * @draft ICU 78
  */
 public interface Segmenter {
