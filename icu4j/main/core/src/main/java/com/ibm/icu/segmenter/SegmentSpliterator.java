@@ -12,8 +12,8 @@ class SegmentSpliterator implements Spliterator.OfInt {
 
   private final BoundaryIteratorOfInts iter;
 
-  SegmentSpliterator(BreakIterator breakIter, IterationDirection direction, int startIdx) {
-    iter = new BoundaryIteratorOfInts(breakIter, direction, startIdx);
+  SegmentSpliterator(BreakIterator breakIter, CharSequence sourceSequence, IterationDirection direction, int startIdx) {
+    iter = new BoundaryIteratorOfInts(breakIter, sourceSequence, direction, startIdx);
   }
 
   @Override
