@@ -25,12 +25,6 @@ class BoundaryIteratorOfInts {
     this.breakIter = breakIter;
     this.direction = direction;
 
-    // TODO(ICU-22987): Remove after fixing preceding(int) to return `DONE` for negative inputs
-    if (startIdx < 0 && direction == IterationDirection.BACKWARDS) {
-      this.currIdx = BreakIterator.DONE;
-      return;
-    }
-
     if (direction == IterationDirection.FORWARDS) {
       this.currIdx = breakIter.following(startIdx);
     } else {
@@ -42,7 +36,10 @@ class BoundaryIteratorOfInts {
       // API that includes the input index when it is itself a boundary, unlike the behavior of
       // BreakIterator.preceding().
       int sourceLength = sourceSequence.length();
-      boolean isOnBoundary = startIdx <= sourceLength && breakIter.isBoundary(startIdx);
+      boolean isOnBoundary =
+          0 <= startIdx
+          && startIdx <= sourceLength
+          && breakIter.isBoundary(startIdx);
       int backFromIdx = isOnBoundary ? startIdx + 1 : startIdx;
 
       this.currIdx = breakIter.preceding(backFromIdx);

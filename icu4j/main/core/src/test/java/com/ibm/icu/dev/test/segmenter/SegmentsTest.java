@@ -298,10 +298,6 @@ public class SegmentsTest extends CoreTestFmwk {
       int[] act = segments.boundariesBackFrom(startIdx).limit(TAKE_LIMIT).toArray();
 
       assertThat(desc, act, is(exp));
-
-      if (startIdx < 0) {
-        logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
-      }
     }
   }
 
@@ -332,10 +328,6 @@ public class SegmentsTest extends CoreTestFmwk {
       int startIdx = (int) caseDatum[1];
       Integer expStart = (Integer) caseDatum[2];
       Integer expLimit = (Integer) caseDatum[3];
-
-      if (startIdx < 0 ) {
-        logKnownIssue("ICU-22987", "BreakIterator.preceding(-2) should return DONE, not 0");
-      }
 
       if (expStart == null) {
         assertThat("Out of bounds range should be null", expLimit == null);
