@@ -1236,14 +1236,29 @@ Calendar::set(int32_t year, int32_t month, int32_t date, int32_t hour, int32_t m
 // -------------------------------------
 int32_t Calendar::getRelatedYear(UErrorCode &status) const
 {
-    return get(UCAL_EXTENDED_YEAR, status);
+    int32_t year = get(UCAL_EXTENDED_YEAR, status);
+    if (U_FAILURE(status)) {
+        return 0;
+    }
+    if (uprv_add32_overflow(year, getRelatedYearDifference(), &year)) {
+        status = U_ILLEGAL_ARGUMENT_ERROR;
+        return 0;
+    }
+    return year;
 }
 
 // -------------------------------------
 void Calendar::setRelatedYear(int32_t year)
 {
     // set extended year
+    if (uprv_add32_overflow(year, -getRelatedYearDifference(), &year)) {
+        return;
+    }
     set(UCAL_EXTENDED_YEAR, year);
+}
+
+int32_t Calendar::getRelatedYearDifference() const {
+    return 0;
 }
 
 // -------------------------------------
@@ -1529,9 +1544,15 @@ void Calendar::computeGregorianFields(int32_t julianDay, UErrorCode& ec) {
         ec = U_ILLEGAL_ARGUMENT_ERROR;
         return;
     }
+    int8_t dayOfWeek;
     Grego::dayToFields(julianDay, fGregorianYear, fGregorianMonth,
                        fGregorianDayOfMonth,
+                       dayOfWeek,
                        fGregorianDayOfYear, ec);
+    if (U_FAILURE(ec)) {
+        return;
+    }
+    internalSet(UCAL_DAY_OF_WEEK, dayOfWeek);
 }
 
 /**
@@ -1560,8 +1581,7 @@ void Calendar::computeWeekFields(UErrorCode &ec) {
     }
 
     // Compute day of week: JD 0 = Monday
-    int32_t dayOfWeek = julianDayToDayOfWeek(fFields[UCAL_JULIAN_DAY]);
-    internalSet(UCAL_DAY_OF_WEEK, dayOfWeek);
+    int32_t dayOfWeek = fFields[UCAL_DAY_OF_WEEK];
     int32_t firstDayOfWeek = getFirstDayOfWeek();
     // Calculate 1-based localized day of week
     int32_t dowLocal = dayOfWeek - firstDayOfWeek + 1;

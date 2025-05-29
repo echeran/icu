@@ -359,7 +359,6 @@ public class IndianCalendar extends Calendar {
     protected void handleComputeFields(int julianDay){
         double jdAtStartOfGregYear;
         int leapMonth, IndianYear, yday, IndianMonth, IndianDayOfMonth, mday;
-        computeGregorianFields(julianDay);
         int gregorianYear = getGregorianYear(); // Stores gregorian date corresponding to Julian day;
         IndianYear = gregorianYear - INDIAN_ERA_START;            // Year in Saka era
 
@@ -499,7 +498,18 @@ public class IndianCalendar extends Calendar {
 
        return jd;
     }
-    
+
+    private static final int INDIAN_CALENDAR_RELATED_YEAR_DIFFERENCE = 79;
+
+    /**
+     * @internal
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    protected final int getRelatedYearDifference() {
+        return INDIAN_CALENDAR_RELATED_YEAR_DIFFERENCE;
+    }
+
     /*
      * The following function is not needed for basic calendar functioning.
      * This routine converts a gregorian date to the corresponding Julian date"

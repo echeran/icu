@@ -698,7 +698,7 @@ fi{
                         "la",
                     }
                     wide{
-                        "sunnuntai",
+                        "sunnuntaina",
                         "maanantaina",
                         "tiistaina",
                         "keskiviikkona",
@@ -1214,6 +1214,7 @@ fi{
             eras{
                 wide{
                     "hidžran jälkeen",
+                    "BH",
                 }
             }
             monthNames{

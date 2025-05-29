@@ -20,6 +20,7 @@ import java.util.MissingResourceException;
 
 import com.ibm.icu.impl.CalType;
 import com.ibm.icu.impl.CalendarUtil;
+import com.ibm.icu.impl.Grego;
 import com.ibm.icu.impl.ICUCache;
 import com.ibm.icu.impl.ICUData;
 import com.ibm.icu.impl.ICUResourceBundle;
@@ -2301,29 +2302,21 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
         set(SECOND, second);
     }
 
-    // -------------------------------------
-    // For now the full getRelatedYear implementation is here;
-    // per #10752 move the non-default implementation to subclasses
-    // (default implementation will do no year adjustment)
-
     /**
-     * utility function for getRelatedYear
+     * @internal
+     * @deprecated This API is ICU internal only.
      */
-    private static int gregoYearFromIslamicStart(int year) {
-        // ad hoc conversion, improve under #10752
-        // rough est for now, ok for grego 1846-2138,
-        // otherwise occasionally wrong (for 3% of years)
-        int cycle, offset, shift = 0;
-        if (year >= 1397) {
-            cycle = (year - 1397) / 67;
-            offset = (year - 1397) % 67;
-            shift = 2*cycle + ((offset >= 33)? 1: 0);
-        } else {
-            cycle = (year - 1396) / 67 - 1;
-            offset = -(year - 1396) % 67;
-            shift = 2*cycle + ((offset <= 33)? 1: 0);
-        }
-        return year + 579 - shift;
+    @Deprecated
+    protected int getRelatedYearDifference() {
+        return 0;
+    }
+    /**
+     * @internal
+     * @deprecated This API is ICU internal only.
+     */
+    @Deprecated
+    public int getRelatedYear() {
+        return get(EXTENDED_YEAR) + getRelatedYearDifference();
     }
 
     /**
@@ -2331,123 +2324,8 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * @deprecated This API is ICU internal only.
      */
     @Deprecated
-    public final int getRelatedYear() {
-        int year = get(EXTENDED_YEAR);
-        CalType type = CalType.GREGORIAN;
-        String typeString = getType();
-        for (CalType testType : CalType.values()) {
-            if (typeString.equals(testType.getId())) {
-                type = testType;
-                break;
-            }
-        }
-        switch (type) {
-            case PERSIAN:
-                year += 622; break;
-            case HEBREW:
-                year -= 3760; break;
-            case CHINESE:
-                year -= 2637; break;
-            case INDIAN:
-                year += 79; break;
-            case COPTIC:
-                year += 284; break;
-            case ETHIOPIC:
-                year += 8; break;
-            case ETHIOPIC_AMETE_ALEM:
-                year -=5492; break;
-            case DANGI:
-                year -= 2333; break;
-            case ISLAMIC_CIVIL:
-            case ISLAMIC:
-            case ISLAMIC_UMALQURA:
-            case ISLAMIC_TBLA:
-            case ISLAMIC_RGSA:
-                year = gregoYearFromIslamicStart(year); break;
-            // case GREGORIAN:
-            // case JAPANESE:
-            // case BUDDHIST:
-            // case ROC:
-            // case ISO8601:
-            default:
-                // do nothing, EXTENDED_YEAR same as Gregorian
-                break;
-        }
-        return year;
-    }
-
-    // -------------------------------------
-    // For now the full setRelatedYear implementation is here;
-    // per #10752 move the non-default implementation to subclasses
-    // (default implementation will do no year adjustment)
-
-    /**
-     * utility function for setRelatedYear
-     */
-    private static int firstIslamicStartYearFromGrego(int year) {
-        // ad hoc conversion, improve under #10752
-        // rough est for now, ok for grego 1846-2138,
-        // otherwise occasionally wrong (for 3% of years)
-        int cycle, offset, shift = 0;
-        if (year >= 1977) {
-            cycle = (year - 1977) / 65;
-            offset = (year - 1977) % 65;
-            shift = 2*cycle + ((offset >= 32)? 1: 0);
-        } else {
-            cycle = (year - 1976) / 65 - 1;
-            offset = -(year - 1976) % 65;
-            shift = 2*cycle + ((offset <= 32)? 1: 0);
-        }
-        return year - 579 + shift;
-    }
-
-    /**
-     * @internal
-     * @deprecated This API is ICU internal only.
-     */
-    @Deprecated
-    public final void setRelatedYear(int year) {
-        CalType type = CalType.GREGORIAN;
-        String typeString = getType();
-        for (CalType testType : CalType.values()) {
-            if (typeString.equals(testType.getId())) {
-                type = testType;
-                break;
-            }
-        }
-        switch (type) {
-            case PERSIAN:
-                year -= 622; break;
-            case HEBREW:
-                year += 3760; break;
-            case CHINESE:
-                year += 2637; break;
-            case INDIAN:
-                year -= 79; break;
-            case COPTIC:
-                year -= 284; break;
-            case ETHIOPIC:
-                year -= 8; break;
-            case ETHIOPIC_AMETE_ALEM:
-                year +=5492; break;
-            case DANGI:
-                year += 2333; break;
-            case ISLAMIC_CIVIL:
-            case ISLAMIC:
-            case ISLAMIC_UMALQURA:
-            case ISLAMIC_TBLA:
-            case ISLAMIC_RGSA:
-                year = firstIslamicStartYearFromGrego(year); break;
-            // case GREGORIAN:
-            // case JAPANESE:
-            // case BUDDHIST:
-            // case ROC:
-            // case ISO8601:
-            default:
-                // do nothing, EXTENDED_YEAR same as Gregorian
-                break;
-        }
-        set(EXTENDED_YEAR, year);
+    public void setRelatedYear(int year) {
+        set(EXTENDED_YEAR, year - getRelatedYearDifference());
     }
 
     /**
@@ -5322,42 +5200,11 @@ public abstract class Calendar implements Serializable, Cloneable, Comparable<Ca
      * @stable ICU 2.0
      */
     protected final void computeGregorianFields(int julianDay) {
-        int year, month, dayOfMonth, dayOfYear;
-
-        // The Gregorian epoch day is zero for Monday January 1, year 1.
-        long gregorianEpochDay = julianDay - JAN_1_1_JULIAN_DAY;
-
-        // Here we convert from the day number to the multiple radix
-        // representation.  We use 400-year, 100-year, and 4-year cycles.
-        // For example, the 4-year cycle has 4 years + 1 leap day; giving
-        // 1461 == 365*4 + 1 days.
-        int[] rem = new int[1];
-        int n400 = floorDivide(gregorianEpochDay, 146097, rem); // 400-year cycle length
-        int n100 = floorDivide(rem[0], 36524, rem); // 100-year cycle length
-        int n4 = floorDivide(rem[0], 1461, rem); // 4-year cycle length
-        int n1 = floorDivide(rem[0], 365, rem);
-        year = 400*n400 + 100*n100 + 4*n4 + n1;
-        dayOfYear = rem[0]; // zero-based day of year
-        if (n100 == 4 || n1 == 4) {
-            dayOfYear = 365; // Dec 31 at end of 4- or 400-yr cycle
-        } else {
-            ++year;
-        }
-
-        boolean isLeap = ((year&0x3) == 0) && // equiv. to (year%4 == 0)
-                (year%100 != 0 || year%400 == 0);
-
-        int correction = 0;
-        int march1 = isLeap ? 60 : 59; // zero-based DOY for March 1
-        if (dayOfYear >= march1) correction = isLeap ? 1 : 2;
-        month = (12 * (dayOfYear + correction) + 6) / 367; // zero-based month
-        dayOfMonth = dayOfYear -
-                GREGORIAN_MONTH_COUNT[month][isLeap?3:2] + 1; // one-based DOM
-
-        gregorianYear = year;
-        gregorianMonth = month; // 0-based already
-        gregorianDayOfMonth = dayOfMonth; // 1-based already
-        gregorianDayOfYear = dayOfYear + 1; // Convert from 0-based to 1-based
+        int[] gregorian = Grego.dayToFields(julianDay - EPOCH_JULIAN_DAY, null);
+        gregorianYear = gregorian[0];
+        gregorianMonth = gregorian[1];
+        gregorianDayOfMonth = gregorian[2];
+        gregorianDayOfYear = gregorian[4];
     }
 
     /**
