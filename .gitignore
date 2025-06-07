@@ -60,12 +60,14 @@ arm64/
 bin/
 debug/
 doc/
+docs/dist/
+docs/.astro/
+docs/node_modules/
 lib/
 !tools/cldr/lib
 out/
 release/
 target/
-!docs/processes/release/
 tmp/
 x64/
 x86/
@@ -85,6 +87,13 @@ rules.mk
 !icu4c/source/samples/csdet/Makefile
 
 # Directory specific wildcards
+docs/npm-debug.log*
+docs/yarn-debug.log*
+docs/yarn-error.log*
+docs/pnpm-debug.log*
+docs/.env
+docs/.env.production
+docs/.DS_Store
 icu4c/source/extra/uconv/resources/*.res
 icu4c/source/perf-*.xml
 icu4c/source/samples/udata/*.dat
