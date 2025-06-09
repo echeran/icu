@@ -6,6 +6,8 @@ import starlightSidebarTopics from 'starlight-sidebar-topics'
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://echeran.github.io/icu',
+	base: '/icu',
 	integrations: [
 		starlight({
 			title: 'ICU',
@@ -27,7 +29,7 @@ export default defineConfig({
 					{
 						label: "About",
 						icon: "information",
-						link: "/about/example",
+						link: "about/example",
 						items: [
 							{ label: 'Example', slug: 'about/example' },
 							{ label: 'Other Page', slug: 'about/otherpage' },
@@ -36,7 +38,7 @@ export default defineConfig({
 					{
 						label: "Using",
 						icon: "laptop",
-						link: "/using/example",
+						link: "using/example",
 						items: [
 							{ label: 'Example', slug: 'using/example' },
 							{ label: 'Other Page', slug: 'using/otherpage' },
@@ -45,7 +47,7 @@ export default defineConfig({
 					{
 						label: "User Guide",
 						icon: "open-book",
-						link: "/guide/example",
+						link: "guide/example",
 						items: [
 							{ label: 'Example', slug: 'guide/example' },
 							{ label: 'Other Page', slug: 'guide/otherpage' },
@@ -54,7 +56,7 @@ export default defineConfig({
 					{
 						label: "Contribute",
 						icon: "seti:todo",
-						link: "/dev/example",
+						link: "dev/example",
 						items: [
 							{ label: 'Example', slug: 'dev/example' },
 							{ label: 'Other Page', slug: 'dev/otherpage' },
