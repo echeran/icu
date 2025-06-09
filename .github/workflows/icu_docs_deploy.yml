@@ -6,7 +6,7 @@ name: GHA ICU Docs - Deploy
 on:
   # Runs on pushes targeting the default branch and only if in the `docs/` directory
   push:
-    branches: ["main"]
+    branches: ["main", "www-redesign-test"]
     paths: ["docs/**"]
 
   # Allows you to run this workflow manually from the Actions tab
