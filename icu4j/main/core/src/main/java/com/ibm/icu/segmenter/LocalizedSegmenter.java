@@ -20,7 +20,7 @@ public class LocalizedSegmenter implements Segmenter {
 
   @Override
   public Segments segment(CharSequence s) {
-    return new LocalizedSegments(s, this);
+    return new LocalizedSegments(this, s);
   }
 
   /**
@@ -142,7 +142,7 @@ public class LocalizedSegmenter implements Segmenter {
 
     private BreakIterator breakIter;
 
-    private LocalizedSegments(CharSequence source, LocalizedSegmenter segmenter) {
+    private LocalizedSegments(LocalizedSegmenter segmenter, CharSequence source) {
       this.source = source;
       this.segmenter = segmenter;
       breakIter = this.segmenter.getNewBreakIterator();
