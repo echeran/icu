@@ -23,7 +23,7 @@ public class RuleBasedSegmenter implements Segmenter {
    */
   @Override
   public Segments segment(CharSequence s) {
-    return new RuleBasedSegments(s, this);
+    return new RuleBasedSegments(this, s);
   }
 
   /**
@@ -86,7 +86,7 @@ public class RuleBasedSegmenter implements Segmenter {
 
     private BreakIterator breakIter;
 
-    private RuleBasedSegments(CharSequence source, RuleBasedSegmenter segmenter) {
+    private RuleBasedSegments(RuleBasedSegmenter segmenter, CharSequence source) {
       this.source = source;
       this.segmenter = segmenter;
       this.breakIter = this.segmenter.getNewBreakIterator();

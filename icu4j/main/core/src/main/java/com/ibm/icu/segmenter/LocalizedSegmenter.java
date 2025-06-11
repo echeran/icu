@@ -31,7 +31,7 @@ public class LocalizedSegmenter implements Segmenter {
     return new Builder();
   }
 
-  private LocalizedSegmenter(ULocale locale, SegmentationType segmentationType) {
+  private LocalizedSegmenter(SegmentationType segmentationType, ULocale locale) {
     this.locale = locale;
     this.segmentationType = segmentationType;
   }
@@ -129,7 +129,7 @@ public class LocalizedSegmenter implements Segmenter {
       if (this.segmentationType == null) {
         throw new IllegalArgumentException("In LocalizedSegmenter, segmentationType is null and must be set to a specific value.");
       }
-      return new LocalizedSegmenter(this.locale, this.segmentationType);
+      return new LocalizedSegmenter(this.segmentationType, this.locale);
     }
 
   }
