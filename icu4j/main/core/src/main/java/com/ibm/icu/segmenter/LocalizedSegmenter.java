@@ -36,13 +36,7 @@ public class LocalizedSegmenter implements Segmenter {
     this.segmentationType = segmentationType;
   }
 
-  /**
-   * @internal
-   * @deprecated This API is ICU internal only.
-   */
-  @Override
-  @Deprecated
-  public BreakIterator getNewBreakIterator() {
+  private BreakIterator getNewBreakIterator() {
     BreakIterator breakIter;
     switch (this.segmentationType) {
       case LINE:
