@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  */
 public class RuleBasedSegmenter implements Segmenter {
 
-  private final String rules;
+  private final BreakIterator prototypeRbbi;
 
   /**
    * @draft ICU 78
@@ -35,11 +35,17 @@ public class RuleBasedSegmenter implements Segmenter {
   }
 
   private RuleBasedSegmenter(String rules) {
-    this.rules = rules;
+    try {
+      this.prototypeRbbi = new RuleBasedBreakIterator(rules);
+    }
+    catch (Exception e) {
+      throw new IllegalArgumentException("In RuleBasedSegmenter, the provided rule string is"
+          + " invalid or there was an error in creating the RuleBasedSegmenter.");
+    }
   }
 
   private BreakIterator getNewBreakIterator() {
-    return new RuleBasedBreakIterator(this.rules);
+    return (BreakIterator) this.prototypeRbbi.clone();
   }
 
   /**
