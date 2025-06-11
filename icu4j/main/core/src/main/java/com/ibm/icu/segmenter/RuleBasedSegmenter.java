@@ -59,6 +59,9 @@ public class RuleBasedSegmenter implements Segmenter {
      * @draft ICU 78
      */
     public Builder setRules(String rules) {
+      if (rules == null) {
+        throw new IllegalArgumentException("In RuleBasedSegmenter, rules cannot be set to null.");
+      }
       this.rules = rules;
       return this;
     }
@@ -69,6 +72,9 @@ public class RuleBasedSegmenter implements Segmenter {
      * @draft ICU 78
      */
     public Segmenter build() {
+      if (this.rules == null) {
+        throw new IllegalArgumentException("In RuleBasedSegmenter, rules is null and must be set to a specific value.");
+      }
       return new RuleBasedSegmenter(this.rules);
     }
   }
