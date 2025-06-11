@@ -34,14 +34,8 @@ public class RuleBasedSegmenter implements Segmenter {
     return new Builder();
   }
 
-  private RuleBasedSegmenter(String rules) {
-    try {
-      this.prototypeRbbi = new RuleBasedBreakIterator(rules);
-    }
-    catch (Exception e) {
-      throw new IllegalArgumentException("In RuleBasedSegmenter, the provided rule string is"
-          + " invalid or there was an error in creating the RuleBasedSegmenter.");
-    }
+  private RuleBasedSegmenter(BreakIterator breakIter) {
+    this.prototypeRbbi = breakIter;
   }
 
   private BreakIterator getNewBreakIterator() {
@@ -54,7 +48,7 @@ public class RuleBasedSegmenter implements Segmenter {
    */
   public static class Builder {
 
-    private String rules = null;
+    private BreakIterator breakIter = null;
 
     private Builder() { }
 
@@ -68,8 +62,13 @@ public class RuleBasedSegmenter implements Segmenter {
       if (rules == null) {
         throw new IllegalArgumentException("In RuleBasedSegmenter, rules cannot be set to null.");
       }
-      this.rules = rules;
-      return this;
+      try {
+        breakIter = new RuleBasedBreakIterator(rules);
+        return this;
+      } catch (RuntimeException rte) {
+        throw new IllegalArgumentException("In RuleBasedSegmenter, the provided rule string is"
+            + " invalid or there was an error in creating the RuleBasedSegmenter.");
+      }
     }
 
     /**
@@ -78,10 +77,11 @@ public class RuleBasedSegmenter implements Segmenter {
      * @draft ICU 78
      */
     public Segmenter build() {
-      if (this.rules == null) {
-        throw new IllegalArgumentException("In RuleBasedSegmenter, rules is null and must be set to a specific value.");
+      if (breakIter == null) {
+        throw new IllegalArgumentException("In RuleBasedSegmenter, a rule string must be set.");
+      } else {
+        return new RuleBasedSegmenter(breakIter);
       }
-      return new RuleBasedSegmenter(this.rules);
     }
   }
 
