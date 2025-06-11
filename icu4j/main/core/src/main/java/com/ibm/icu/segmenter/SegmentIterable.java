@@ -12,10 +12,10 @@ import java.util.Iterator;
  * enables the creation of a lazy {@code Stream}.
  */
 class SegmentIterable implements Iterable<Segment> {
-  BreakIterator breakIter;
-  final IterationDirection direction;
-  int startIdx;
-  final CharSequence source;
+  private BreakIterator breakIter;
+  private final IterationDirection direction;
+  private int startIdx;
+  private final CharSequence source;
 
   SegmentIterable(BreakIterator breakIter, IterationDirection direction, int startIdx, CharSequence source) {
     this.breakIter = breakIter;

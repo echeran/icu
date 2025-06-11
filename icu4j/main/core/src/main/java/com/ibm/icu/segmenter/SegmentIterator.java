@@ -8,11 +8,11 @@ import com.ibm.icu.segmenter.Segments.IterationDirection;
 import java.util.Iterator;
 
 class SegmentIterator implements Iterator<Segment> {
-  BreakIterator breakIter;
-  final IterationDirection direction;
-  int start;
-  int limit;
-  final CharSequence source;
+  private BreakIterator breakIter;
+  private final IterationDirection direction;
+  private int start;
+  private int limit;
+  private final CharSequence source;
 
   SegmentIterator(BreakIterator breakIter, IterationDirection direction, int startIdx, CharSequence source) {
     this.breakIter = breakIter;
@@ -43,7 +43,7 @@ class SegmentIterator implements Iterator<Segment> {
     }
   }
 
-  int getDirectionBasedNextIdx() {
+  private int getDirectionBasedNextIdx() {
     if (direction == IterationDirection.FORWARDS) {
       return breakIter.next();
     } else {

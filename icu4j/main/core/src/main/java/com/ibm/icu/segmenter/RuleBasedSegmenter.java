@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  */
 public class RuleBasedSegmenter implements Segmenter {
 
-  private String rules;
+  private final String rules;
 
   /**
    * @draft ICU 78
@@ -34,7 +34,7 @@ public class RuleBasedSegmenter implements Segmenter {
     return new Builder();
   }
 
-  RuleBasedSegmenter(String rules) {
+  private RuleBasedSegmenter(String rules) {
     this.rules = rules;
   }
 
@@ -48,9 +48,9 @@ public class RuleBasedSegmenter implements Segmenter {
    */
   public static class Builder {
 
-    String rules;
+    private String rules = null;
 
-    Builder() { }
+    private Builder() { }
 
     /**
      * Sets the rule string for segmentation.
@@ -73,14 +73,14 @@ public class RuleBasedSegmenter implements Segmenter {
     }
   }
 
-  static class RuleBasedSegments implements Segments {
+  private class RuleBasedSegments implements Segments {
     private CharSequence source;
 
     private RuleBasedSegmenter segmenter;
 
     private BreakIterator breakIter;
 
-    RuleBasedSegments(CharSequence source, RuleBasedSegmenter segmenter) {
+    private RuleBasedSegments(CharSequence source, RuleBasedSegmenter segmenter) {
       this.source = source;
       this.segmenter = segmenter;
       this.breakIter = this.segmenter.getNewBreakIterator();

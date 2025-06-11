@@ -17,9 +17,9 @@ import com.ibm.icu.segmenter.Segments.IterationDirection;
  * backwards.
  */
 class BoundaryIteratorOfInts {
-  BreakIterator breakIter;
-  IterationDirection direction;
-  int currIdx;
+  private BreakIterator breakIter;
+  private IterationDirection direction;
+  private int currIdx;
 
   BoundaryIteratorOfInts(BreakIterator breakIter, CharSequence sourceSequence, IterationDirection direction, int startIdx) {
     this.breakIter = breakIter;

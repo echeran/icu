@@ -31,7 +31,7 @@ public class LocalizedSegmenter implements Segmenter {
     return new Builder();
   }
 
-  LocalizedSegmenter(ULocale locale, SegmentationType segmentationType) {
+  private LocalizedSegmenter(ULocale locale, SegmentationType segmentationType) {
     this.locale = locale;
     this.segmentationType = segmentationType;
   }
@@ -79,7 +79,7 @@ public class LocalizedSegmenter implements Segmenter {
 
     private SegmentationType segmentationType = SegmentationType.GRAPHEME_CLUSTER;
 
-    Builder() { }
+    private Builder() { }
 
     /**
      * Set the locale for which segmentation rules will be loaded
@@ -122,7 +122,7 @@ public class LocalizedSegmenter implements Segmenter {
 
   }
 
-  class LocalizedSegments implements Segments {
+  private class LocalizedSegments implements Segments {
 
     private CharSequence source;
 
