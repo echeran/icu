@@ -38,19 +38,19 @@ public class LocalizedSegmenter implements Segmenter {
 
   private BreakIterator getNewBreakIterator() {
     BreakIterator breakIter;
-    switch (this.segmentationType) {
+    switch (segmentationType) {
       case LINE:
-        breakIter = BreakIterator.getLineInstance(this.locale);
+        breakIter = BreakIterator.getLineInstance(locale);
         break;
       case SENTENCE:
-        breakIter = BreakIterator.getSentenceInstance(this.locale);
+        breakIter = BreakIterator.getSentenceInstance(locale);
         break;
       case WORD:
-        breakIter = BreakIterator.getWordInstance(this.locale);
+        breakIter = BreakIterator.getWordInstance(locale);
         break;
       case GRAPHEME_CLUSTER:
       default:
-        breakIter = BreakIterator.getCharacterInstance(this.locale);
+        breakIter = BreakIterator.getCharacterInstance(locale);
         break;
     }
     return breakIter;
@@ -145,49 +145,49 @@ public class LocalizedSegmenter implements Segmenter {
     private LocalizedSegments(CharSequence source, LocalizedSegmenter segmenter) {
       this.source = source;
       this.segmenter = segmenter;
-      this.breakIter = this.segmenter.getNewBreakIterator();
+      breakIter = this.segmenter.getNewBreakIterator();
 
-      this.breakIter.setText(source);
+      breakIter.setText(source);
     }
 
     @Override
     public Segment segmentAt(int i) {
-      return SegmentsImplUtils.segmentAt(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentAt(breakIter, source, i);
     }
 
     @Override
     public Stream<Segment> segments() {
-      return SegmentsImplUtils.segments(this.breakIter, this.source);
+      return SegmentsImplUtils.segments(breakIter, source);
     }
 
     @Override
     public boolean isBoundary(int i) {
-      return SegmentsImplUtils.isBoundary(this.breakIter, this.source, i);
+      return SegmentsImplUtils.isBoundary(breakIter, source, i);
     }
 
     @Override
     public Stream<Segment> segmentsFrom(int i) {
-      return SegmentsImplUtils.segmentsFrom(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentsFrom(breakIter, source, i);
     }
 
     @Override
     public Stream<Segment> segmentsBefore(int i) {
-      return SegmentsImplUtils.segmentsBefore(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentsBefore(breakIter, source, i);
     }
 
     @Override
     public IntStream boundaries() {
-      return SegmentsImplUtils.boundaries(this.breakIter, this.source);
+      return SegmentsImplUtils.boundaries(breakIter, source);
     }
 
     @Override
     public IntStream boundariesAfter(int i) {
-      return SegmentsImplUtils.boundariesAfter(this.breakIter, this.source, i);
+      return SegmentsImplUtils.boundariesAfter(breakIter, source, i);
     }
 
     @Override
     public IntStream boundariesBackFrom(int i) {
-      return SegmentsImplUtils.boundariesBackFrom(this.breakIter, this.source, i);
+      return SegmentsImplUtils.boundariesBackFrom(breakIter, source, i);
     }
   }
 

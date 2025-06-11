@@ -26,7 +26,7 @@ class BoundaryIteratorOfInts {
     this.direction = direction;
 
     if (direction == IterationDirection.FORWARDS) {
-      this.currIdx = breakIter.following(startIdx);
+      currIdx = breakIter.following(startIdx);
     } else {
       assert direction == IterationDirection.BACKWARDS;
 
@@ -47,17 +47,17 @@ class BoundaryIteratorOfInts {
   }
 
   public boolean hasNext() {
-    return this.currIdx != BreakIterator.DONE;
+    return currIdx != BreakIterator.DONE;
   }
 
   public Integer next() {
-    int result = this.currIdx;
+    int result = currIdx;
 
     if (direction == IterationDirection.FORWARDS) {
-      this.currIdx = breakIter.next();
+      currIdx = breakIter.next();
     } else {
       assert direction == IterationDirection.BACKWARDS;
-      this.currIdx = breakIter.previous();
+      currIdx = breakIter.previous();
     }
 
     return result;
