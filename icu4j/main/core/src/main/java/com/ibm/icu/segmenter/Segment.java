@@ -29,6 +29,6 @@ public class Segment {
    * @draft ICU 78
    */
   public CharSequence getSubSequence() {
-    return source.subSequence(this.start, this.limit);
+    return source.subSequence(start, limit);
   }
 }

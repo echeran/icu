@@ -39,7 +39,7 @@ public class RuleBasedSegmenter implements Segmenter {
   }
 
   private BreakIterator getNewBreakIterator() {
-    return (BreakIterator) this.prototypeRbbi.clone();
+    return (BreakIterator) prototypeRbbi.clone();
   }
 
   /**
@@ -102,42 +102,42 @@ public class RuleBasedSegmenter implements Segmenter {
 
     @Override
     public Segment segmentAt(int i) {
-      return SegmentsImplUtils.segmentAt(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentAt(breakIter, source, i);
     }
 
     @Override
     public Stream<Segment> segments() {
-      return SegmentsImplUtils.segments(this.breakIter, this.source);
+      return SegmentsImplUtils.segments(breakIter, source);
     }
 
     @Override
     public boolean isBoundary(int i) {
-      return SegmentsImplUtils.isBoundary(this.breakIter, this.source, i);
+      return SegmentsImplUtils.isBoundary(breakIter, source, i);
     }
 
     @Override
     public Stream<Segment> segmentsFrom(int i) {
-      return SegmentsImplUtils.segmentsFrom(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentsFrom(breakIter, source, i);
     }
 
     @Override
     public Stream<Segment> segmentsBefore(int i) {
-      return SegmentsImplUtils.segmentsBefore(this.breakIter, this.source, i);
+      return SegmentsImplUtils.segmentsBefore(breakIter, source, i);
     }
 
     @Override
     public IntStream boundaries() {
-      return SegmentsImplUtils.boundaries(this.breakIter, this.source);
+      return SegmentsImplUtils.boundaries(breakIter, source);
     }
 
     @Override
     public IntStream boundariesAfter(int i) {
-      return SegmentsImplUtils.boundariesAfter(this.breakIter, this.source, i);
+      return SegmentsImplUtils.boundariesAfter(breakIter, source, i);
     }
 
     @Override
     public IntStream boundariesBackFrom(int i) {
-      return SegmentsImplUtils.boundariesBackFrom(this.breakIter, this.source, i);
+      return SegmentsImplUtils.boundariesBackFrom(breakIter, source, i);
     }
   }
 }

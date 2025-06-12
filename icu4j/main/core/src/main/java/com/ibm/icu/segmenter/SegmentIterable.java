@@ -26,7 +26,7 @@ class SegmentIterable implements Iterable<Segment> {
 
   @Override
   public Iterator<Segment> iterator() {
-    return new SegmentIterator(this.breakIter, this.direction, this.startIdx, this.source);
+    return new SegmentIterator(breakIter, direction, startIdx, source);
   }
 }
 

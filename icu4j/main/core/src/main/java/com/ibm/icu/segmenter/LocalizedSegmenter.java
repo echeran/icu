@@ -126,10 +126,10 @@ public class LocalizedSegmenter implements Segmenter {
      * @draft ICU 78
      */
     public Segmenter build() {
-      if (this.segmentationType == null) {
+      if (segmentationType == null) {
         throw new IllegalArgumentException("segmentationType is null and must be set to a specific value.");
       }
-      return new LocalizedSegmenter(this.locale, this.segmentationType);
+      return new LocalizedSegmenter(locale, segmentationType);
     }
 
   }

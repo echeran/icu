@@ -54,20 +54,20 @@ class SegmentIterator implements Iterator<Segment> {
 
   @Override
   public boolean hasNext() {
-    return this.limit != BreakIterator.DONE;
+    return limit != BreakIterator.DONE;
   }
 
   @Override
   public Segment next() {
     Segment result;
-    if (this.limit < this.start) {
-      result = new Segment(this.limit, this.start, this.source);
+    if (limit < start) {
+      result = new Segment(limit, start, source);
     } else {
-      result = new Segment(this.start, this.limit, this.source);
+      result = new Segment(start, limit, source);
     }
 
-    this.start = this.limit;
-    this.limit = getDirectionBasedNextIdx();
+    start = limit;
+    limit = getDirectionBasedNextIdx();
 
     return result;
   }
