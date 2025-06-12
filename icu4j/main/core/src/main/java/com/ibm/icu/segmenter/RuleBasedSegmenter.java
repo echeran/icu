@@ -60,14 +60,14 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     public Builder setRules(String rules) {
       if (rules == null) {
-        throw new IllegalArgumentException("In RuleBasedSegmenter, rules cannot be set to null.");
+        throw new IllegalArgumentException("rules cannot be set to null.");
       }
       try {
         breakIter = new RuleBasedBreakIterator(rules);
         return this;
       } catch (RuntimeException rte) {
-        throw new IllegalArgumentException("In RuleBasedSegmenter, the provided rule string is"
-            + " invalid or there was an error in creating the RuleBasedSegmenter.");
+        throw new IllegalArgumentException("The provided rule string is invalid"
+            + " or there was an error in creating the RuleBasedSegmenter.", rte);
       }
     }
 
@@ -78,7 +78,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     public Segmenter build() {
       if (breakIter == null) {
-        throw new IllegalArgumentException("In RuleBasedSegmenter, a rule string must be set.");
+        throw new IllegalArgumentException("A rule string must be set.");
       } else {
         return new RuleBasedSegmenter(breakIter);
       }

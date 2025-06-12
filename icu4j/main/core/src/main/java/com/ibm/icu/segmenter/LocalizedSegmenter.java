@@ -88,7 +88,7 @@ public class LocalizedSegmenter implements Segmenter {
      */
     public Builder setLocale(ULocale locale) {
       if (locale == null) {
-        throw new IllegalArgumentException("In LocalizedSegmenter, locale cannot be set to null.");
+        throw new IllegalArgumentException("locale cannot be set to null.");
       }
       this.locale = locale;
       return this;
@@ -101,7 +101,7 @@ public class LocalizedSegmenter implements Segmenter {
      */
     public Builder setLocale(Locale locale) {
       if (locale == null) {
-        throw new IllegalArgumentException("In LocalizedSegmenter, locale cannot be set to null.");
+        throw new IllegalArgumentException("locale cannot be set to null.");
       }
       this.locale = ULocale.forLocale(locale);
       return this;
@@ -114,7 +114,7 @@ public class LocalizedSegmenter implements Segmenter {
      */
     public Builder setSegmentationType(SegmentationType segmentationType) {
       if (segmentationType == null) {
-        throw new IllegalArgumentException("In LocalizedSegmenter, segmentationType cannot be set to null.");
+        throw new IllegalArgumentException("segmentationType cannot be set to null.");
       }
       this.segmentationType = segmentationType;
       return this;
@@ -127,7 +127,7 @@ public class LocalizedSegmenter implements Segmenter {
      */
     public Segmenter build() {
       if (this.segmentationType == null) {
-        throw new IllegalArgumentException("In LocalizedSegmenter, segmentationType is null and must be set to a specific value.");
+        throw new IllegalArgumentException("segmentationType is null and must be set to a specific value.");
       }
       return new LocalizedSegmenter(this.locale, this.segmentationType);
     }
