@@ -22,24 +22,24 @@ class SegmentIterator implements Iterator<Segment> {
     Segment segmentAtIdx = SegmentsImplUtils.segmentAt(breakIter, source, startIdx);
 
     if (segmentAtIdx == null) {
-      this.start = BreakIterator.DONE;
+      start = BreakIterator.DONE;
     } else if (direction == IterationDirection.FORWARDS) {
-      this.start = segmentAtIdx.start;
-      this.limit = breakIter.following(this.start);
+      start = segmentAtIdx.start;
+      limit = breakIter.following(start);
     } else {
       assert direction == IterationDirection.BACKWARDS;
       if (breakIter.isBoundary(startIdx)) {
         // Note: breakIter::isBoundary is a stateful operation. It resets the position in the
         // BreakIterator, which we want to ensure that the position is where we think it is.
-        this.start = startIdx;
+        start = startIdx;
       } else {
         // Since we already called BreakIterator.isBoundary() which mutates the BreakIterator
         // position to increment forwards when the return value is false, we should call
         // BreakIterator.previous() to update the iterator position while getting the start value
         // of the segment at startIdx
-        this.start = breakIter.previous();
+        start = breakIter.previous();
       }
-      this.limit = getDirectionBasedNextIdx();
+      limit = getDirectionBasedNextIdx();
     }
   }
 
