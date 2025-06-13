@@ -43,7 +43,7 @@ public interface Segments {
    */
   default Stream<CharSequence> subSequences() {
     return segments().map(Segment::getSubSequence);
-  };
+  }
 
   /**
    * Returns the segment that contains index {@code i}. Containment is inclusive of the start index
