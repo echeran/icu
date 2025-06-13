@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 /**
  * Performs segmentation according to the provided rule string. The rule string must follow the
- * same guidelines as for {@link RuleBasedBreakIterator#getInstanceFromCompiledRules(InputStream)}.
+ * same guidelines as for {@link RuleBasedBreakIterator#RuleBasedBreakIterator(String)}.
  * @draft ICU 78
  */
 public class RuleBasedSegmenter implements Segmenter {
