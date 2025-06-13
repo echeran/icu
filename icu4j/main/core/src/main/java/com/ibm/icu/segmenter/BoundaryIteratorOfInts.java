@@ -35,6 +35,11 @@ class BoundaryIteratorOfInts {
       // BreakIterator state, that always moves backwards by at least 1. We want to support an
       // API that includes the input index when it is itself a boundary, unlike the behavior of
       // BreakIterator.preceding().
+      //
+      // Note: we have to set the initial index indirectly because there is no way to statelessly
+      // query whether an index is on a boundary. Instead, BreakIterator.isBoundary() will mutate
+      // state when the input is not on a boundary, before it returns the value indicating a
+      // boundary.
       int sourceLength = sourceSequence.length();
       boolean isOnBoundary =
           0 <= startIdx
