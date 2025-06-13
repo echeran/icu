@@ -41,13 +41,19 @@ class BoundaryIteratorOfInts {
       // state when the input is not on a boundary, before it returns the value indicating a
       // boundary.
       int sourceLength = sourceSequence.length();
-      boolean isOnBoundary =
-          0 <= startIdx
-          && startIdx <= sourceLength
-          && breakIter.isBoundary(startIdx);
-      int backFromIdx = isOnBoundary ? startIdx + 1 : startIdx;
+      if (startIdx == 0) {
+        this.currIdx = breakIter.first();
+      } else if (startIdx == sourceLength) {
+        this.currIdx = breakIter.last();
+      } else {
+        boolean isOnBoundary =
+            0 <= startIdx
+                && startIdx <= sourceLength
+                && breakIter.isBoundary(startIdx);
+        int backFromIdx = isOnBoundary ? startIdx + 1 : startIdx;
 
-      this.currIdx = breakIter.preceding(backFromIdx);
+        this.currIdx = breakIter.preceding(backFromIdx);
+      }
     }
   }
 
