@@ -22,17 +22,19 @@ public class RuleBasedSegmenterTest extends CoreTestFmwk {
 
   @Test
   public void testRules() {
-    String source = "hejsan k:a tack";
-
     Object[][] casesData = {
-        {"default",   ".*;",       Arrays.asList("hejsan k:a tack")},
+        {"default",
+            "hejsan k:a tack",
+            ".*;",
+            Arrays.asList("hejsan k:a tack")},
         // TODO: add more cases once RBBI rule syntax is understood
     };
 
     for (Object[] caseDatum : casesData) {
       String desc = (String) caseDatum[0];
-      String subrule = (String) caseDatum[1];
-      List<CharSequence> expWords = (List<CharSequence>) caseDatum[2];
+      String source = (String) caseDatum[1];
+      String subrule = (String) caseDatum[2];
+      List<CharSequence> expWords = (List<CharSequence>) caseDatum[3];
 
       // the following rule substring was taken as a subset from BreakIteratorRules_en_US_TEST.java:
       String rules = subrule;
