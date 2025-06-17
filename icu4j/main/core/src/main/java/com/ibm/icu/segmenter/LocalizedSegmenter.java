@@ -196,7 +196,7 @@ public class LocalizedSegmenter implements Segmenter {
      */
     @Override
     public boolean isBoundary(int i) {
-      return SegmentsImplUtils.isBoundary((BreakIterator) breakIterPrototype.clone(), source, i);
+      return ((BreakIterator) breakIterPrototype.clone()).isBoundary(i);
     }
 
     /**

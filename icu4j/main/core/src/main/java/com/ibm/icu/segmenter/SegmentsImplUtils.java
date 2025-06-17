@@ -13,10 +13,6 @@ import java.util.stream.StreamSupport;
 
 class SegmentsImplUtils {
 
-  static boolean isBoundary(BreakIterator breakIter, CharSequence source, int i) {
-    return breakIter.isBoundary(i);
-  }
-
   static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
       int start;
       int limit;
