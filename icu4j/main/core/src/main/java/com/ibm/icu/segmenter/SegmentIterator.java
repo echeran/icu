@@ -19,55 +19,58 @@ class SegmentIterator implements Iterator<Segment> {
     this.direction = direction;
     this.source = source;
 
-    Segment segmentAtIdx = SegmentsImplUtils.segmentAt(breakIter, source, startIdx);
+    // Note: BreakIterator::isBoundary is a stateful operation. It resets the position in the
+    // BreakIterator, and thus doesn't just return whether the input is on a boundary.
+    boolean startIdxIsBoundary = breakIter.isBoundary(startIdx);
 
-    if (segmentAtIdx == null) {
-      start = BreakIterator.DONE;
-    } else if (direction == IterationDirection.FORWARDS) {
-      start = segmentAtIdx.start;
-      limit = breakIter.following(start);
-    } else {
-      assert direction == IterationDirection.BACKWARDS;
-      if (breakIter.isBoundary(startIdx)) {
-        // Note: breakIter::isBoundary is a stateful operation. It resets the position in the
-        // BreakIterator, which we want to ensure that the position is where we think it is.
-        start = startIdx;
-      } else {
-        // Since we already called BreakIterator.isBoundary() which mutates the BreakIterator
-        // position to increment forwards when the return value is false, we should call
-        // BreakIterator.previous() to update the iterator position while getting the start value
-        // of the segment at startIdx
-        start = breakIter.previous();
-      }
-      limit = getDirectionBasedNextIdx();
-    }
-  }
-
-  private int getDirectionBasedNextIdx() {
     if (direction == IterationDirection.FORWARDS) {
-      return breakIter.next();
+      if (startIdxIsBoundary) {
+        start = startIdx;
+        limit = breakIter.next();
+      } else {
+        // if startIdx wasn't on a boundary, then the call to isBoundary will have advanced it to
+        // the next boundary, which is the limit of the segment
+        limit = breakIter.current();
+        // go back to get the start of the segment
+        start = breakIter.previous();
+        // reset current position of BreakIterator to be limit of segment
+        breakIter.isBoundary(limit);
+      }
     } else {
       assert direction == IterationDirection.BACKWARDS;
-      return breakIter.previous();
+      if (startIdxIsBoundary) {
+        limit = breakIter.current();
+      } else {
+        // if startIdx was not on boundary, then the breakIter state moved forward past startIdx
+        // after the call to BreakIterator::current, so we need to move to the previous boundary
+        // before startIdx to start the iteration
+        limit = breakIter.previous();
+      }
+      start = breakIter.previous();
     }
   }
 
   @Override
   public boolean hasNext() {
-    return limit != BreakIterator.DONE;
+    if (direction == IterationDirection.FORWARDS) {
+      return limit != BreakIterator.DONE;
+    } else {
+      return start != BreakIterator.DONE;
+    }
   }
 
   @Override
   public Segment next() {
-    Segment result;
-    if (limit < start) {
-      result = new Segment(limit, start, source);
-    } else {
-      result = new Segment(start, limit, source);
-    }
+    Segment result = new Segment(start, limit, source);
 
-    start = limit;
-    limit = getDirectionBasedNextIdx();
+    if (direction == IterationDirection.FORWARDS) {
+      start = limit;
+      limit = breakIter.next();
+    } else {
+      assert direction == IterationDirection.BACKWARDS;
+      limit = start;
+      start = breakIter.previous();
+    }
 
     return result;
   }
