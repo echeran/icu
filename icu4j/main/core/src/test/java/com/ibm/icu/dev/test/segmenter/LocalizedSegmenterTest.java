@@ -15,6 +15,7 @@ import com.ibm.icu.util.ULocale;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,39 +35,31 @@ public class LocalizedSegmenterTest extends CoreTestFmwk {
 
     for (Object[] caseDatum : casesData) {
       String localeTag = (String) caseDatum[0];
-      ULocale locale = ULocale.forLanguageTag(localeTag);
+      // ULocale locale = ULocale.forLanguageTag(localeTag);
       String source = (String) caseDatum[1];
       List<CharSequence> expWords = (List<CharSequence>) caseDatum[2];
 
-      Segmenter wordSeg =
-          LocalizedSegmenter.builder()
-              .setLocale(locale)
-              .setSegmentationType(SegmentationType.WORD)
-              .build();
-      Segments segments = wordSeg.segment(source);
+      // create functions that abstract over the different types of locales so that, later on,
+      // we can test using both in the same way
+      Function<LocalizedSegmenter.Builder, LocalizedSegmenter.Builder> setJLocaleFn =
+          builder -> builder.setLocale(Locale.forLanguageTag(localeTag));
+      Function<LocalizedSegmenter.Builder, LocalizedSegmenter.Builder> setULocaleFn =
+          builder -> builder.setLocale(ULocale.forLanguageTag(localeTag));
 
-      List<CharSequence> actWords = segments.subSequences().collect(Collectors.toList());
+      // Loop/iterate over both Java Locale and ICU ULocale such that we always test with both
+      // types of locale objects.
+      for (Function<LocalizedSegmenter.Builder, LocalizedSegmenter.Builder> setLocIntoBuilder : Arrays.asList(setJLocaleFn, setULocaleFn)) {
 
-      assertThat(actWords, is(expWords));
+        LocalizedSegmenter.Builder builder = LocalizedSegmenter.builder()
+            .setSegmentationType(SegmentationType.WORD);
+        LocalizedSegmenter.Builder builderWithLocale = setLocIntoBuilder.apply(builder);
+        Segmenter wordSeg = builderWithLocale.build();
+        Segments segments = wordSeg.segment(source);
+
+        List<CharSequence> actWords = segments.subSequences().collect(Collectors.toList());
+
+        assertThat(actWords, is(expWords));
+      }
     }
-  }
-
-  @Test
-  public void testJavaLocaleInLocalizedSegmenter() {
-    String source = "Das 21ste Jahrh. ist das beste.";
-    String localeTag = "de";
-    Locale locale = Locale.forLanguageTag(localeTag);
-    List<CharSequence> expWords = Arrays.asList("Das", " ", "21ste", " ", "Jahrh", ".", " ", "ist", " ", "das", " ", "beste", ".");
-
-    Segmenter wordSeg =
-        LocalizedSegmenter.builder()
-            .setLocale(locale)
-            .setSegmentationType(SegmentationType.WORD)
-            .build();
-    Segments segments = wordSeg.segment(source);
-
-    List<CharSequence> actWords = segments.subSequences().collect(Collectors.toList());
-
-    assertThat(actWords, is(expWords));
   }
 }
