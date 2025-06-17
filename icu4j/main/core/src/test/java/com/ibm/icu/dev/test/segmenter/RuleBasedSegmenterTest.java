@@ -33,14 +33,13 @@ public class RuleBasedSegmenterTest extends CoreTestFmwk {
     for (Object[] caseDatum : casesData) {
       String desc = (String) caseDatum[0];
       String source = (String) caseDatum[1];
-      String subrule = (String) caseDatum[2];
+      String rule = (String) caseDatum[2];
       List<CharSequence> expWords = (List<CharSequence>) caseDatum[3];
 
       // the following rule substring was taken as a subset from BreakIteratorRules_en_US_TEST.java:
-      String rules = subrule;
 
       Segmenter seg = RuleBasedSegmenter.builder()
-          .setRules(rules)
+          .setRules(rule)
           .build();
       Segments segments = seg.segment(source);
 
