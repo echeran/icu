@@ -23,11 +23,10 @@ public class RuleBasedSegmenterTest extends CoreTestFmwk {
   @Test
   public void testRules() {
     Object[][] casesData = {
-        {"default",
-            "hejsan k:a tack",
-            ".*;",
-            Arrays.asList("hejsan k:a tack")},
-        // TODO: add more cases once RBBI rule syntax is understood
+        {"ASCII lowercase a-z only",
+            "Kühlschränke kühlen Getränke",
+            "[a-z]+;",
+            Arrays.asList("K", "ü", "hlschr", "ä", "nke", " ", "k", "ü", "hlen", " ", "G", "etr", "ä", "nke")},
     };
 
     for (Object[] caseDatum : casesData) {
