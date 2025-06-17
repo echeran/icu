@@ -36,13 +36,17 @@ class SegmentSpliterator implements Spliterator.OfInt {
 
   @Override
   public int characteristics() {
-    return Spliterator.DISTINCT  // BreakIterator always advances
-        | Spliterator.IMMUTABLE // design of Segmenter API is to provide an immutable view of
+    return
+        // BreakIterator always advances
+        Spliterator.DISTINCT
+        // The design of Segmenter the API is to provide an immutable view of
         // segmentation by preventing the input string from mutating
-        // in the underlying BreakIterator
-        | Spliterator.NONNULL   // primtive int is non-null
-        | Spliterator.ORDERED   // BreakIterator always advances, and in a single direction
-        ;
+        // in the underlying BreakIterator.
+        | Spliterator.IMMUTABLE
+        // primitive int is non-null
+        | Spliterator.NONNULL
+        // BreakIterator always advances, and in a single direction.
+        | Spliterator.ORDERED;
   }
 
   @Override
