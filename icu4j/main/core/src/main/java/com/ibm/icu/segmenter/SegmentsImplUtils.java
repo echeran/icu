@@ -18,7 +18,6 @@ class SegmentsImplUtils {
   }
 
   static Segment segmentAt(BreakIterator breakIter, CharSequence sourceSequence, int i) {
-    try {
       int start;
       int limit;
 
@@ -39,13 +38,6 @@ class SegmentsImplUtils {
       } else {
         return null;
       }
-    } catch (IllegalArgumentException iae) {
-      // Catch the error that is thrown by the implementation helper method inside BreakIterator
-      // (called checkOffset) whenever the index passed to `.isBoundary(int)` is out of bounds
-      // in the original string. Since IndexOutOfBoundsException is more appropriate, throw that
-      // instead.
-      throw new IndexOutOfBoundsException(i);
-    }
   }
 
   static Stream<Segment> segments(BreakIterator breakIter, CharSequence sourceSequence) {
