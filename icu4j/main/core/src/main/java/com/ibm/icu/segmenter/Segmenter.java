@@ -32,7 +32,8 @@ public interface Segmenter {
    * Return a {@link Segments} object that encapsulates the segmentation of the input
    * {@code CharSequence}. The {@code Segments} object, in turn, provides the main APIs to support
    * traversal over the resulting segments and boundaries via the Java {@code Stream} abstraction.
-   * @param s input {@code CharSequence} on which segmentation is performed
+   * @param s input {@code CharSequence} on which segmentation is performed. The input must not be
+   *     modified while using the resulting {@code Segments} object.
    * @return A {@code Segments} object with APIs to access the results of segmentation, including
    *     APIs that return {@code Stream}s of the segments and boundaries.
    * @draft ICU 78

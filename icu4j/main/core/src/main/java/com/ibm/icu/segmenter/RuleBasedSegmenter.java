@@ -16,13 +16,14 @@ import java.util.stream.Stream;
  */
 public class RuleBasedSegmenter implements Segmenter {
 
-  private final BreakIterator prototypeRbbi;
+  private final BreakIterator breakIterPrototype;
 
   /**
    * Return a {@link Segments} object that encapsulates the segmentation of the input
    * {@code CharSequence}. The {@code Segments} object, in turn, provides the main APIs to support
    * traversal over the resulting segments and boundaries via the Java {@code Stream} abstraction.
-   * @param s input {@code CharSequence} on which segmentation is performed
+   * @param s input {@code CharSequence} on which segmentation is performed. The input must not be
+   *     modified while using the resulting {@code Segments} object.
    * @return A {@code Segments} object with APIs to access the results of segmentation, including
    *     APIs that return {@code Stream}s of the segments and boundaries.
    * @draft ICU 78
@@ -41,11 +42,11 @@ public class RuleBasedSegmenter implements Segmenter {
   }
 
   private RuleBasedSegmenter(BreakIterator breakIter) {
-    this.prototypeRbbi = breakIter;
+    breakIterPrototype = breakIter;
   }
 
   private BreakIterator getNewBreakIterator() {
-    return (BreakIterator) prototypeRbbi.clone();
+    return (BreakIterator) breakIterPrototype.clone();
   }
 
   /**
@@ -94,16 +95,26 @@ public class RuleBasedSegmenter implements Segmenter {
   private class RuleBasedSegments implements Segments {
     private CharSequence source;
 
-    private RuleBasedSegmenter segmenter;
-
-    private BreakIterator breakIter;
+    private BreakIterator breakIterPrototype;
 
     private RuleBasedSegments(RuleBasedSegmenter segmenter, CharSequence source) {
       this.source = source;
-      this.segmenter = segmenter;
-      this.breakIter = this.segmenter.getNewBreakIterator();
 
-      this.breakIter.setText(source);
+      // We are creating a clone of the Segmenter's prototype BreakIterator field so that this
+      // concrete Segments object can avoid sharing state with the other Segments object instances
+      // that get spawned from the Segmenter. This allows difference source CharSequences to be used
+      // in each Segments object.
+      //
+      // In turn, the cloned BreakIterator becomes a prototype to be stored in the Segments object,
+      // which then gets cloned and used in each of the Segments APIs' implementations. The second
+      // level of cloning that happens when the Segments object's local BreakIterator prototype
+      // gets cloned allows the iteration state to be separate whenever an Segments API is called.
+      // Otherwise, there is a chance that multiple API calls on the same Segments object might
+      // mutate the same position/index, if done concurrently.
+      breakIterPrototype = segmenter.getNewBreakIterator();
+      // It's okay to perform .setText on the object that we want to clone later because we should
+      // then not have to call .setText on the clones.
+      breakIterPrototype.setText(source);
     }
 
     /**
@@ -115,7 +126,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public Segment segmentAt(int i) {
-      return SegmentsImplUtils.segmentAt(breakIter, source, i);
+      return SegmentsImplUtils.segmentAt((BreakIterator) breakIterPrototype.clone(), source, i);
     }
 
     /**
@@ -126,7 +137,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public Stream<Segment> segments() {
-      return SegmentsImplUtils.segments(breakIter, source);
+      return SegmentsImplUtils.segments((BreakIterator) breakIterPrototype.clone(), source);
     }
 
     /**
@@ -138,7 +149,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public boolean isBoundary(int i) {
-      return SegmentsImplUtils.isBoundary(breakIter, source, i);
+      return SegmentsImplUtils.isBoundary((BreakIterator) breakIterPrototype.clone(), source, i);
     }
 
     /**
@@ -150,7 +161,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public Stream<Segment> segmentsFrom(int i) {
-      return SegmentsImplUtils.segmentsFrom(breakIter, source, i);
+      return SegmentsImplUtils.segmentsFrom((BreakIterator) breakIterPrototype.clone(), source, i);
     }
 
     /**
@@ -162,7 +173,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public Stream<Segment> segmentsBefore(int i) {
-      return SegmentsImplUtils.segmentsBefore(breakIter, source, i);
+      return SegmentsImplUtils.segmentsBefore((BreakIterator) breakIterPrototype.clone(), source, i);
     }
 
     /**
@@ -173,7 +184,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public IntStream boundaries() {
-      return SegmentsImplUtils.boundaries(breakIter, source);
+      return SegmentsImplUtils.boundaries((BreakIterator) breakIterPrototype.clone(), source);
     }
 
     /**
@@ -184,7 +195,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public IntStream boundariesAfter(int i) {
-      return SegmentsImplUtils.boundariesAfter(breakIter, source, i);
+      return SegmentsImplUtils.boundariesAfter((BreakIterator) breakIterPrototype.clone(), source, i);
     }
 
     /**
@@ -195,7 +206,7 @@ public class RuleBasedSegmenter implements Segmenter {
      */
     @Override
     public IntStream boundariesBackFrom(int i) {
-      return SegmentsImplUtils.boundariesBackFrom(breakIter, source, i);
+      return SegmentsImplUtils.boundariesBackFrom((BreakIterator) breakIterPrototype.clone(), source, i);
     }
   }
 }
