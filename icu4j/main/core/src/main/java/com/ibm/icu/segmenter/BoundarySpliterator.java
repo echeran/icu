@@ -8,11 +8,11 @@ import com.ibm.icu.segmenter.Segments.IterationDirection;
 import java.util.Spliterator;
 import java.util.function.IntConsumer;
 
-class SegmentSpliterator implements Spliterator.OfInt {
+class BoundarySpliterator implements Spliterator.OfInt {
 
   private final BoundaryIteratorOfInts iter;
 
-  SegmentSpliterator(BreakIterator breakIter, CharSequence sourceSequence, IterationDirection direction, int startIdx) {
+  BoundarySpliterator(BreakIterator breakIter, CharSequence sourceSequence, IterationDirection direction, int startIdx) {
     iter = new BoundaryIteratorOfInts(breakIter, sourceSequence, direction, startIdx);
   }
 

@@ -80,12 +80,12 @@ class SegmentsImplUtils {
     breakIter.setText(sourceSequence);
 
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    return StreamSupport.intStream(new SegmentSpliterator(breakIter, sourceSequence, IterationDirection.FORWARDS, i), false);
+    return StreamSupport.intStream(new BoundarySpliterator(breakIter, sourceSequence, IterationDirection.FORWARDS, i), false);
   }
 
   static IntStream boundariesBackFrom(BreakIterator breakIter, CharSequence sourceSequence, int i) {
     // create a Stream from a Spliterator of an Iterable so that the Stream can be lazy, not eager
-    return StreamSupport.intStream(new SegmentSpliterator(breakIter, sourceSequence, IterationDirection.BACKWARDS, i), false);
+    return StreamSupport.intStream(new BoundarySpliterator(breakIter, sourceSequence, IterationDirection.BACKWARDS, i), false);
   }
 
 }
