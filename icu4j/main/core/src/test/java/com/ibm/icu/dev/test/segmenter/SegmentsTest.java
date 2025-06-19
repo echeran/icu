@@ -319,7 +319,8 @@ public class SegmentsTest extends CoreTestFmwk {
         {"index at beginning",                           0,                  0,                 3},
         {"index in the middle of the first segment",     2,                  0,                 3},
         {"index in the middle of the third segment",     5,                  4,                 9},
-        {"index at the end",                             source.length()-1,  44,                45},
+        {"index right before the end",                   source.length()-1,  44,                45},
+        {"index at the end",                             source.length(),    null,              null},
         {"index after the end",                          source.length()+1,  null,              null},
     };
 
@@ -330,7 +331,14 @@ public class SegmentsTest extends CoreTestFmwk {
       Integer expLimit = (Integer) caseDatum[3];
 
       if (expStart == null) {
-        assertThat("Out of bounds range should be null", expLimit == null);
+        try {
+          // this should throw an exception because the index is out of bounds
+          Segment segment = segments1.segmentAt(startIdx);
+          // if an exception isn't thrown, then we have a test failure
+          fail("segmentAt should throw for an out of bounds index");
+        } catch (IndexOutOfBoundsException ioobe) {
+          // test throws expected exception, so continue
+        }
       } else {
         Segment segment = segments1.segmentAt(startIdx);
 
