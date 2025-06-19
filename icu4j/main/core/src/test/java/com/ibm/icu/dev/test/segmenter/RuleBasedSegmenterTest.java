@@ -27,6 +27,14 @@ public class RuleBasedSegmenterTest extends CoreTestFmwk {
             "Kühlschränke kühlen Getränke",
             "[a-z]+;",
             Arrays.asList("K", "ü", "hlschr", "ä", "nke", " ", "k", "ü", "hlen", " ", "G", "etr", "ä", "nke")},
+        {"ASCII upper- and lowercase a-z",
+            "Kühlschränke kühlen Getränke",
+            "[A-Za-z]+;",
+            Arrays.asList("K", "ü", "hlschr", "ä", "nke", " ", "k", "ü", "hlen", " ", "Getr", "ä", "nke")},
+        {"ASCII upper- and lowercase a-z and some letters with diaeresis",
+            "Kühlschränke kühlen Getränke",
+            "[A-Za-z{ü}{ä}]+;",
+            Arrays.asList("Kühlschränke", " ", "kühlen", " ", "Getränke")},
     };
 
     for (Object[] caseDatum : casesData) {
@@ -34,8 +42,6 @@ public class RuleBasedSegmenterTest extends CoreTestFmwk {
       String source = (String) caseDatum[1];
       String rule = (String) caseDatum[2];
       List<CharSequence> expWords = (List<CharSequence>) caseDatum[3];
-
-      // the following rule substring was taken as a subset from BreakIteratorRules_en_US_TEST.java:
 
       Segmenter seg = RuleBasedSegmenter.builder()
           .setRules(rule)
