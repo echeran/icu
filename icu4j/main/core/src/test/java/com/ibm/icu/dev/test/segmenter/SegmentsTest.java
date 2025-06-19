@@ -14,8 +14,10 @@ import com.ibm.icu.segmenter.Segmenter;
 import com.ibm.icu.segmenter.Segments;
 import com.ibm.icu.util.ULocale;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -104,22 +106,23 @@ public class SegmentsTest extends CoreTestFmwk {
 
     // Create new Segments for source1
     Segments segments1 = enWordSegmenter.segment(source1);
+    List<Segment> segments = segments1.segments().collect(Collectors.toList());
 
-    Object[][] casesData = {
-        {"start of segment",                     4,                     true},
-        {"between start and limit of segment",   6,                     false},
-        {"limit of segment",                     9,                     true},
-        {"beginning of string",                  0,                     true},
-        {"end of string",                        source1.length(),      true},
-    };
-
-    for (Object[] caseDatum : casesData) {
-      String desc = (String) caseDatum[0];
-      int idx = (int) caseDatum[1];
-      boolean exp = (boolean) caseDatum[2];
-
-      assertThat(desc, segments1.isBoundary(idx) == exp);
+    BitSet actBoundaries = new BitSet(source1.length());
+    for (Segment seg : segments) {
+      actBoundaries.set(seg.start);
+      actBoundaries.set(seg.limit);
     }
+
+    IntStream.rangeClosed(0, source1.length() - 1).forEach(
+        i -> {
+          if (actBoundaries.get(i)) {
+            assertTrue("Detected " + i + " as boundary", segments1.isBoundary(i));
+          } else {
+            assertFalse("Detected " + i + " as not a boundary", segments1.isBoundary(i));
+          }
+        }
+    );
   }
 
   @Test
