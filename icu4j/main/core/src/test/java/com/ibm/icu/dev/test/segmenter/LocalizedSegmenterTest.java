@@ -35,7 +35,6 @@ public class LocalizedSegmenterTest extends CoreTestFmwk {
 
     for (Object[] caseDatum : casesData) {
       String localeTag = (String) caseDatum[0];
-      // ULocale locale = ULocale.forLanguageTag(localeTag);
       String source = (String) caseDatum[1];
       List<CharSequence> expWords = (List<CharSequence>) caseDatum[2];
 
