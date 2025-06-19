@@ -61,6 +61,7 @@ public class LocalizedSegmenter implements Segmenter {
    * <a
    * href="https://unicode-org.github.io/icu/userguide/boundaryanalysis/#four-types-of-breakiterator">Boundary Analysis</a>
    * for further details.
+   * @draft ICU 78
    */
   public enum SegmentationType {
     GRAPHEME_CLUSTER,
