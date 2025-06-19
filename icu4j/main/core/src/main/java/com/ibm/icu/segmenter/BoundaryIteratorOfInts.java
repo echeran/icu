@@ -42,9 +42,9 @@ class BoundaryIteratorOfInts {
       // boundary.
       int sourceLength = sourceSequence.length();
       if (startIdx == 0) {
-        this.currIdx = breakIter.first();
+        currIdx = breakIter.first();
       } else if (startIdx == sourceLength) {
-        this.currIdx = breakIter.last();
+        currIdx = breakIter.last();
       } else {
         boolean isOnBoundary =
             0 <= startIdx
@@ -52,7 +52,7 @@ class BoundaryIteratorOfInts {
                 && breakIter.isBoundary(startIdx);
         int backFromIdx = isOnBoundary ? startIdx + 1 : startIdx;
 
-        this.currIdx = breakIter.preceding(backFromIdx);
+        currIdx = breakIter.preceding(backFromIdx);
       }
     }
   }
