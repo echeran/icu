@@ -50,9 +50,8 @@ class BoundaryIteratorOfInts {
             0 <= startIdx
                 && startIdx <= sourceLength
                 && breakIter.isBoundary(startIdx);
-        int backFromIdx = isOnBoundary ? startIdx + 1 : startIdx;
 
-        currIdx = breakIter.preceding(backFromIdx);
+        currIdx = isOnBoundary ? startIdx : breakIter.preceding(startIdx);
       }
     }
   }
