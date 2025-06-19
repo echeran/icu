@@ -29,7 +29,7 @@ import com.ibm.icu.text.BreakIterator;
 public interface Segmenter {
 
   /**
-   * Return a {@link Segments} object that encapsulates the segmentation of the input
+   * Returns a {@link Segments} object that encapsulates the segmentation of the input
    * {@code CharSequence}. The {@code Segments} object, in turn, provides the main APIs to support
    * traversal over the resulting segments and boundaries via the Java {@code Stream} abstraction.
    * @param s input {@code CharSequence} on which segmentation is performed. The input must not be
