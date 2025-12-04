@@ -29,8 +29,8 @@ export default defineConfig({
 						icon: "information",
 						link: "/about/example",
 						items: [
-							{ label: 'Example', slug: 'about/example' },
-							{ label: 'Other Page', slug: 'about/otherpage' },
+							{ label: 'What is ICU?', slug: 'about/what' },
+							{ label: 'Who uses ICU?', slug: 'about/who-uses' },
 						]
 					},
 					{

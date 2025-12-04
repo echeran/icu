@@ -59,3 +59,4 @@ and adding the dropdown functionality on top.
     ```
     npm i astro-embed@0.9.0
     ```
+1. Install [Astro MDX integration](https://docs.astro.build/en/guides/integrations-guide/mdx/) to install the integration that allows Astro to support markdown written in an extended format called MDX.
