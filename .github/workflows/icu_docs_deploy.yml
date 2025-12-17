@@ -32,6 +32,16 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Debug
+        run: |
+          cd docs
+          find src/content || echo "src/content doesn't exist"
+          echo
+          find dist || echo "dist dir doesn't exist"
+          npm run build
+          find src/content || echo "src/content doesn't exist"
+          echo
+          find dist || echo "dist dir doesn't exist"
       - name: Install, build, and upload your site
         uses: withastro/action@9811f9299d5d37ca0416ca85cee333c7c9485cd1 # v5.0.1
         with:
