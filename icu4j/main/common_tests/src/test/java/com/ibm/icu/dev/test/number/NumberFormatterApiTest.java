@@ -2433,6 +2433,22 @@ public class NumberFormatterApiTest extends CoreTestFmwk {
                 "0.01",
                 "0.00");
 
+        assertFormatDescending(
+            "Currency",
+            "currency/CAD",
+            "currency/CAD",
+            NumberFormatter.with().unit(CAD),
+            ULocale.ENGLISH,
+            "CA$87,650.00",
+            "CA$8,765.00",
+            "CA$876.50",
+            "CA$87.65",
+            "CA$8.76",
+            "CA$0.88",
+            "CA$0.09",
+            "CA$0.01",
+            "CA$0.00");
+
         assertFormatSingleMeasure(
                 "Currency with CurrencyAmount Input",
                 "",

@@ -2135,6 +2135,22 @@ void NumberFormatterApiTest::unitCurrency() {
             u"0.01",
             u"0.00");
 
+    assertFormatDescending(
+            u"Currency",
+            u"currency/CAD",
+            u"currency/CAD",
+            NumberFormatter::with().unit(CAD),
+            Locale::getEnglish(),
+            u"CA$87,650.00",
+            u"CA$8,765.00",
+            u"CA$876.50",
+            u"CA$87.65",
+            u"CA$8.76",
+            u"CA$0.88",
+            u"CA$0.09",
+            u"CA$0.01",
+            u"CA$0.00");
+
 //    TODO: Implement Measure in C++
 //    assertFormatSingleMeasure(
 //            u"Currency with CurrencyAmount Input",
