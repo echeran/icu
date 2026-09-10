@@ -86,9 +86,17 @@ SegmentIterator & SegmentIterator::operator--() {
         breakIter_->isBoundary(startIdx_);
         iterLogicState_ = IterLogicalState::HERE;
     } else {
-        ruleStatus_ = breakIter_->getRuleStatus();
         limitIdx_ = startIdx_;
-        startIdx_ = breakIter_->preceding(startIdx_); 
+
+        // Note: BreakIterator.isBoundary() is a stateful operation. It resets the position in the
+        // BreakIterator, and thus doesn't just return whether the input is on a boundary.
+        bool limitIdxIsBoundary = breakIter_->isBoundary(limitIdx_);
+        if (!limitIdxIsBoundary) {
+            limitIdx_ = breakIter_->current();
+        }
+        
+        ruleStatus_ = breakIter_->getRuleStatus();
+        startIdx_ = breakIter_->previous();
         iterLogicState_ = IterLogicalState::BACKWARDS;
     }
 

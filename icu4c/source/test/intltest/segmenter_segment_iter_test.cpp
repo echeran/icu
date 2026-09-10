@@ -29,6 +29,10 @@ void SegmentIterTest::runIndexedTest( int32_t index, UBool exec, const char* &na
     TESTCASE_AUTO(testSegments);
     TESTCASE_AUTO(testMultipleSegmentObjectsFromSegmenter);
     TESTCASE_AUTO(testRuleStatus);
+    TESTCASE_AUTO(testSegmentsFromMiddleOfSegment);
+    TESTCASE_AUTO(testSegmentsFromOnBoundary);
+    TESTCASE_AUTO(testSegmentsBeforeMiddleOfSegment);
+    TESTCASE_AUTO(testSegmentsBeforeOnBoundary);
 
     TESTCASE_AUTO_END;
 }
@@ -264,7 +268,112 @@ void SegmentIterTest::testRuleStatus() {
     std::vector<std::u16string_view> expWordsBackward{u"fume", u"qui", u"blond", u"juge", u"au", u"whisky", u"vieux", u"ce",
                                 u"Portez"};
     assertTrue( "segmented word strings backwards", wordsBackward == expWordsBackward);
+}
 
+void SegmentIterTest::testSegmentsFromMiddleOfSegment() {
+    IcuTestErrorCode errorCode(*this, "testSegmentsFromMiddleOfSegment");
+
+    icu::segmenter::LocalizedSegmenter enWordSegmenter =
+        icu::segmenter::LocalizedSegmenterBuilder()
+            .setLocale(Locale::getEnglish())
+            .setSegmentationType(icu::segmenter::SegmentationType::WORD)
+            .build(errorCode);
+
+    std::u16string_view source1 = u"The quick brown fox jumped over the lazy dog.";
+    int32_t startIdx = 1;
+
+    // Create new Segments for source1
+    auto segments1 = enWordSegmenter.segment(source1, errorCode);
+    auto segmentRange1 = segments1->segments();
+    std::vector<icu::segmenter::Segment> segmentVec1;
+    for (auto segmentIter = segments1->segmentsFrom(startIdx); segmentIter != segmentRange1.end(); ++segmentIter) {
+        segmentVec1.push_back(*segmentIter);
+    }
+
+    assertEquals("first segment start", 0, segmentVec1[0].getStart());
+    assertEquals("first segment limit", 3, segmentVec1[0].getLimit());
+    assertEquals("second segment start", 3, segmentVec1[1].getStart());
+    assertEquals("second segment limit", 4, segmentVec1[1].getLimit());
+}
+
+void SegmentIterTest::testSegmentsFromOnBoundary() {
+    IcuTestErrorCode errorCode(*this, "testSegmentsFromOnBoundary");
+
+    icu::segmenter::LocalizedSegmenter enWordSegmenter =
+        icu::segmenter::LocalizedSegmenterBuilder()
+            .setLocale(Locale::getEnglish())
+            .setSegmentationType(icu::segmenter::SegmentationType::WORD)
+            .build(errorCode);
+    
+    std::u16string_view source1 = u"The quick brown fox jumped over the lazy dog.";
+    int32_t startIdx = 3;
+
+    // Create new Segments for source1
+    auto segments1 = enWordSegmenter.segment(source1, errorCode);
+    auto segmentRange1 = segments1->segments();
+    std::vector<icu::segmenter::Segment> segmentVec1;
+    for (auto segmentIter = segments1->segmentsFrom(startIdx); segmentIter != segmentRange1.end(); ++segmentIter) {
+        segmentVec1.push_back(*segmentIter);
+    }
+
+    assertEquals("first segment start", 3, segmentVec1[0].getStart());
+    assertEquals("first segment limit", 4, segmentVec1[0].getLimit());
+    assertEquals("second segment start", 4, segmentVec1[1].getStart());
+    assertEquals("second segment limit", 9, segmentVec1[1].getLimit());
+}
+
+void SegmentIterTest::testSegmentsBeforeMiddleOfSegment() {
+    IcuTestErrorCode errorCode(*this, "testSegmentsBeforeMiddleOfSegment");
+
+    icu::segmenter::LocalizedSegmenter enWordSegmenter =
+        icu::segmenter::LocalizedSegmenterBuilder()
+            .setLocale(Locale::getEnglish())
+            .setSegmentationType(icu::segmenter::SegmentationType::WORD)
+            .build(errorCode);
+    
+    std::u16string_view source1 = u"The quick brown fox jumped over the lazy dog.";
+    int32_t startIdx = 8;
+
+    // Create new Segments for source1
+    auto segments1 = enWordSegmenter.segment(source1, errorCode);
+    auto segmentRange1 = segments1->segments();
+    std::vector<icu::segmenter::Segment> segmentVec1;
+    for (auto segmentIter = segments1->segmentsFrom(startIdx); segmentIter != segmentRange1.begin(); ) {
+        --segmentIter;
+        segmentVec1.push_back(*segmentIter);
+    }
+
+    assertEquals("first segment start", 4, segmentVec1[0].getStart());
+    assertEquals("first segment limit", 9, segmentVec1[0].getLimit());
+    assertEquals("second segment start", 3, segmentVec1[1].getStart());
+    assertEquals("second segment limit", 4, segmentVec1[1].getLimit());
+}
+
+void SegmentIterTest::testSegmentsBeforeOnBoundary() {
+    IcuTestErrorCode errorCode(*this, "testSegmentsBeforeOnBoundary");
+
+    icu::segmenter::LocalizedSegmenter enWordSegmenter =
+        icu::segmenter::LocalizedSegmenterBuilder()
+            .setLocale(Locale::getEnglish())
+            .setSegmentationType(icu::segmenter::SegmentationType::WORD)
+            .build(errorCode);
+    
+    std::u16string_view source1 = u"The quick brown fox jumped over the lazy dog.";
+    int32_t startIdx = 9;
+
+    // Create new Segments for source1
+    auto segments1 = enWordSegmenter.segment(source1, errorCode);
+    auto segmentRange1 = segments1->segments();
+    std::vector<icu::segmenter::Segment> segmentVec1;
+    for (auto segmentIter = segments1->segmentsFrom(startIdx); segmentIter != segmentRange1.begin(); ) {
+        --segmentIter;
+        segmentVec1.push_back(*segmentIter);
+    }
+
+    assertEquals("first segment start", 4, segmentVec1[0].getStart());
+    assertEquals("first segment limit", 9, segmentVec1[0].getLimit());
+    assertEquals("second segment start", 3, segmentVec1[1].getStart());
+    assertEquals("second segment limit", 4, segmentVec1[1].getLimit());
 }
 
 //---------------------------------------------

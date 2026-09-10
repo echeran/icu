@@ -20,6 +20,10 @@ public:
     void testSegments();
     void testMultipleSegmentObjectsFromSegmenter();
     void testRuleStatus();
+    void testSegmentsFromMiddleOfSegment();
+    void testSegmentsFromOnBoundary();
+    void testSegmentsBeforeMiddleOfSegment();
+    void testSegmentsBeforeOnBoundary();
 
 private:
     // Test parameters, from the test framework and test invocation.
