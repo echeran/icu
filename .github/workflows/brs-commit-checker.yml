@@ -47,9 +47,12 @@ jobs:
                 cache-dependency-path: |
                     tools/commit-checker/Pipfile
                     tools/commit-checker/Pipfile.lock
-            - name: Install pipenv
+            - name: Install pipenv (if not found)
               run: |
-                sudo pip3 install pipenv
+                if ! which pipenv; then
+                  echo "`pipenv` not found. Installing using `pip3`";
+                  sudo pip3 install pipenv
+                fi
             - name: Generate report
               env:
                 JIRA_USERNAME: ${{ secrets.COMMIT_CHECKER_JIRA_EMAIL }}
