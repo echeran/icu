@@ -44,16 +44,16 @@ jobs:
                 then
                   git fetch origin ${{ inputs.from_git_ref }}:${{ inputs.from_git_ref }}
                   git checkout ${{ inputs.from_git_ref }}
-                # else
-                #   git checkout ${{ inputs.from_git_ref }}
+                else
+                  git checkout ${{ inputs.from_git_ref }}
                 fi
 
                 if ! [[ ${{ inputs.end_git_ref }} == origin* ]] ;
                 then
                   git fetch origin ${{ inputs.end_git_ref }}:${{ inputs.end_git_ref }}
                   git checkout ${{ inputs.end_git_ref }}
-                # else
-                #   git checkout ${{ inputs.end_git_ref }}
+                else
+                  git checkout ${{ inputs.end_git_ref }}
                 fi
             - name: Setup Python
               uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
