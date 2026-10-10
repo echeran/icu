@@ -59,6 +59,10 @@ jobs:
               uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
               with:
                 python-version: '3.12.8'
+            - name: Upgrade pip as necessary
+              run: |
+                sudo apt update
+                sudo apt install --only-upgrade python3-pip
             - name: Install pipenv (if not found)
               run: |
                 if ! which pipenv; then
