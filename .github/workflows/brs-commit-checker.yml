@@ -67,7 +67,6 @@ jobs:
               run: |
                 if ! which pipenv; then
                   echo "pipenv not found. Installing using pip3 using Virtual Environment";
-                  python3 -m venv .venv
                   sudo pip3 install --ignore-installed pipenv
                 fi
             - name: Generate report
