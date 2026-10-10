@@ -39,6 +39,8 @@ jobs:
             - name: Fetch all branches
               run: |
                 git fetch origin
+                git checkout ${{ inputs.from_git_ref }}
+                git checkout ${{ inputs.end_git_ref }}
             - name: Setup Python
               uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
               with:
